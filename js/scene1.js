@@ -201,10 +201,10 @@ class Scene1 {
   renderLoop() {
     this.renderID = requestAnimationFrame(this.renderLoop.bind(this));
     const delta = this.clock.getDelta();
-    // TWEEN.update();
+    TWEEN.update();
     this.controls.update(delta);
     this.renderer.render(this.scene, this.camera);
-    // this.stats.update();
+    this.stats.update();
   }
   onWindowResize() {
     this.camera.aspect = window.innerWidth / window.innerHeight;
