@@ -129,7 +129,7 @@ class SceneLobby {
       });
     });
 
-    // Load the arcs for francis
+    // Arcs for Francis
     const arcTexture = new THREE.TextureLoader(this.manager).load(
       `${this.dataPath}txt/arch.png`
     );
@@ -159,27 +159,51 @@ class SceneLobby {
     this.scene.add(directionalLight1);
     directionalLight1.position.set(50, 35, 0);
 
-    const spotLight = new THREE.SpotLight(0xffffff, 4, 30, 0.8);
-    spotLight.position.set(15, 5, 5);
-    const spPos = new THREE.Object3D();
-    spPos.position.set(15, 20, 0);
-    spotLight.target = spPos;
-    // spotLight.castShadow = true;
-    this.scene.add(spotLight);
-    this.scene.add(spotLight.target);
+    const francis1SpotLight = new THREE.SpotLight(0xffffff, 0, 30, 0.4);
+    francis1SpotLight.position.set(0, 16, 24); // Camera position
+    const sp1Target = new THREE.Object3D();
+    sp1Target.position.set(-13, 10, 0);
+    francis1SpotLight.target = sp1Target;
+    this.scene.add(francis1SpotLight);
+    this.scene.add(francis1SpotLight.target);
+    this.francis1SpotLight = francis1SpotLight;
+
+    const francis2SpotLight = new THREE.SpotLight(0xffffff, 0, 40, 0.33);
+    francis2SpotLight.position.set(0, 16, 24); // Camera position
+    const sp2Target = new THREE.Object3D();
+    sp2Target.position.set(0, 10, 0);
+    francis2SpotLight.target = sp2Target;
+    this.scene.add(francis2SpotLight);
+    this.scene.add(francis2SpotLight.target);
+    this.francis2SpotLight = francis2SpotLight;
+
+    const francis3SpotLight = new THREE.SpotLight(0xffffff, 0, 30, 0.4);
+    francis3SpotLight.position.set(0, 16, 24); // Camera position
+    const sp3Target = new THREE.Object3D();
+    sp3Target.position.set(13, 10, 0);
+    francis3SpotLight.target = sp3Target;
+    this.scene.add(francis3SpotLight);
+    this.scene.add(francis3SpotLight.target);
+    this.francis3SpotLight = francis3SpotLight;
 
     this.setupFrancisAnimations();
+
+    this.raycaster = new THREE.Raycaster();
+    this.mouse = new THREE.Vector2();
+    window.addEventListener("mousemove", this.onMouseMove.bind(this), false);
+
+    this.statusText = document.getElementById("copy");
 
     // Define the controls ------------------------------------------------------
     this.controls = new FlyControls(this.camera, this.renderer.domElement);
     this.controls.movementSpeed = 1;
     this.controls.domElement = this.renderer.domElement;
-    this.controls.rollSpeed = Math.PI / 10; // 30
+    this.controls.rollSpeed = Math.PI / 30; // 30
     this.controls.autoForward = false;
     this.controls.dragToLook = false;
     // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
-    this.camera.position.set(0, 16.1, 24);
+    this.camera.position.set(0, 16, 24);
     this.renderState = false; // We won't be rendering straight away
   }
   setupFrancisAnimations() {
@@ -282,6 +306,158 @@ class SceneLobby {
     franc1AnimUp.start();
     franc2AnimUp.start();
     franc3AnimUp.start();
+
+    // Light hover animations
+    // Francis 1 Animation
+    var lightStartVec1 = {
+      y: 0, // Doesn't have to be 'y', just put it for now
+    };
+    var lightEndVec1 = {
+      y: 25,
+    };
+    var franc1AnimLightUp = new TWEEN.Tween(lightStartVec1).to(
+      lightEndVec1,
+      1000
+    );
+    franc1AnimLightUp.onUpdate(
+      function () {
+        if (this.francis1Hover) {
+          this.francis1SpotLight.intensity = lightStartVec1.y;
+        } else {
+          this.franc1AnimLightUp.stop();
+          lightEndVec1.y = 0;
+          this.franc1AnimLightDown.start();
+        }
+      }.bind(this)
+    );
+    franc1AnimLightUp.onComplete(function () {
+      lightStartVec1.y = 25;
+      lightEndVec1.y = 0;
+    });
+    var franc1AnimLightDown = new TWEEN.Tween(lightStartVec1).to(
+      lightEndVec1,
+      1000
+    );
+    franc1AnimLightDown.onUpdate(
+      function () {
+        if (this.francis1Hover) {
+          this.franc1AnimLightDown.stop();
+          lightEndVec1.y = 25;
+          this.franc1AnimLightUp.start();
+        } else {
+          this.francis1SpotLight.intensity = lightStartVec1.y;
+        }
+      }.bind(this)
+    );
+    franc1AnimLightDown.onComplete(function () {
+      lightStartVec1.y = 0;
+      lightEndVec1.y = 25;
+    });
+    franc1AnimLightUp.easing(TWEEN.Easing.Quadratic.InOut);
+    franc1AnimLightDown.easing(TWEEN.Easing.Quadratic.InOut);
+
+    // Francis 2 Animation
+    var lightStartVec2 = {
+      y: 0, // Doesn't have to be 'y', just put it for now
+    };
+    var lightEndVec2 = {
+      y: 15,
+    };
+    var franc2AnimLightUp = new TWEEN.Tween(lightStartVec2).to(
+      lightEndVec2,
+      1000
+    );
+    franc2AnimLightUp.onUpdate(
+      function () {
+        if (this.francis2Hover) {
+          this.francis2SpotLight.intensity = lightStartVec2.y;
+        } else {
+          this.franc2AnimLightUp.stop();
+          lightEndVec2.y = 0;
+          this.franc2AnimLightDown.start();
+        }
+      }.bind(this)
+    );
+    franc2AnimLightUp.onComplete(function () {
+      lightStartVec2.y = 15;
+      lightEndVec2.y = 0;
+    });
+    var franc2AnimLightDown = new TWEEN.Tween(lightStartVec2).to(
+      lightEndVec2,
+      1000
+    );
+    franc2AnimLightDown.onUpdate(
+      function () {
+        if (this.francis2Hover) {
+          this.franc2AnimLightDown.stop();
+          lightEndVec2.y = 15;
+          this.franc2AnimLightUp.start();
+        } else {
+          this.francis2SpotLight.intensity = lightStartVec2.y;
+        }
+      }.bind(this)
+    );
+    franc2AnimLightDown.onComplete(function () {
+      lightStartVec2.y = 0;
+      lightEndVec2.y = 15;
+    });
+    franc2AnimLightUp.easing(TWEEN.Easing.Quadratic.InOut);
+    franc2AnimLightDown.easing(TWEEN.Easing.Quadratic.InOut);
+
+    // Francis 3 Animation
+    var lightStartVec3 = {
+      y: 0, // Doesn't have to be 'y', just put it for now
+    };
+    var lightEndVec3 = {
+      y: 25,
+    };
+    var franc3AnimLightUp = new TWEEN.Tween(lightStartVec3).to(
+      lightEndVec3,
+      1000
+    );
+    franc3AnimLightUp.onUpdate(
+      function () {
+        if (this.francis3Hover) {
+          this.francis3SpotLight.intensity = lightStartVec3.y;
+        } else {
+          this.franc3AnimLightUp.stop();
+          lightEndVec3.y = 0;
+          this.franc3AnimLightDown.start();
+        }
+      }.bind(this)
+    );
+    franc3AnimLightUp.onComplete(function () {
+      lightStartVec3.y = 25;
+      lightEndVec3.y = 0;
+    });
+    var franc3AnimLightDown = new TWEEN.Tween(lightStartVec3).to(
+      lightEndVec3,
+      1000
+    );
+    franc3AnimLightDown.onUpdate(
+      function () {
+        if (this.francis3Hover) {
+          this.franc3AnimLightDown.stop();
+          lightEndVec3.y = 25;
+          this.franc3AnimLightUp.start();
+        } else {
+          this.francis3SpotLight.intensity = lightStartVec3.y;
+        }
+      }.bind(this)
+    );
+    franc3AnimLightDown.onComplete(function () {
+      lightStartVec3.y = 0;
+      lightEndVec3.y = 25;
+    });
+    franc3AnimLightUp.easing(TWEEN.Easing.Quadratic.InOut);
+    franc3AnimLightDown.easing(TWEEN.Easing.Quadratic.InOut);
+
+    this.franc1AnimLightUp = franc1AnimLightUp;
+    this.franc1AnimLightDown = franc1AnimLightDown;
+    this.franc2AnimLightUp = franc2AnimLightUp;
+    this.franc2AnimLightDown = franc2AnimLightDown;
+    this.franc3AnimLightUp = franc3AnimLightUp;
+    this.franc3AnimLightDown = franc3AnimLightDown;
   }
   play() {
     // this.ambienceSFX.setLoop(true);
@@ -306,11 +482,57 @@ class SceneLobby {
     this.controls.update(delta);
     this.renderer.render(this.scene, this.camera);
     this.stats.update();
+
+    // update the picking ray with the camera and mouse position
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    // calculate objects intersecting the picking ray
+    const francis1Intersects = this.raycaster.intersectObjects(
+      [this.francis1],
+      true
+    );
+    const francis2Intersects = this.raycaster.intersectObjects(
+      [this.francis2],
+      true
+    );
+    const francis3Intersects = this.raycaster.intersectObjects(
+      [this.francis3],
+      true
+    );
+    if (francis1Intersects.length) {
+      if (this.francis1Hover == false) this.franc1AnimLightUp.start();
+      this.francis1Hover = true;
+    } else {
+      if (this.francis1Hover == true) this.franc1AnimLightDown.start();
+      this.francis1Hover = false;
+    }
+    if (francis2Intersects.length) {
+      if (this.francis2Hover == false) this.franc2AnimLightUp.start();
+      this.francis2Hover = true;
+    } else {
+      if (this.francis2Hover == true) this.franc2AnimLightDown.start();
+      this.francis2Hover = false;
+    }
+    if (francis3Intersects.length) {
+      if (this.francis3Hover == false) this.franc3AnimLightUp.start();
+      this.francis3Hover = true;
+    } else {
+      if (this.francis3Hover == true) this.franc3AnimLightDown.start();
+      this.francis3Hover = false;
+    }
+
+    this.statusText.innerHTML = JSON.stringify(francis1Intersects.length);
+
+    this.renderer.render(this.scene, this.camera);
   }
   onWindowResize() {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+  onMouseMove(event) {
+    // this.statusText.innerHTML = JSON.stringify(this.mouse);
+    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   }
   cleanUp() {
     // Remove the event listener we setup
