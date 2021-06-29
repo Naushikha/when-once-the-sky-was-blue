@@ -463,6 +463,30 @@ class SceneLobby {
     // this.ambienceSFX.setLoop(true);
     // this.ambienceSFX.play();
     // this.franc3AnimUp.start();
+
+    // Pan Down Animation
+    this.controls.enabled = false;
+    var posVec1 = {
+      x: Math.PI / 2,
+    };
+    var endVec1 = {
+      x: -Math.PI / 19,
+    };
+    var panDown = new TWEEN.Tween(posVec1).to(endVec1, 10000);
+    panDown.onUpdate(
+      function () {
+        this.camera.rotation.x = posVec1.x;
+      }.bind(this)
+    );
+    panDown.onComplete(
+      function () {
+        this.controls.enabled = true;
+      }.bind(this)
+    );
+    panDown.easing(TWEEN.Easing.Cubic.InOut);
+    // this.controls.enabled = true;
+
+    panDown.start();
   }
   render(state = true) {
     if (state) {
@@ -479,7 +503,9 @@ class SceneLobby {
     this.renderID = requestAnimationFrame(this.renderLoop.bind(this));
     const delta = this.clock.getDelta();
     TWEEN.update();
-    this.controls.update(delta);
+    if (this.controls.enabled) {
+      this.controls.update(delta);
+    }
     this.renderer.render(this.scene, this.camera);
     this.stats.update();
 
@@ -498,6 +524,7 @@ class SceneLobby {
       [this.francis3],
       true
     );
+
     if (francis1Intersects.length) {
       if (this.francis1Hover == false) this.franc1AnimLightUp.start();
       this.francis1Hover = true;
@@ -519,8 +546,7 @@ class SceneLobby {
       if (this.francis3Hover == true) this.franc3AnimLightDown.start();
       this.francis3Hover = false;
     }
-
-    this.statusText.innerHTML = JSON.stringify(francis1Intersects.length);
+    // this.statusText.innerHTML = JSON.stringify(francis2Intersects);
 
     this.renderer.render(this.scene, this.camera);
   }
