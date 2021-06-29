@@ -1,6 +1,9 @@
 import * as THREE from "./lib/three.module.js";
 import Stats from "./lib/stats.module.js";
 import { SceneLobby } from "./sceneLobby.js";
+import { ScenePerf1 } from "./scenePerf1.js";
+import { ScenePerf2 } from "./scenePerf2.js";
+import { ScenePerf3 } from "./scenePerf3.js";
 
 const progress = document.getElementById("progress");
 const progressBar = document.getElementById("progress-bar");
@@ -22,6 +25,7 @@ let phrases = [
   "Anytime now...",
   "Patience is a virtue.",
 ];
+let currentScene = "lobby";
 // Loading manager
 const manager = new THREE.LoadingManager();
 manager.onProgress = function (item, loaded, total) {
@@ -38,10 +42,10 @@ manager.onLoad = function () {
   startButton.style.animation = "fadein 5s";
 
   // Skip play for now
-  // lobby.render();
-  // lobby.play();
-  // startButton.style.visibility = "hidden";
-  // loadingOverlay.style.visibility = "hidden";
+  lobby.render();
+  lobby.play();
+  startButton.style.visibility = "hidden";
+  loadingOverlay.style.visibility = "hidden";
 
   startButton.addEventListener("click", () => {
     lobby.render();
@@ -82,10 +86,72 @@ stats.domElement.style.position = "absolute";
 stats.domElement.style.top = "0px";
 document.body.appendChild(stats.domElement);
 
-// Setup a scene
+// Setup scenes
 const lobby = new SceneLobby(renderer, manager, stats);
+const perf1 = new ScenePerf1(renderer, manager, stats);
+const perf2 = new ScenePerf2(renderer, manager, stats);
+const perf3 = new ScenePerf3(renderer, manager, stats);
 
 document.body.style.cursor = "url('../data/txt/cursor_grey.png') 16 16, auto";
 startButton.style.cursor = "url('../data/txt/cursor_white.png') 16 16, auto";
 
 // startButton.classList.add("cursor-grey");
+
+let tog = false;
+function dothis() {
+  if (tog) {
+    perf1.render(false);
+    lobby.render();
+  } else {
+    lobby.render(false);
+    perf1.render();
+  }
+  tog = !tog;
+}
+
+// document.getElementById("switch").addEventListener("click", dothis);
+
+function sceneSwitcher() {
+  switch (currentScene) {
+    case "lobby":
+      if (lobby.francis1Hover) {
+        lobby.render(false);
+        perf1.render();
+        currentScene = "perf1";
+      } else if (lobby.francis2Hover) {
+        lobby.render(false);
+        perf2.render();
+        currentScene = "perf2";
+      } else if (lobby.francis3Hover) {
+        lobby.render(false);
+        perf3.render();
+        currentScene = "perf3";
+      }
+      break;
+    case "perf1":
+      if (perf1.escape) {
+        perf1.render(false);
+        lobby.render();
+        currentScene = "lobby";
+      }
+      break;
+    case "perf2":
+      if (perf2.escape) {
+        perf2.render(false);
+        lobby.render();
+        currentScene = "lobby";
+      }
+      break;
+    case "perf3":
+      if (perf3.escape) {
+        perf3.render(false);
+        lobby.render();
+        currentScene = "lobby";
+      }
+      break;
+
+    default:
+      break;
+  }
+}
+document.addEventListener("click", sceneSwitcher);

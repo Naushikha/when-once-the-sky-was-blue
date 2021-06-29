@@ -62,7 +62,7 @@ class SceneLobby {
       objLoader.load(`${this.dataPath}mdl/francis.obj`, (root) => {
         this.francis1 = root;
         this.scene.add(this.francis1);
-        this.francis1.position.x = -13;
+        this.francis1.position.x = -20;
         this.francis1.rotation.y += Math.PI / 6;
         this.francis1.scale.set(0.1, 0.1, 0.1);
         this.francis1.traverse(function (child) {
@@ -99,7 +99,7 @@ class SceneLobby {
       objLoader.load(`${this.dataPath}mdl/francis.obj`, (root) => {
         this.francis3 = root;
         this.scene.add(this.francis3);
-        this.francis3.position.x = 13;
+        this.francis3.position.x = 20;
         this.francis3.rotation.y -= Math.PI / 6;
         this.francis3.scale.set(0.1, 0.1, 0.1);
         this.francis3.traverse(function (child) {
@@ -118,7 +118,7 @@ class SceneLobby {
       objLoader.load(`${this.dataPath}mdl/francis.obj`, (root) => {
         this.francisUs = root;
         this.scene.add(this.francisUs);
-        this.francisUs.position.z = 19;
+        this.francisUs.position.z = 35;
         this.francisUs.rotation.x += Math.PI / 6;
         this.francisUs.scale.set(0.1, 0.1, 0.1);
         this.francisUs.traverse(function (child) {
@@ -133,7 +133,7 @@ class SceneLobby {
     const arcTexture = new THREE.TextureLoader(this.manager).load(
       `${this.dataPath}txt/arch.png`
     );
-    const arcGeometry = new THREE.PlaneGeometry(13, 23);
+    const arcGeometry = new THREE.PlaneGeometry(20, 40);
     const arcMaterial = new THREE.MeshBasicMaterial({
       map: arcTexture,
       color: 0xcccccc,
@@ -141,14 +141,14 @@ class SceneLobby {
       side: THREE.DoubleSide,
     });
     const arc1 = new THREE.Mesh(arcGeometry, arcMaterial);
-    arc1.position.set(15, 10, -2);
+    arc1.position.set(30, 10, -20);
     arc1.rotation.y -= Math.PI / 6;
     this.scene.add(arc1);
     const arc2 = new THREE.Mesh(arcGeometry, arcMaterial);
-    arc2.position.set(0, 10, -16);
+    arc2.position.set(0, 10, -25);
     this.scene.add(arc2);
     const arc3 = new THREE.Mesh(arcGeometry, arcMaterial);
-    arc3.position.set(-15, 10, -2);
+    arc3.position.set(-30, 10, -20);
     arc3.rotation.y += Math.PI / 6;
     this.scene.add(arc3);
 
@@ -159,10 +159,10 @@ class SceneLobby {
     this.scene.add(directionalLight1);
     directionalLight1.position.set(50, 35, 0);
 
-    const francis1SpotLight = new THREE.SpotLight(0xffffff, 0, 30, 0.4);
+    const francis1SpotLight = new THREE.SpotLight(0xffffff, 0, 40, 0.4);
     francis1SpotLight.position.set(0, 16, 24); // Camera position
     const sp1Target = new THREE.Object3D();
-    sp1Target.position.set(-13, 10, 0);
+    sp1Target.position.set(-20, 10, 0);
     francis1SpotLight.target = sp1Target;
     this.scene.add(francis1SpotLight);
     this.scene.add(francis1SpotLight.target);
@@ -177,10 +177,10 @@ class SceneLobby {
     this.scene.add(francis2SpotLight.target);
     this.francis2SpotLight = francis2SpotLight;
 
-    const francis3SpotLight = new THREE.SpotLight(0xffffff, 0, 30, 0.4);
+    const francis3SpotLight = new THREE.SpotLight(0xffffff, 0, 40, 0.4);
     francis3SpotLight.position.set(0, 16, 24); // Camera position
     const sp3Target = new THREE.Object3D();
-    sp3Target.position.set(13, 10, 0);
+    sp3Target.position.set(20, 10, 0);
     francis3SpotLight.target = sp3Target;
     this.scene.add(francis3SpotLight);
     this.scene.add(francis3SpotLight.target);
@@ -203,7 +203,8 @@ class SceneLobby {
     this.controls.dragToLook = false;
     // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
-    this.camera.position.set(0, 16, 24);
+    this.camera.position.set(0, 16, 40);
+    this.camera.rotation.x = 3; // To prevent pointing at francis at start
     this.renderState = false; // We won't be rendering straight away
   }
   setupFrancisAnimations() {
@@ -488,7 +489,7 @@ class SceneLobby {
       x: Math.PI / 2,
     };
     var endVec1 = {
-      x: -Math.PI / 19,
+      x: -Math.PI / 21,
     };
     var panDown = new TWEEN.Tween(posVec1).to(endVec1, 10000);
     panDown.onUpdate(
@@ -502,9 +503,8 @@ class SceneLobby {
       }.bind(this)
     );
     panDown.easing(TWEEN.Easing.Cubic.InOut);
-    // this.controls.enabled = true;
-
     panDown.start();
+    // this.controls.enabled = true;
   }
   render(state = true) {
     if (state) {
