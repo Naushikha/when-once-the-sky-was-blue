@@ -330,10 +330,13 @@ class SceneLobby {
         }
       }.bind(this)
     );
-    franc1AnimLightUp.onComplete(function () {
-      lightStartVec1.y = 25;
-      lightEndVec1.y = 0;
-    });
+    franc1AnimLightUp.onComplete(
+      function () {
+        lightStartVec1.y = 25;
+        lightEndVec1.y = 0;
+        this.francis1Lit = true;
+      }.bind(this)
+    );
     var franc1AnimLightDown = new TWEEN.Tween(lightStartVec1).to(
       lightEndVec1,
       1000
@@ -349,10 +352,13 @@ class SceneLobby {
         }
       }.bind(this)
     );
-    franc1AnimLightDown.onComplete(function () {
-      lightStartVec1.y = 0;
-      lightEndVec1.y = 25;
-    });
+    franc1AnimLightDown.onComplete(
+      function () {
+        lightStartVec1.y = 0;
+        lightEndVec1.y = 25;
+        this.francis1Lit = false;
+      }.bind(this)
+    );
     franc1AnimLightUp.easing(TWEEN.Easing.Quadratic.InOut);
     franc1AnimLightDown.easing(TWEEN.Easing.Quadratic.InOut);
 
@@ -378,10 +384,13 @@ class SceneLobby {
         }
       }.bind(this)
     );
-    franc2AnimLightUp.onComplete(function () {
-      lightStartVec2.y = 15;
-      lightEndVec2.y = 0;
-    });
+    franc2AnimLightUp.onComplete(
+      function () {
+        lightStartVec2.y = 15;
+        lightEndVec2.y = 0;
+        this.francis2Lit = true;
+      }.bind(this)
+    );
     var franc2AnimLightDown = new TWEEN.Tween(lightStartVec2).to(
       lightEndVec2,
       1000
@@ -397,10 +406,13 @@ class SceneLobby {
         }
       }.bind(this)
     );
-    franc2AnimLightDown.onComplete(function () {
-      lightStartVec2.y = 0;
-      lightEndVec2.y = 15;
-    });
+    franc2AnimLightDown.onComplete(
+      function () {
+        lightStartVec2.y = 0;
+        lightEndVec2.y = 15;
+        this.francis2Lit = false;
+      }.bind(this)
+    );
     franc2AnimLightUp.easing(TWEEN.Easing.Quadratic.InOut);
     franc2AnimLightDown.easing(TWEEN.Easing.Quadratic.InOut);
 
@@ -426,10 +438,13 @@ class SceneLobby {
         }
       }.bind(this)
     );
-    franc3AnimLightUp.onComplete(function () {
-      lightStartVec3.y = 25;
-      lightEndVec3.y = 0;
-    });
+    franc3AnimLightUp.onComplete(
+      function () {
+        lightStartVec3.y = 25;
+        lightEndVec3.y = 0;
+        this.francis3Lit = true;
+      }.bind(this)
+    );
     var franc3AnimLightDown = new TWEEN.Tween(lightStartVec3).to(
       lightEndVec3,
       1000
@@ -445,10 +460,13 @@ class SceneLobby {
         }
       }.bind(this)
     );
-    franc3AnimLightDown.onComplete(function () {
-      lightStartVec3.y = 0;
-      lightEndVec3.y = 25;
-    });
+    franc3AnimLightDown.onComplete(
+      function () {
+        lightStartVec3.y = 0;
+        lightEndVec3.y = 25;
+        this.francis3Lit = false;
+      }.bind(this)
+    );
     franc3AnimLightUp.easing(TWEEN.Easing.Quadratic.InOut);
     franc3AnimLightDown.easing(TWEEN.Easing.Quadratic.InOut);
 
@@ -509,9 +527,7 @@ class SceneLobby {
     this.renderer.render(this.scene, this.camera);
     this.stats.update();
 
-    // update the picking ray with the camera and mouse position
     this.raycaster.setFromCamera(this.mouse, this.camera);
-    // calculate objects intersecting the picking ray
     const francis1Intersects = this.raycaster.intersectObjects(
       [this.francis1],
       true
@@ -529,24 +545,25 @@ class SceneLobby {
       if (this.francis1Hover == false) this.franc1AnimLightUp.start();
       this.francis1Hover = true;
     } else {
-      if (this.francis1Hover == true) this.franc1AnimLightDown.start();
+      if (this.francis1Lit == true) this.franc1AnimLightDown.start();
       this.francis1Hover = false;
     }
     if (francis2Intersects.length) {
       if (this.francis2Hover == false) this.franc2AnimLightUp.start();
       this.francis2Hover = true;
     } else {
-      if (this.francis2Hover == true) this.franc2AnimLightDown.start();
+      if (this.francis2Lit == true) this.franc2AnimLightDown.start();
       this.francis2Hover = false;
     }
     if (francis3Intersects.length) {
       if (this.francis3Hover == false) this.franc3AnimLightUp.start();
       this.francis3Hover = true;
     } else {
-      if (this.francis3Hover == true) this.franc3AnimLightDown.start();
+      if (this.francis3Lit == true) this.franc3AnimLightDown.start();
       this.francis3Hover = false;
     }
     // this.statusText.innerHTML = JSON.stringify(francis2Intersects);
+    console.log(this.francis2Lit);
 
     this.renderer.render(this.scene, this.camera);
   }
