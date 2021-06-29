@@ -1,16 +1,16 @@
 @font-face {
-  font-family: "Roboto";
+  font-family: "EB Garamond";
   font-style: normal;
-  font-weight: 300;
+  font-weight: 400;
   font-display: swap;
-  src: url("../data/font/roboto.woff2") format("woff2");
+  src: url("../data/font/garamond.woff2") format("woff2");
   unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F,
     U+FE2E-FE2F;
 }
 
 body {
   margin: 0;
-  font-family: "Roboto", sans-serif;
+  font-family: "EB Garamond", sans-serif;
   user-select: none;
 }
 
@@ -153,13 +153,20 @@ body {
   font-size: 20px;
 }
 #loading-overlay .stm2 {
-  /* height: 4em; */
-  width: 15em;
   padding: 1em 0em;
   padding-left: 4em;
   text-align: left !important;
   letter-spacing: 2px;
   font-size: 18px;
+  display: flex;
+  align-items: center;
+}
+
+#loading-overlay .stm2 img {
+  height: 2em;
+  width: 2em;
+  padding-right: 1em;
+  /* padding-top: 1em; */
 }
 
 #loading-overlay button {
