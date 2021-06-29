@@ -562,9 +562,15 @@ class SceneLobby {
       if (this.francis3Lit == true) this.franc3AnimLightDown.start();
       this.francis3Hover = false;
     }
+    // Set cursor
+    if (this.francis1Hover || this.francis2Hover || this.francis3Hover) {
+      document.body.style.cursor =
+        "url('../data/txt/cursor_white.png') 16 16, auto";
+    } else {
+      document.body.style.cursor =
+        "url('../data/txt/cursor_grey.png') 16 16, auto";
+    }
     // this.statusText.innerHTML = JSON.stringify(francis2Intersects);
-    console.log(this.francis2Lit);
-
     this.renderer.render(this.scene, this.camera);
   }
   onWindowResize() {

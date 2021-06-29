@@ -84,3 +84,8 @@ document.body.appendChild(stats.domElement);
 
 // Setup a scene
 const lobby = new SceneLobby(renderer, manager, stats);
+
+document.body.style.cursor = "url('../data/txt/cursor_grey.png') 16 16, auto";
+startButton.style.cursor = "url('../data/txt/cursor_white.png') 16 16, auto";
+
+// startButton.classList.add("cursor-grey");
