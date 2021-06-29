@@ -92,13 +92,73 @@ body {
 
 #loading-overlay h1 {
   font-weight: 100;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  animation: fadein 5s forwards;
+  animation-delay: 2s;
+  opacity: 0;
 }
-
+/* 
 #loading-overlay p {
   margin: 0 10em;
   text-align: center;
   letter-spacing: 2px;
+} */
+
+#loading-overlay #intro {
+  margin: 1em 10em;
+  animation: fadein 5s forwards;
+  animation-delay: 3.5s;
+  opacity: 0;
+}
+
+#loading-overlay #best {
+  margin: 3em 0em 1em 0em;
+  animation: fadein 5s forwards;
+  animation-delay: 8s;
+  opacity: 0;
+}
+/* Recommendations */
+#loading-overlay #rec1 {
+  animation: fadein 5s forwards;
+  animation-delay: 10s;
+  opacity: 0;
+}
+#loading-overlay #rec2 {
+  animation: fadein 5s forwards;
+  animation-delay: 12s;
+  opacity: 0;
+}
+#loading-overlay #rec3 {
+  animation: fadein 5s forwards;
+  animation-delay: 14s;
+  opacity: 0;
+}
+
+#loading-overlay #phrase {
+  margin: 2em 10em 1em 10em;
+  /* animation: fadeinout 5s; */
+  opacity: 0;
+}
+
+/* https://css-tricks.com/restart-css-animation/ */
+.run-animation {
+  animation: fadeinout 5s;
+}
+
+#loading-overlay .stm {
+  margin: 2em 10em;
+  text-align: center;
+  letter-spacing: 2px;
+  font-size: 20px;
+}
+#loading-overlay .stm2 {
+  /* height: 4em; */
+  width: 15em;
+  padding: 1em 0em;
+  padding-left: 4em;
+  text-align: left !important;
+  letter-spacing: 2px;
+  font-size: 18px;
 }
 
 #loading-overlay button {
@@ -113,4 +173,39 @@ body {
   cursor: pointer;
   /* font-family: "Orbitron", sans-serif; */
   letter-spacing: 2px;
+  transition: all 2s;
+}
+
+#loading-overlay button:hover {
+  letter-spacing: 5px;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeout {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeinout {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
