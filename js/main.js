@@ -92,8 +92,8 @@ const perf1 = new ScenePerf1(renderer, manager, stats);
 const perf2 = new ScenePerf2(renderer, manager, stats);
 const perf3 = new ScenePerf3(renderer, manager, stats);
 
-document.body.style.cursor = "url('../data/txt/cursor_grey.png') 16 16, auto";
-startButton.style.cursor = "url('../data/txt/cursor_white.png') 16 16, auto";
+document.body.style.cursor = "url('./data/txt/cursor_grey.png') 16 16, auto";
+startButton.style.cursor = "url('./data/txt/cursor_white.png') 16 16, auto";
 
 // startButton.classList.add("cursor-grey");
 
