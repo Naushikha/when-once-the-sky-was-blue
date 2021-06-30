@@ -277,7 +277,3 @@ button::after {
     opacity: 0;
   }
 }
-
-.cursor-grey {
-  cursor: url("../data/txt/cursor_grey.png"), auto;
-}
