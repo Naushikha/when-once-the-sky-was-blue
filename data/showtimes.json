@@ -1,0 +1,10 @@
+{
+    "showState": "open",
+    "scheduleStart": "",
+    "scheduleStop": "",
+    "scheduleDays": [
+        ["startdate", "enddate"],
+        ["startdate", "enddate"],
+        ["startdate", "enddate"]
+    ]
+}

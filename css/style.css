@@ -12,6 +12,7 @@ body {
   margin: 0;
   font-family: "EB Garamond", sans-serif;
   user-select: none;
+  overflow: hidden;
 }
 
 #info {
@@ -78,6 +79,7 @@ body {
 
 #loading-overlay,
 #showtime-overlay,
+#captions-overlay,
 #credits-overlay {
   position: absolute;
   font-size: 16px;
@@ -96,7 +98,34 @@ body {
 
 #showtime-overlay {
   background: rgba(0, 0, 0, 1);
+  /* visibility: hidden; */
+}
+
+#showtime-overlay h1 {
+  position: absolute;
+  top: 10vh;
+}
+#showtime-overlay #showtime-warn {
+  text-align: center;
+  font-size: 1.3em;
+}
+
+#captions-overlay {
+  background: rgba(255, 255, 255, 0);
+  pointer-events: none;
   visibility: hidden;
+}
+
+#captions-overlay #instruc {
+  position: absolute;
+  font-size: 1.5em;
+  top: 15vh;
+}
+
+#captions-overlay #caption {
+  position: absolute;
+  font-size: 1.5em;
+  top: 80vh;
 }
 
 #credits-overlay {
@@ -111,12 +140,6 @@ body {
   animation-delay: 2s;
   opacity: 0;
 }
-/* 
-#loading-overlay p {
-  margin: 0 10em;
-  text-align: center;
-  letter-spacing: 2px;
-} */
 
 #loading-overlay #intro {
   margin: 1em 10em;
@@ -150,7 +173,6 @@ body {
 
 #loading-overlay #phrase {
   margin: 2em 10em 1em 10em;
-  /* animation: fadeinout 5s; */
   opacity: 0;
 }
 
@@ -179,7 +201,6 @@ body {
   height: 2em;
   width: 2em;
   padding-right: 1em;
-  /* padding-top: 1em; */
 }
 
 #loading-overlay button {
@@ -191,7 +212,6 @@ body {
   color: #ffffff;
   padding: 12px 18px;
   text-transform: uppercase;
-  /* cursor: pointer; */
   letter-spacing: 2px;
 
   position: relative;
