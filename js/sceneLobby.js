@@ -691,7 +691,7 @@ class SceneLobby {
         "url('../data/txt/cursor_white.png') 16 16, auto";
     } else {
       document.body.style.cursor =
-        "url('../data/txt/cursor_grey.png') 16 16, auto";
+        "url('./data/txt/cursor_grey.png') 16 16, auto";
     }
     // this.statusText.innerHTML = JSON.stringify(francis2Intersects);
     this.renderer.render(this.scene, this.camera);
