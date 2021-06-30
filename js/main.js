@@ -111,21 +111,46 @@ function dothis() {
 
 // document.getElementById("switch").addEventListener("click", dothis);
 
+// lobby.playLook();
+
+function switchCallback(perf) {
+  switch (perf) {
+    case "lobby":
+      perf1.render(false);
+      perf2.render(false);
+      perf3.render(false);
+      lobby.render();
+      currentScene = "lobby";
+      break;
+    case "perf1":
+      lobby.render(false);
+      perf1.render();
+      currentScene = "perf1";
+      break;
+    case "perf2":
+      lobby.render(false);
+      perf2.render();
+      currentScene = "perf2";
+      break;
+    case "perf3":
+      lobby.render(false);
+      perf3.render();
+      currentScene = "perf3";
+      break;
+    default:
+      break;
+  }
+}
+
 function sceneSwitcher() {
   switch (currentScene) {
     case "lobby":
       if (lobby.francis1Hover) {
-        lobby.render(false);
-        perf1.render();
-        currentScene = "perf1";
+        lobby.enterPerformance(switchCallback, "perf1");
       } else if (lobby.francis2Hover) {
-        lobby.render(false);
-        perf2.render();
-        currentScene = "perf2";
+        lobby.enterPerformance(switchCallback, "perf2");
       } else if (lobby.francis3Hover) {
-        lobby.render(false);
-        perf3.render();
-        currentScene = "perf3";
+        lobby.enterPerformance(switchCallback, "perf3");
       }
       break;
     case "perf1":

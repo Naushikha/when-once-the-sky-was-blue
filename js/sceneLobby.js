@@ -3,6 +3,11 @@ import { FlyControls } from "./lib/FlyControls.js";
 import { OrbitControls } from "./lib/OrbitControls.js";
 import { MTLLoader } from "./lib/MTLLoader.js";
 import { OBJLoader } from "./lib/OBJLoader.js";
+// For bloom
+import { EffectComposer } from "./lib/postprocessing/EffectComposer.js";
+import { RenderPass } from "./lib/postprocessing/RenderPass.js";
+import { ShaderPass } from "./lib/postprocessing/ShaderPass.js";
+import { UnrealBloomPass } from "./lib/postprocessing/UnrealBloomPass.js";
 
 class SceneLobby {
   dataPath = "./data/";
@@ -41,6 +46,7 @@ class SceneLobby {
       "txt/skybox_right.png",
     ]);
     this.scene.background = skyboxTextures;
+    this.skyboxTextures = skyboxTextures; // Export this for bloom
 
     const axesHelper = new THREE.AxesHelper(5);
     this.scene.add(axesHelper);
@@ -55,7 +61,7 @@ class SceneLobby {
     const mtlLoader = new MTLLoader(manager);
 
     // Francis 1 - Left
-    mtlLoader.load(`${this.dataPath}mdl/francis.mtl`, (mtl) => {
+    mtlLoader.load(`${this.dataPath}mdl/francis_white.mtl`, (mtl) => {
       mtl.preload();
       const objLoader = new OBJLoader(manager);
       objLoader.setMaterials(mtl);
@@ -74,7 +80,7 @@ class SceneLobby {
     });
 
     // Francis 2 - Middle
-    mtlLoader.load(`${this.dataPath}mdl/francis.mtl`, (mtl) => {
+    mtlLoader.load(`${this.dataPath}mdl/francis_white.mtl`, (mtl) => {
       mtl.preload();
       const objLoader = new OBJLoader(manager);
       objLoader.setMaterials(mtl);
@@ -92,7 +98,7 @@ class SceneLobby {
     });
 
     // Francis 3 - Right
-    mtlLoader.load(`${this.dataPath}mdl/francis.mtl`, (mtl) => {
+    mtlLoader.load(`${this.dataPath}mdl/francis_white.mtl`, (mtl) => {
       mtl.preload();
       const objLoader = new OBJLoader(manager);
       objLoader.setMaterials(mtl);
@@ -111,7 +117,7 @@ class SceneLobby {
     });
 
     // Francis US
-    mtlLoader.load(`${this.dataPath}mdl/francis.mtl`, (mtl) => {
+    mtlLoader.load(`${this.dataPath}mdl/francis_white.mtl`, (mtl) => {
       mtl.preload();
       const objLoader = new OBJLoader(manager);
       objLoader.setMaterials(mtl);
@@ -152,12 +158,25 @@ class SceneLobby {
     arc3.rotation.y += Math.PI / 6;
     this.scene.add(arc3);
 
+    this.setupBloom();
+
+    // Bloom sphere
+    const bloomGeometry = new THREE.IcosahedronGeometry(1, 15);
+    const bloomMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const bloom = new THREE.Mesh(bloomGeometry, bloomMaterial);
+    bloom.scale.setScalar(0);
+    bloom.position.y = 30;
+    bloom.layers.toggle(this.BLOOM_SCENE);
+    bloom.layers.enable(this.BLOOM_SCENE);
+    this.scene.add(bloom);
+    this.bloom = bloom;
+
     // Lighting
 
-    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 1);
+    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.4);
     directionalLight1.castShadow = true;
     this.scene.add(directionalLight1);
-    directionalLight1.position.set(50, 35, 0);
+    directionalLight1.position.set(0, 35, 40);
 
     const francis1SpotLight = new THREE.SpotLight(0xffffff, 0, 40, 0.4);
     francis1SpotLight.position.set(0, 16, 24); // Camera position
@@ -308,13 +327,14 @@ class SceneLobby {
     franc2AnimUp.start();
     franc3AnimUp.start();
 
+    const maxLight = 3;
     // Light hover animations
     // Francis 1 Animation
     var lightStartVec1 = {
       y: 0, // Doesn't have to be 'y', just put it for now
     };
     var lightEndVec1 = {
-      y: 25,
+      y: maxLight,
     };
     var franc1AnimLightUp = new TWEEN.Tween(lightStartVec1).to(
       lightEndVec1,
@@ -333,7 +353,7 @@ class SceneLobby {
     );
     franc1AnimLightUp.onComplete(
       function () {
-        lightStartVec1.y = 25;
+        lightStartVec1.y = maxLight;
         lightEndVec1.y = 0;
         this.francis1Lit = true;
       }.bind(this)
@@ -346,7 +366,7 @@ class SceneLobby {
       function () {
         if (this.francis1Hover) {
           this.franc1AnimLightDown.stop();
-          lightEndVec1.y = 25;
+          lightEndVec1.y = maxLight;
           this.franc1AnimLightUp.start();
         } else {
           this.francis1SpotLight.intensity = lightStartVec1.y;
@@ -356,7 +376,7 @@ class SceneLobby {
     franc1AnimLightDown.onComplete(
       function () {
         lightStartVec1.y = 0;
-        lightEndVec1.y = 25;
+        lightEndVec1.y = maxLight;
         this.francis1Lit = false;
       }.bind(this)
     );
@@ -368,7 +388,7 @@ class SceneLobby {
       y: 0, // Doesn't have to be 'y', just put it for now
     };
     var lightEndVec2 = {
-      y: 15,
+      y: maxLight * 1.2,
     };
     var franc2AnimLightUp = new TWEEN.Tween(lightStartVec2).to(
       lightEndVec2,
@@ -387,7 +407,7 @@ class SceneLobby {
     );
     franc2AnimLightUp.onComplete(
       function () {
-        lightStartVec2.y = 15;
+        lightStartVec2.y = maxLight * 1.2;
         lightEndVec2.y = 0;
         this.francis2Lit = true;
       }.bind(this)
@@ -400,7 +420,7 @@ class SceneLobby {
       function () {
         if (this.francis2Hover) {
           this.franc2AnimLightDown.stop();
-          lightEndVec2.y = 15;
+          lightEndVec2.y = maxLight * 1.2;
           this.franc2AnimLightUp.start();
         } else {
           this.francis2SpotLight.intensity = lightStartVec2.y;
@@ -410,7 +430,7 @@ class SceneLobby {
     franc2AnimLightDown.onComplete(
       function () {
         lightStartVec2.y = 0;
-        lightEndVec2.y = 15;
+        lightEndVec2.y = maxLight * 1.2;
         this.francis2Lit = false;
       }.bind(this)
     );
@@ -422,7 +442,7 @@ class SceneLobby {
       y: 0, // Doesn't have to be 'y', just put it for now
     };
     var lightEndVec3 = {
-      y: 25,
+      y: maxLight,
     };
     var franc3AnimLightUp = new TWEEN.Tween(lightStartVec3).to(
       lightEndVec3,
@@ -441,7 +461,7 @@ class SceneLobby {
     );
     franc3AnimLightUp.onComplete(
       function () {
-        lightStartVec3.y = 25;
+        lightStartVec3.y = maxLight;
         lightEndVec3.y = 0;
         this.francis3Lit = true;
       }.bind(this)
@@ -454,7 +474,7 @@ class SceneLobby {
       function () {
         if (this.francis3Hover) {
           this.franc3AnimLightDown.stop();
-          lightEndVec3.y = 25;
+          lightEndVec3.y = maxLight;
           this.franc3AnimLightUp.start();
         } else {
           this.francis3SpotLight.intensity = lightStartVec3.y;
@@ -464,7 +484,7 @@ class SceneLobby {
     franc3AnimLightDown.onComplete(
       function () {
         lightStartVec3.y = 0;
-        lightEndVec3.y = 25;
+        lightEndVec3.y = maxLight;
         this.francis3Lit = false;
       }.bind(this)
     );
@@ -477,6 +497,109 @@ class SceneLobby {
     this.franc2AnimLightDown = franc2AnimLightDown;
     this.franc3AnimLightUp = franc3AnimLightUp;
     this.franc3AnimLightDown = franc3AnimLightDown;
+  }
+  setupBloomAnimations(switcher, perf) {
+    var test = new THREE.Object3D();
+    test.position.set(
+      this.camera.position.x,
+      this.camera.position.y,
+      this.camera.position.z
+    );
+    test.rotation.set(0.3, 0, 0); // To look at bloom
+    var posVec1 = {
+      x: this.camera.rotation.x,
+      y: this.camera.rotation.y,
+      z: this.camera.rotation.z,
+    };
+    var endVec1 = {
+      x: test.rotation.x,
+      y: test.rotation.y,
+      z: test.rotation.z,
+    };
+    var lookAtBloom = new TWEEN.Tween(posVec1).to(endVec1, 3000);
+    lookAtBloom.onUpdate(
+      function () {
+        this.camera.rotation.set(posVec1.x, posVec1.y, posVec1.z);
+      }.bind(this)
+    );
+    // lookAtBloom.onComplete(
+    //   function () {
+    //     growBloom.start();
+    //   }.bind(this)
+    // );
+    var posVec2 = {
+      s: 0,
+    };
+    var endVec2 = {
+      s: 30,
+    };
+    var growBloom = new TWEEN.Tween(posVec2).to(endVec2, 5000);
+    growBloom.onUpdate(
+      function () {
+        this.bloom.scale.setScalar(posVec2.s);
+      }.bind(this)
+    );
+    growBloom.onComplete(
+      function () {
+        // set bloom to default
+        this.bloom.scale.setScalar(0);
+        this.blooming = false; // Stop rendering bloom
+        switcher(perf); //switch to next perf
+      }.bind(this)
+    );
+    lookAtBloom.easing(TWEEN.Easing.Quadratic.InOut);
+    growBloom.easing(TWEEN.Easing.Quadratic.In);
+
+    this.lookAtBloom = lookAtBloom;
+    this.lookAtBloom.start();
+    growBloom.start();
+    this.blooming = true; // Set the render state to blooming
+  }
+  setupBloom() {
+    this.BLOOM_SCENE = 1; // SEPERATE SCENE FOR BLOOM
+    this.bloomLayer = new THREE.Layers();
+    this.bloomLayer.set(this.BLOOM_SCENE);
+    this.bloomDarkMaterial = new THREE.MeshBasicMaterial({ color: "black" });
+    this.bloomMaterials = {};
+    // this.renderer.toneMapping = THREE.ReinhardToneMapping;
+    this.renderScene = new RenderPass(this.scene, this.camera);
+    this.bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      1.5,
+      0.4,
+      0
+    );
+    // this.renderer.toneMappingExposure = -1;
+    // this.bloomPass.threshold = 0; // These are the setting to change to achieve effect
+    this.bloomPass.strength = Number(1);
+    this.bloomPass.radius = Number(1);
+    this.bloomComposer = new EffectComposer(this.renderer);
+    this.bloomComposer.renderToScreen = false;
+    this.bloomComposer.addPass(this.renderScene);
+    this.bloomComposer.addPass(this.bloomPass);
+    this.finalPass = new ShaderPass(
+      new THREE.ShaderMaterial({
+        uniforms: {
+          baseTexture: { value: null },
+          bloomTexture: { value: this.bloomComposer.renderTarget2.texture },
+        },
+        vertexShader: `varying vec2 vUv;
+					void main(){vUv = uv;gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );}`,
+        fragmentShader: `uniform sampler2D baseTexture;uniform sampler2D bloomTexture;varying vec2 vUv;
+					void main(){gl_FragColor = ( texture2D( baseTexture, vUv ) + vec4( 1.0 ) * texture2D( bloomTexture, vUv ) );}`,
+        defines: {},
+      }),
+      "baseTexture"
+    );
+    this.finalPass.needsSwap = true;
+    this.finalComposer = new EffectComposer(this.renderer);
+    this.finalComposer.addPass(this.renderScene);
+    this.finalComposer.addPass(this.finalPass);
+  }
+  enterPerformance(switcher, perf) {
+    this.controls.enabled = false;
+    this.setupBloomAnimations(switcher, perf);
+    // switcher(perf);
   }
   play() {
     // this.ambienceSFX.setLoop(true);
@@ -503,8 +626,8 @@ class SceneLobby {
       }.bind(this)
     );
     panDown.easing(TWEEN.Easing.Cubic.InOut);
-    panDown.start();
-    // this.controls.enabled = true;
+    // panDown.start();
+    this.controls.enabled = true;
   }
   render(state = true) {
     if (state) {
@@ -541,21 +664,21 @@ class SceneLobby {
       true
     );
 
-    if (francis1Intersects.length) {
+    if (francis1Intersects.length && !this.blooming) {
       if (this.francis1Hover == false) this.franc1AnimLightUp.start();
       this.francis1Hover = true;
     } else {
       if (this.francis1Lit == true) this.franc1AnimLightDown.start();
       this.francis1Hover = false;
     }
-    if (francis2Intersects.length) {
+    if (francis2Intersects.length && !this.blooming) {
       if (this.francis2Hover == false) this.franc2AnimLightUp.start();
       this.francis2Hover = true;
     } else {
       if (this.francis2Lit == true) this.franc2AnimLightDown.start();
       this.francis2Hover = false;
     }
-    if (francis3Intersects.length) {
+    if (francis3Intersects.length && !this.blooming) {
       if (this.francis3Hover == false) this.franc3AnimLightUp.start();
       this.francis3Hover = true;
     } else {
@@ -572,11 +695,40 @@ class SceneLobby {
     }
     // this.statusText.innerHTML = JSON.stringify(francis2Intersects);
     this.renderer.render(this.scene, this.camera);
+
+    if (this.blooming) {
+      this.renderBloom();
+      this.finalComposer.render();
+    }
+  }
+  renderBloom() {
+    this.scene.traverse(darkenNonBloomed.bind(this));
+    this.scene.background = new THREE.Color(0x000000); // Make background black
+    this.bloomComposer.render();
+    this.scene.traverse(restoreMaterial.bind(this));
+    this.scene.background = this.skyboxTextures; // Restore background
+    function darkenNonBloomed(obj) {
+      if (obj.isMesh && this.bloomLayer.test(obj.layers) === false) {
+        this.bloomMaterials[obj.uuid] = obj.material;
+        obj.material = this.bloomDarkMaterial;
+      }
+    }
+    function restoreMaterial(obj) {
+      if (this.bloomMaterials[obj.uuid]) {
+        obj.material = this.bloomMaterials[obj.uuid];
+        delete this.bloomMaterials[obj.uuid];
+      }
+    }
   }
   onWindowResize() {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+    if (this.blooming) {
+      this.bloomComposer.setSize(window.innerWidth, window.innerHeight);
+      this.finalComposer.setSize(window.innerWidth, window.innerHeight);
+    }
   }
   onMouseMove(event) {
     // this.statusText.innerHTML = JSON.stringify(this.mouse);
