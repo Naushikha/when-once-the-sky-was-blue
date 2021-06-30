@@ -3,6 +3,7 @@ import { OrbitControls } from "./lib/OrbitControls.js";
 
 class ScenePerf1 {
   dataPath = "./data/";
+  lobbyCallback;
 
   constructor(renderer, manager, stats) {
     this.renderer = renderer;
@@ -19,12 +20,6 @@ class ScenePerf1 {
       1000
     );
     window.addEventListener("resize", this.onWindowResize.bind(this), false);
-    function escape(e) {
-      if (e.key === "Escape") {
-        this.escape = !this.escape;
-      }
-    }
-    window.addEventListener("keydown", escape.bind(this));
 
     // Load everything on to the screen -----------------------------------------
 

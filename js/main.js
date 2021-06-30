@@ -92,26 +92,14 @@ const perf1 = new ScenePerf1(renderer, manager, stats);
 const perf2 = new ScenePerf2(renderer, manager, stats);
 const perf3 = new ScenePerf3(renderer, manager, stats);
 
+// Set scene callbacks to return to lobby
+perf1.lobbyCallback = switchCallback;
+perf2.lobbyCallback = switchCallback;
+perf3.lobbyCallback = switchCallback;
+
+// Set cursor for body
 document.body.style.cursor = "url('./data/txt/cursor_grey.png') 16 16, auto";
 startButton.style.cursor = "url('./data/txt/cursor_white.png') 16 16, auto";
-
-// startButton.classList.add("cursor-grey");
-
-let tog = false;
-function dothis() {
-  if (tog) {
-    perf1.render(false);
-    lobby.render();
-  } else {
-    lobby.render(false);
-    perf1.render();
-  }
-  tog = !tog;
-}
-
-// document.getElementById("switch").addEventListener("click", dothis);
-
-// lobby.playLook();
 
 function switchCallback(perf) {
   switch (perf) {
@@ -142,7 +130,7 @@ function switchCallback(perf) {
   }
 }
 
-function sceneSwitcher() {
+function sceneSwitchMouse() {
   switch (currentScene) {
     case "lobby":
       if (lobby.francis1Hover) {
@@ -153,30 +141,31 @@ function sceneSwitcher() {
         lobby.enterPerformance(switchCallback, "perf3");
       }
       break;
-    case "perf1":
-      if (perf1.escape) {
-        perf1.render(false);
-        lobby.render();
-        currentScene = "lobby";
-      }
-      break;
-    case "perf2":
-      if (perf2.escape) {
-        perf2.render(false);
-        lobby.render();
-        currentScene = "lobby";
-      }
-      break;
-    case "perf3":
-      if (perf3.escape) {
-        perf3.render(false);
-        lobby.render();
-        currentScene = "lobby";
-      }
-      break;
-
     default:
       break;
   }
 }
-document.addEventListener("click", sceneSwitcher);
+document.addEventListener("click", sceneSwitchMouse);
+
+function sceneSwitchKey() {
+  switch (currentScene) {
+    case "perf1":
+      switchCallback("lobby");
+      break;
+    case "perf2":
+      switchCallback("lobby");
+      break;
+    case "perf3":
+      switchCallback("lobby");
+      break;
+    default:
+      break;
+  }
+}
+// Temporary switch to lobby
+function escape(e) {
+  if (e.key === "Escape") {
+    sceneSwitchKey();
+  }
+}
+window.addEventListener("keydown", escape);
