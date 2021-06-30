@@ -107,6 +107,20 @@ function switchCallback(perf) {
       perf1.render(false);
       perf2.render(false);
       perf3.render(false);
+      // When coming back to lobby the skybox should change based on the perf we were in
+      switch (currentScene) {
+        case "perf1":
+          lobby.updateSkybox("purple");
+          break;
+        case "perf2":
+          lobby.updateSkybox("red");
+          break;
+        case "perf3":
+          lobby.updateSkybox("yellow");
+          break;
+        default:
+          break;
+      }
       lobby.render();
       currentScene = "lobby";
       break;

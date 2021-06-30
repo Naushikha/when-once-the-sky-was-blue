@@ -37,15 +37,42 @@ class SceneLobby {
     const loader = new THREE.CubeTextureLoader(this.manager);
     loader.setPath(this.dataPath);
 
-    const skyboxTextures = loader.load([
-      "txt/skybox_front.png",
-      "txt/skybox_back.png",
-      "txt/skybox_top.png",
-      "txt/skybox_bottom.png",
-      "txt/skybox_left.png",
-      "txt/skybox_right.png",
-    ]);
-    this.scene.background = skyboxTextures;
+    this.currentSkybox = "black";
+    const skyboxTextures = {
+      black: loader.load([
+        "txt/black_sb_front.png",
+        "txt/black_sb_back.png",
+        "txt/black_sb_top.png",
+        "txt/black_sb_bottom.png",
+        "txt/black_sb_left.png",
+        "txt/black_sb_right.png",
+      ]),
+      purple: loader.load([
+        "txt/purple_sb_front.png",
+        "txt/purple_sb_back.png",
+        "txt/purple_sb_top.png",
+        "txt/purple_sb_bottom.png",
+        "txt/purple_sb_left.png",
+        "txt/purple_sb_right.png",
+      ]),
+      red: loader.load([
+        "txt/red_sb_front.png",
+        "txt/red_sb_back.png",
+        "txt/red_sb_top.png",
+        "txt/red_sb_bottom.png",
+        "txt/red_sb_left.png",
+        "txt/red_sb_right.png",
+      ]),
+      yellow: loader.load([
+        "txt/yellow_sb_front.png",
+        "txt/yellow_sb_back.png",
+        "txt/yellow_sb_top.png",
+        "txt/yellow_sb_bottom.png",
+        "txt/yellow_sb_left.png",
+        "txt/yellow_sb_right.png",
+      ]),
+    };
+    this.scene.background = skyboxTextures[this.currentSkybox];
     this.skyboxTextures = skyboxTextures; // Export this for bloom
 
     const axesHelper = new THREE.AxesHelper(5);
@@ -629,6 +656,11 @@ class SceneLobby {
     // panDown.start();
     this.controls.enabled = true;
   }
+  updateSkybox(skyboxName) {
+    // Call from outside to change
+    this.currentSkybox = skyboxName;
+    this.scene.background = this.skyboxTextures[this.currentSkybox];
+  }
   render(state = true) {
     if (state) {
       this.renderLoop();
@@ -706,7 +738,7 @@ class SceneLobby {
     this.scene.background = new THREE.Color(0x000000); // Make background black
     this.bloomComposer.render();
     this.scene.traverse(restoreMaterial.bind(this));
-    this.scene.background = this.skyboxTextures; // Restore background
+    this.scene.background = this.skyboxTextures[this.currentSkybox]; // Restore background
     function darkenNonBloomed(obj) {
       if (obj.isMesh && this.bloomLayer.test(obj.layers) === false) {
         this.bloomMaterials[obj.uuid] = obj.material;

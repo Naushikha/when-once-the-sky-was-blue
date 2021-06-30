@@ -30,12 +30,12 @@ class ScenePerf2 {
     loader.setPath(this.dataPath);
 
     const skyboxTextures = loader.load([
-      "txt/skybox_front.png",
-      "txt/skybox_back.png",
-      "txt/skybox_top.png",
-      "txt/skybox_bottom.png",
-      "txt/skybox_left.png",
-      "txt/skybox_right.png",
+      "txt/black_sb_front.png",
+      "txt/black_sb_back.png",
+      "txt/black_sb_top.png",
+      "txt/black_sb_bottom.png",
+      "txt/black_sb_left.png",
+      "txt/black_sb_right.png",
     ]);
     this.scene.background = skyboxTextures;
 
