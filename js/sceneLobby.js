@@ -688,7 +688,7 @@ class SceneLobby {
     // Set cursor
     if (this.francis1Hover || this.francis2Hover || this.francis3Hover) {
       document.body.style.cursor =
-        "url('../data/txt/cursor_white.png') 16 16, auto";
+        "url('./data/txt/cursor_white.png') 16 16, auto";
     } else {
       document.body.style.cursor =
         "url('./data/txt/cursor_grey.png') 16 16, auto";
