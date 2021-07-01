@@ -10,6 +10,7 @@ class ScenePerf2 {
     this.manager = manager;
     this.stats = stats;
     this.renderState = false;
+    this.animation = new TWEEN.Group(); // Animation
 
     // Setup this scene and its camera ------------------------------------------
     this.scene = new THREE.Scene();
@@ -54,6 +55,7 @@ class ScenePerf2 {
   }
   render(state = true) {
     if (state) {
+      this.transition(255, 255, 255, 1, 0, 0, 0, 0); // Do transition animation
       this.renderLoop();
       this.controls.enabled = true;
       this.renderState = true;
@@ -65,7 +67,7 @@ class ScenePerf2 {
   }
   renderLoop() {
     this.renderID = requestAnimationFrame(this.renderLoop.bind(this));
-    // TWEEN.update();
+    this.animation.update();
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
     this.stats.update();
@@ -79,6 +81,30 @@ class ScenePerf2 {
     // Remove the event listener we setup
     window.removeEventListener("resize", this.onWindowResize.bind(this));
     // Remove stuff in the scene as here well
+  }
+  transition(sR, sG, sB, sA, eR, eG, eB, eA) {
+    const transitionOverlay = document.getElementById("transition-overlay");
+    var posVec1 = {
+      r: sR,
+      g: sG,
+      b: sB,
+      a: sA,
+    };
+    var endVec1 = {
+      r: eR,
+      g: eG,
+      b: eB,
+      a: eA,
+    };
+    var transitionAni = new TWEEN.Tween(posVec1, this.animation).to(
+      endVec1,
+      4000
+    );
+    transitionAni.onUpdate(function () {
+      transitionOverlay.style.background = `rgba(${posVec1.r}, ${posVec1.g}, ${posVec1.b}, ${posVec1.a})`;
+    });
+    transitionAni.easing(TWEEN.Easing.Cubic.InOut);
+    transitionAni.start();
   }
 }
 

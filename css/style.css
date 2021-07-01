@@ -79,6 +79,7 @@ body {
 
 #loading-overlay,
 #showtime-overlay,
+#transition-overlay,
 #captions-overlay,
 #credits-overlay {
   position: absolute;
@@ -98,7 +99,7 @@ body {
 
 #showtime-overlay {
   background: rgba(0, 0, 0, 1);
-  /* visibility: hidden; */
+  visibility: hidden;
 }
 
 #showtime-overlay h1 {
@@ -108,6 +109,11 @@ body {
 #showtime-overlay #showtime-warn {
   text-align: center;
   font-size: 1.3em;
+}
+
+#transition-overlay {
+  background: rgba(255, 255, 255, 0);
+  pointer-events: none;
 }
 
 #captions-overlay {

@@ -15,11 +15,13 @@ fetch("./data/showtimes.json")
 
     switch (showState) {
       case "closed":
+        showtimeOverlay.visibility = "visible";
         warning.innerHTML =
           "Looks like you have missed the showtime. <br> Check back again later.";
         throw new Error("Show's closed bruh.");
         break;
       case "scheduled":
+        showtimeOverlay.visibility = "visible";
         warning.innerHTML =
           "Looks like you have missed the showtime. <br> Check back again later at [SCHED]";
         throw new Error("Show's closed bruh.");
@@ -38,23 +40,9 @@ function runShow() {
   const loadingOverlay = document.getElementById("loading-overlay");
   const startButton = document.getElementById("start-button");
 
-  let loadingState = true;
-  let phrases = [
-    "The experience is loading...",
-    "Get comfortable.",
-    "No distractions.",
-    "We are getting things ready...",
-    "Props are being setup...",
-    "Adjusting placements...",
-    "Stage area is ready.",
-    "Testing lighting...",
-    "Performing sound checks...",
-    "Narrator is warming up...",
-    "Anytime now...",
-    "Patience is a virtue.",
-  ];
   let currentScene = "lobby";
   // Loading manager
+  let loadingState = true;
   const manager = new THREE.LoadingManager();
   manager.onProgress = function (item, loaded, total) {
     progressBar.style.width = (loaded / total) * 100 + "%";
@@ -85,6 +73,20 @@ function runShow() {
     });
   };
 
+  let phrases = [
+    "The experience is loading...",
+    "Get comfortable.",
+    "No distractions.",
+    "We are getting things ready...",
+    "Props are being setup...",
+    "Adjusting placements...",
+    "Stage area is ready.",
+    "Testing lighting...",
+    "Performing sound checks...",
+    "Narrator is warming up...",
+    "Anytime now...",
+    "Patience is a virtue.",
+  ];
   let phraseCount = 0;
   function showPhrases() {
     const phrase = document.getElementById("phrase");
@@ -102,7 +104,6 @@ function runShow() {
     phraseCount++;
     setTimeout(showPhrases, 5000);
   }
-
   setTimeout(showPhrases, 18000);
 
   // Setup the renderer

@@ -18,6 +18,7 @@ class SceneLobby {
     this.manager = manager;
     this.stats = stats;
     this.renderState = false;
+    this.animation = new TWEEN.Group(); // Animation
 
     // Setup this scene and its camera ------------------------------------------
     this.scene = new THREE.Scene();
@@ -261,7 +262,10 @@ class SceneLobby {
     var endVec1 = {
       y: 0,
     };
-    var franc1AnimUp = new TWEEN.Tween(posVec1).to(endVec1, 3000);
+    var franc1AnimUp = new TWEEN.Tween(posVec1, this.animation).to(
+      endVec1,
+      3000
+    );
     franc1AnimUp.onUpdate(
       function () {
         this.francis1.position.y = posVec1.y;
@@ -272,7 +276,10 @@ class SceneLobby {
       endVec1.y = 0.5;
       franc1AnimDown.start();
     });
-    var franc1AnimDown = new TWEEN.Tween(posVec1).to(endVec1, 3000);
+    var franc1AnimDown = new TWEEN.Tween(posVec1, this.animation).to(
+      endVec1,
+      3000
+    );
     franc1AnimDown.onUpdate(
       function () {
         this.francis1.position.y = posVec1.y;
@@ -293,7 +300,10 @@ class SceneLobby {
     var endVec2 = {
       y: 0.5,
     };
-    var franc2AnimUp = new TWEEN.Tween(posVec2).to(endVec2, 4000);
+    var franc2AnimUp = new TWEEN.Tween(posVec2, this.animation).to(
+      endVec2,
+      4000
+    );
     franc2AnimUp.onUpdate(
       function () {
         this.francis2.position.y = posVec2.y;
@@ -304,7 +314,10 @@ class SceneLobby {
       endVec2.y = 0;
       franc2AnimDown.start();
     });
-    var franc2AnimDown = new TWEEN.Tween(posVec2).to(endVec2, 4000);
+    var franc2AnimDown = new TWEEN.Tween(posVec2, this.animation).to(
+      endVec2,
+      4000
+    );
     franc2AnimDown.onUpdate(
       function () {
         this.francis2.position.y = posVec2.y;
@@ -325,7 +338,10 @@ class SceneLobby {
     var endVec3 = {
       y: 0.5,
     };
-    var franc3AnimUp = new TWEEN.Tween(posVec3).to(endVec3, 5000);
+    var franc3AnimUp = new TWEEN.Tween(posVec3, this.animation).to(
+      endVec3,
+      5000
+    );
     franc3AnimUp.onUpdate(
       function () {
         this.francis3.position.y = posVec3.y;
@@ -336,7 +352,10 @@ class SceneLobby {
       endVec3.y = 0;
       franc3AnimDown.start();
     });
-    var franc3AnimDown = new TWEEN.Tween(posVec3).to(endVec3, 5000);
+    var franc3AnimDown = new TWEEN.Tween(posVec3, this.animation).to(
+      endVec3,
+      5000
+    );
     franc3AnimDown.onUpdate(
       function () {
         this.francis3.position.y = posVec3.y;
@@ -363,7 +382,7 @@ class SceneLobby {
     var lightEndVec1 = {
       y: maxLight,
     };
-    var franc1AnimLightUp = new TWEEN.Tween(lightStartVec1).to(
+    var franc1AnimLightUp = new TWEEN.Tween(lightStartVec1, this.animation).to(
       lightEndVec1,
       1000
     );
@@ -385,10 +404,10 @@ class SceneLobby {
         this.francis1Lit = true;
       }.bind(this)
     );
-    var franc1AnimLightDown = new TWEEN.Tween(lightStartVec1).to(
-      lightEndVec1,
-      1000
-    );
+    var franc1AnimLightDown = new TWEEN.Tween(
+      lightStartVec1,
+      this.animation
+    ).to(lightEndVec1, 1000);
     franc1AnimLightDown.onUpdate(
       function () {
         if (this.francis1Hover) {
@@ -417,7 +436,7 @@ class SceneLobby {
     var lightEndVec2 = {
       y: maxLight * 1.2,
     };
-    var franc2AnimLightUp = new TWEEN.Tween(lightStartVec2).to(
+    var franc2AnimLightUp = new TWEEN.Tween(lightStartVec2, this.animation).to(
       lightEndVec2,
       1000
     );
@@ -439,10 +458,10 @@ class SceneLobby {
         this.francis2Lit = true;
       }.bind(this)
     );
-    var franc2AnimLightDown = new TWEEN.Tween(lightStartVec2).to(
-      lightEndVec2,
-      1000
-    );
+    var franc2AnimLightDown = new TWEEN.Tween(
+      lightStartVec2,
+      this.animation
+    ).to(lightEndVec2, 1000);
     franc2AnimLightDown.onUpdate(
       function () {
         if (this.francis2Hover) {
@@ -471,7 +490,7 @@ class SceneLobby {
     var lightEndVec3 = {
       y: maxLight,
     };
-    var franc3AnimLightUp = new TWEEN.Tween(lightStartVec3).to(
+    var franc3AnimLightUp = new TWEEN.Tween(lightStartVec3, this.animation).to(
       lightEndVec3,
       1000
     );
@@ -493,10 +512,10 @@ class SceneLobby {
         this.francis3Lit = true;
       }.bind(this)
     );
-    var franc3AnimLightDown = new TWEEN.Tween(lightStartVec3).to(
-      lightEndVec3,
-      1000
-    );
+    var franc3AnimLightDown = new TWEEN.Tween(
+      lightStartVec3,
+      this.animation
+    ).to(lightEndVec3, 1000);
     franc3AnimLightDown.onUpdate(
       function () {
         if (this.francis3Hover) {
@@ -526,24 +545,20 @@ class SceneLobby {
     this.franc3AnimLightDown = franc3AnimLightDown;
   }
   setupBloomAnimations(switcher, perf) {
-    var test = new THREE.Object3D();
-    test.position.set(
-      this.camera.position.x,
-      this.camera.position.y,
-      this.camera.position.z
-    );
-    test.rotation.set(0.3, 0, 0); // To look at bloom
     var posVec1 = {
       x: this.camera.rotation.x,
       y: this.camera.rotation.y,
       z: this.camera.rotation.z,
     };
     var endVec1 = {
-      x: test.rotation.x,
-      y: test.rotation.y,
-      z: test.rotation.z,
+      x: 0.3,
+      y: 0,
+      z: 0,
     };
-    var lookAtBloom = new TWEEN.Tween(posVec1).to(endVec1, 3000);
+    var lookAtBloom = new TWEEN.Tween(posVec1, this.animation).to(
+      endVec1,
+      3000
+    );
     lookAtBloom.onUpdate(
       function () {
         this.camera.rotation.set(posVec1.x, posVec1.y, posVec1.z);
@@ -560,7 +575,7 @@ class SceneLobby {
     var endVec2 = {
       s: 30,
     };
-    var growBloom = new TWEEN.Tween(posVec2).to(endVec2, 5000);
+    var growBloom = new TWEEN.Tween(posVec2, this.animation).to(endVec2, 5000);
     growBloom.onUpdate(
       function () {
         this.bloom.scale.setScalar(posVec2.s);
@@ -641,7 +656,7 @@ class SceneLobby {
     var endVec1 = {
       x: -Math.PI / 21,
     };
-    var panDown = new TWEEN.Tween(posVec1).to(endVec1, 10000);
+    var panDown = new TWEEN.Tween(posVec1, this.animation).to(endVec1, 10000);
     panDown.onUpdate(
       function () {
         this.camera.rotation.x = posVec1.x;
@@ -675,7 +690,7 @@ class SceneLobby {
   renderLoop() {
     this.renderID = requestAnimationFrame(this.renderLoop.bind(this));
     const delta = this.clock.getDelta();
-    TWEEN.update();
+    this.animation.update();
     if (this.controls.enabled) {
       this.controls.update(delta);
     }
