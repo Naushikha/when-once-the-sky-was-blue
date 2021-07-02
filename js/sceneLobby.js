@@ -3,7 +3,7 @@ import { FlyControls } from "./lib/FlyControls.js";
 import { OrbitControls } from "./lib/OrbitControls.js";
 import { MTLLoader } from "./lib/MTLLoader.js";
 import { OBJLoader } from "./lib/OBJLoader.js";
-// For bloom
+// Bloom (Transition light effect) imports
 import { EffectComposer } from "./lib/postprocessing/EffectComposer.js";
 import { RenderPass } from "./lib/postprocessing/RenderPass.js";
 import { ShaderPass } from "./lib/postprocessing/ShaderPass.js";
@@ -33,14 +33,12 @@ class SceneLobby {
     // Load everything on to the screen -----------------------------------------
 
     // Skybox
-    // http://wwwtyro.github.io/space-3d
-
-    const loader = new THREE.CubeTextureLoader(this.manager);
-    loader.setPath(this.dataPath);
+    const skyBoxLoader = new THREE.CubeTextureLoader(this.manager);
+    skyBoxLoader.setPath(this.dataPath);
 
     this.currentSkybox = "black";
     const skyboxTextures = {
-      black: loader.load([
+      black: skyBoxLoader.load([
         "txt/black_sb_front.png",
         "txt/black_sb_back.png",
         "txt/black_sb_top.png",
@@ -48,7 +46,7 @@ class SceneLobby {
         "txt/black_sb_left.png",
         "txt/black_sb_right.png",
       ]),
-      purple: loader.load([
+      purple: skyBoxLoader.load([
         "txt/purple_sb_front.png",
         "txt/purple_sb_back.png",
         "txt/purple_sb_top.png",
@@ -56,7 +54,7 @@ class SceneLobby {
         "txt/purple_sb_left.png",
         "txt/purple_sb_right.png",
       ]),
-      red: loader.load([
+      red: skyBoxLoader.load([
         "txt/red_sb_front.png",
         "txt/red_sb_back.png",
         "txt/red_sb_top.png",
@@ -64,7 +62,7 @@ class SceneLobby {
         "txt/red_sb_left.png",
         "txt/red_sb_right.png",
       ]),
-      yellow: loader.load([
+      yellow: skyBoxLoader.load([
         "txt/yellow_sb_front.png",
         "txt/yellow_sb_back.png",
         "txt/yellow_sb_top.png",
@@ -87,16 +85,11 @@ class SceneLobby {
       const objLoader = new OBJLoader(manager);
       objLoader.setMaterials(mtl);
       objLoader.load(`${this.dataPath}mdl/francis.obj`, (root) => {
+        root.position.x = -20;
+        root.rotation.y += Math.PI / 6;
+        root.scale.set(0.1, 0.1, 0.1);
+        this.scene.add(root);
         this.francis1 = root;
-        this.scene.add(this.francis1);
-        this.francis1.position.x = -20;
-        this.francis1.rotation.y += Math.PI / 6;
-        this.francis1.scale.set(0.1, 0.1, 0.1);
-        this.francis1.traverse(function (child) {
-          if (child instanceof THREE.Mesh) {
-            child.castShadow = true;
-          }
-        });
       });
     });
 
@@ -106,15 +99,10 @@ class SceneLobby {
       const objLoader = new OBJLoader(manager);
       objLoader.setMaterials(mtl);
       objLoader.load(`${this.dataPath}mdl/francis.obj`, (root) => {
+        root.position.z = -10;
+        root.scale.set(0.1, 0.1, 0.1);
+        this.scene.add(root);
         this.francis2 = root;
-        this.scene.add(this.francis2);
-        this.francis2.position.z = -10;
-        this.francis2.scale.set(0.1, 0.1, 0.1);
-        this.francis2.traverse(function (child) {
-          if (child instanceof THREE.Mesh) {
-            child.castShadow = true;
-          }
-        });
       });
     });
 
@@ -124,16 +112,11 @@ class SceneLobby {
       const objLoader = new OBJLoader(manager);
       objLoader.setMaterials(mtl);
       objLoader.load(`${this.dataPath}mdl/francis.obj`, (root) => {
+        root.position.x = 20;
+        root.rotation.y -= Math.PI / 6;
+        root.scale.set(0.1, 0.1, 0.1);
+        this.scene.add(root);
         this.francis3 = root;
-        this.scene.add(this.francis3);
-        this.francis3.position.x = 20;
-        this.francis3.rotation.y -= Math.PI / 6;
-        this.francis3.scale.set(0.1, 0.1, 0.1);
-        this.francis3.traverse(function (child) {
-          if (child instanceof THREE.Mesh) {
-            child.castShadow = true;
-          }
-        });
       });
     });
 
@@ -143,16 +126,12 @@ class SceneLobby {
       const objLoader = new OBJLoader(manager);
       objLoader.setMaterials(mtl);
       objLoader.load(`${this.dataPath}mdl/francis.obj`, (root) => {
+        root.position.z = 38;
+        root.position.y = -1;
+        root.rotation.x += Math.PI / 8;
+        root.scale.set(0.2, 0.2, 0.2);
+        this.scene.add(root);
         this.francisUs = root;
-        this.scene.add(this.francisUs);
-        this.francisUs.position.z = 35;
-        this.francisUs.rotation.x += Math.PI / 6;
-        this.francisUs.scale.set(0.1, 0.1, 0.1);
-        this.francisUs.traverse(function (child) {
-          if (child instanceof THREE.Mesh) {
-            child.castShadow = true;
-          }
-        });
       });
     });
 
@@ -193,12 +172,12 @@ class SceneLobby {
     this.bloom = bloom;
 
     // Lighting
-
+    // Main light
     const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.4);
     directionalLight1.castShadow = true;
     this.scene.add(directionalLight1);
     directionalLight1.position.set(0, 35, 40);
-
+    // Lights for francis hover
     const francis1SpotLight = new THREE.SpotLight(0xffffff, 0, 40, 0.4);
     francis1SpotLight.position.set(0, 16, 24); // Camera position
     const sp1Target = new THREE.Object3D();
@@ -232,15 +211,13 @@ class SceneLobby {
     this.mouse = new THREE.Vector2();
     window.addEventListener("mousemove", this.onMouseMove.bind(this), false);
 
-    this.statusText = document.getElementById("copy");
+    this.statusText = document.getElementById("copy"); // For debugging
 
     // Define the controls ------------------------------------------------------
     this.controls = new FlyControls(this.camera, this.renderer.domElement);
     this.controls.movementSpeed = 1;
     this.controls.domElement = this.renderer.domElement;
     this.controls.rollSpeed = Math.PI / 30; // 30
-    this.controls.autoForward = false;
-    this.controls.dragToLook = false;
     this.controls.enabled = false; // Disable it after creation
     // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
@@ -638,7 +615,6 @@ class SceneLobby {
   }
   play() {
     // Pan Down Animation
-    this.controls.enabled = false;
     var posVec1 = {
       x: Math.PI / 2,
     };
@@ -657,8 +633,8 @@ class SceneLobby {
       }.bind(this)
     );
     panDown.easing(TWEEN.Easing.Quadratic.InOut);
-    panDown.start();
-    // this.controls.enabled = true;
+    // panDown.start();
+    this.controls.enabled = true;
   }
   updateSkybox(skyboxName) {
     // Call from outside to change

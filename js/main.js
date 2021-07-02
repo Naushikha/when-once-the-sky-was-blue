@@ -36,6 +36,7 @@ fetch("./data/showtimes.json")
     }
   });
 
+// Main entry point to the show
 function runShow() {
   const progress = document.getElementById("progress");
   const progressBar = document.getElementById("progress-bar");
@@ -44,15 +45,14 @@ function runShow() {
   const fullscrButton = document.getElementById("fullscr-button");
 
   let currentScene = "lobby";
+
   // Loading manager
   let loadingState = true;
   const manager = new THREE.LoadingManager();
   manager.onProgress = function (item, loaded, total) {
     progressBar.style.width = (loaded / total) * 100 + "%";
-    // progressBar.innerHTML = `Loading ${loaded}/${total}`;
     startButton.style.visibility = "hidden";
   };
-
   manager.onLoad = function () {
     loadingState = false;
     progress.style.display = "none";
@@ -61,13 +61,14 @@ function runShow() {
     startButton.style.animation = "fadein 5s";
 
     // Skip play for now
-    // currentScene = "perf2";
-    // perf2.render();
+    currentScene = "perf2";
+    perf2.render();
+    sfxPerf2.play();
 
     // lobby.render();
     // lobby.play();
-    // startButton.style.visibility = "hidden";
-    // loadingOverlay.style.visibility = "hidden";
+    startButton.style.visibility = "hidden";
+    loadingOverlay.style.visibility = "hidden";
 
     startButton.addEventListener("click", () => {
       // lobby.render();
@@ -75,14 +76,15 @@ function runShow() {
       // sfxLobbyBase.play();
       // sfxLobbyVO.play(10);
 
-      currentScene = "perf2";
-      perf2.render();
-      sfxPerf2.play();
+      // currentScene = "perf2";
+      // perf2.render();
+      // sfxPerf2.play();
       startButton.style.visibility = "hidden";
       loadingOverlay.style.visibility = "hidden";
     });
   };
 
+  // Some nice random loading phrases
   let phrases = [
     "The experience is loading...",
     "Get comfortable.",
@@ -169,6 +171,7 @@ function runShow() {
     }
   );
 
+  // Handle lobby and performance sound pausing/playing
   let perf1Done = false,
     perf2Done = false,
     perf3Done = false;
@@ -289,6 +292,7 @@ function runShow() {
     }
   }
 
+  // Handle all the click functions (only francis so far)
   function sceneSwitchMouse() {
     switch (currentScene) {
       case "lobby":
@@ -306,6 +310,7 @@ function runShow() {
   }
   document.addEventListener("click", sceneSwitchMouse);
 
+  // Temporary switch to lobby
   function sceneSwitchKey() {
     switch (currentScene) {
       case "perf1":
@@ -321,7 +326,6 @@ function runShow() {
         break;
     }
   }
-  // Temporary switch to lobby
   function escape(e) {
     if (e.key === "Escape") {
       sceneSwitchKey();
