@@ -191,11 +191,11 @@ class FlyControls extends EventDispatcher {
 			// scope.object.translateY( scope.moveVector.y * moveMult );
 			// scope.object.translateZ( scope.moveVector.z * moveMult );
 
-			// if (scope.object.rotation.x > Math.PI/4) scope.object.rotation.x = Math.PI/4;
-			// if (scope.object.rotation.x < -Math.PI/4) scope.object.rotation.x = -Math.PI/4;
+			// if (scope.object.rotation.x > Math.PI/2) scope.object.rotation.x = Math.PI/2;
+			// if (scope.object.rotation.x < -Math.PI/2) scope.object.rotation.x = -Math.PI/2;
 			// if (scope.object.rotation.y > Math.PI/8) scope.object.rotation.y = Math.PI/8;
 			// if (scope.object.rotation.y < -Math.PI/8) scope.object.rotation.y = -Math.PI/8;
-			scope.object.rotation.z = 0;
+			// scope.object.rotation.z = 0;
 
 			scope.tmpQuaternion.set( scope.rotationVector.x * rotMult, scope.rotationVector.y * rotMult, scope.rotationVector.z * rotMult, 1 ).normalize();
 			scope.object.quaternion.multiply( scope.tmpQuaternion );

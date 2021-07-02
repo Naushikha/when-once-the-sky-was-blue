@@ -79,13 +79,6 @@ class SceneLobby {
     const axesHelper = new THREE.AxesHelper(5);
     this.scene.add(axesHelper);
 
-    // Setup audio
-    // const listener = new THREE.AudioListener();
-    // this.camera.add(listener);
-    // // const audioLoader = new THREE.AudioLoader(manager);
-    // this.ambienceSFX = new THREE.Audio(listener);
-    // this.ambienceSFX.load(`${this.dataPath}sfx/lobby.mp3`);
-
     const mtlLoader = new MTLLoader(manager);
 
     // Francis 1 - Left
@@ -248,6 +241,7 @@ class SceneLobby {
     this.controls.rollSpeed = Math.PI / 30; // 30
     this.controls.autoForward = false;
     this.controls.dragToLook = false;
+    this.controls.enabled = false; // Disable it after creation
     // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
     this.camera.position.set(0, 16, 40);
@@ -641,13 +635,8 @@ class SceneLobby {
   enterPerformance(switcher, perf) {
     this.controls.enabled = false;
     this.setupBloomAnimations(switcher, perf);
-    // switcher(perf);
   }
   play() {
-    // this.ambienceSFX.setLoop(true);
-    // this.ambienceSFX.play();
-    // this.franc3AnimUp.start();
-
     // Pan Down Animation
     this.controls.enabled = false;
     var posVec1 = {
@@ -656,7 +645,7 @@ class SceneLobby {
     var endVec1 = {
       x: -Math.PI / 21,
     };
-    var panDown = new TWEEN.Tween(posVec1, this.animation).to(endVec1, 10000);
+    var panDown = new TWEEN.Tween(posVec1, this.animation).to(endVec1, 15000);
     panDown.onUpdate(
       function () {
         this.camera.rotation.x = posVec1.x;
@@ -667,9 +656,9 @@ class SceneLobby {
         this.controls.enabled = true;
       }.bind(this)
     );
-    panDown.easing(TWEEN.Easing.Cubic.InOut);
-    // panDown.start();
-    this.controls.enabled = true;
+    panDown.easing(TWEEN.Easing.Quadratic.InOut);
+    panDown.start();
+    // this.controls.enabled = true;
   }
   updateSkybox(skyboxName) {
     // Call from outside to change

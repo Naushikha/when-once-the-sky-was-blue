@@ -1,11 +1,13 @@
 import * as THREE from "./lib/three.module.js";
 import { OrbitControls } from "./lib/OrbitControls.js";
+import { FlyControls } from "./lib/FlyControlsUnrestricted.js";
 import { LightningStrike } from "./lib/effects/LightningStrike.js";
 import { LightningStorm } from "./lib/effects/LightningStorm.js";
 import { EffectComposer } from "./lib/postprocessing/EffectComposer.js";
 import { RenderPass } from "./lib/postprocessing/RenderPass.js";
 import { OutlinePass } from "./lib/postprocessing/OutlinePass.js";
 
+import { loadSubtitle } from "./subtitleParser.js";
 class ScenePerf2 {
   dataPath = "./data/";
   lobbyCallback;
@@ -45,7 +47,7 @@ class ScenePerf2 {
     ]);
     this.scene.background = skyboxTextures;
 
-    const geometry = new THREE.SphereGeometry(20, 32, 32);
+    const geometry = new THREE.SphereGeometry(18, 32, 32);
     const material = new THREE.MeshStandardMaterial({
       color: 0xeb4034,
       roughness: 0.8,
@@ -95,19 +97,31 @@ class ScenePerf2 {
 
     // colorChange1.start();
 
-    const light = new THREE.PointLight(0xffffff, 10, 50, 2);
-    light.position.set(0, -18, 0);
+    // Load subtitles
+    loadSubtitle(`${this.dataPath}srt/chickentest.srt`).then((sub) => {
+      this.subtitles = sub;
+      this.currentSub = 0;
+      this.playSubtitles();
+    });
+
+    const light = new THREE.PointLight(0xffffff, 7, 50, 2);
+    light.position.set(0, -14, 0);
     this.scene.add(light);
 
     // Define the controls ------------------------------------------------------
-    this.controls = new OrbitControls(this.camera, renderer.domElement);
-    this.camera.position.set(10, 10, 10);
+    this.clock = new THREE.Clock(); // Flycontrols need a CLOCK!
+    // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls = new FlyControls(this.camera, this.renderer.domElement);
+    this.controls.movementSpeed = 1;
+    this.controls.domElement = this.renderer.domElement;
+    this.controls.rollSpeed = Math.PI / 25; // 30
+    this.controls.enabled = true;
     this.renderState = false; // We won't be rendering straight away
   }
   setupLightning() {
-    this.outlineColor = new THREE.Color(0x00ffff);
+    this.outlineColor = new THREE.Color(0xffffff);
     const lightningMaterial = new THREE.MeshBasicMaterial({
-      color: 0xb0ffff,
+      color: 0xffffff,
     });
     const rayDirection = new THREE.Vector3(0, -1, 0);
     let rayLength = 0;
@@ -171,7 +185,7 @@ class ScenePerf2 {
       },
     };
     const storm = new LightningStorm({
-      size: 30, // Change this to increase size etcccc
+      size: 11, // Change this to increase size etcccc
       minHeight: 40,
       maxHeight: 40,
       maxSlope: 0.1,
@@ -215,7 +229,55 @@ class ScenePerf2 {
       this.composer
     );
     this.lightningTime = 0;
-    this.clock = new THREE.Clock();
+    this.lightningClock = new THREE.Clock();
+  }
+  showSubtitle() {
+    const sub = this.subtitles[this.currentSub];
+    const quarterTime = Math.floor((sub.endTime - sub.startTime) / 4);
+    const caption = document.getElementById("caption");
+    caption.innerHTML = sub.text.replace("\n", "<br/>");
+    var posVec1 = {
+      o: 0,
+    };
+    var endVec1 = {
+      o: 1,
+    };
+    var fadeIn = new TWEEN.Tween(posVec1, this.animation).to(
+      endVec1,
+      quarterTime
+    );
+    fadeIn.onUpdate(function () {
+      caption.style.opacity = posVec1.o;
+    });
+    fadeIn.onComplete(function () {
+      posVec1.o = 1;
+      endVec1.o = 0;
+      fadeOut.start();
+    });
+    var fadeOut = new TWEEN.Tween(posVec1, this.animation).to(
+      endVec1,
+      quarterTime
+    );
+    fadeOut.delay(quarterTime * 2); // Show the subtitle for this long
+    fadeOut.onUpdate(function () {
+      caption.style.opacity = posVec1.o;
+    });
+    fadeOut.onComplete(
+      function () {
+        const timeUntil =
+          this.subtitles[this.currentSub + 1].startTime -
+          this.subtitles[this.currentSub].endTime; // time till next sub
+        this.currentSub += 1;
+        setTimeout(this.showSubtitle.bind(this), timeUntil);
+      }.bind(this)
+    );
+    fadeIn.easing(TWEEN.Easing.Quadratic.InOut);
+    fadeOut.easing(TWEEN.Easing.Quadratic.InOut);
+    fadeIn.start();
+  }
+  playSubtitles() {
+    this.currentSub = 10;
+    this.showSubtitle();
   }
   render(state = true) {
     if (state) {
@@ -231,13 +293,16 @@ class ScenePerf2 {
   }
   renderLoop() {
     this.renderID = requestAnimationFrame(this.renderLoop.bind(this));
+    const delta = this.clock.getDelta();
     this.animation.update();
-    this.controls.update();
-    this.renderer.render(this.scene, this.camera);
+    // this.renderer.render(this.scene, this.camera);
+    if (this.controls.enabled) {
+      this.controls.update(delta);
+    }
     this.stats.update();
 
     // Lightning stuff
-    this.lightningTime += 0.1 * this.clock.getDelta();
+    this.lightningTime += 0.1 * this.lightningClock.getDelta();
     this.storm.update(this.lightningTime);
     this.composer.render();
   }

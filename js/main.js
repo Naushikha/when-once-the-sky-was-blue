@@ -5,6 +5,8 @@ import { ScenePerf1 } from "./scenePerf1.js";
 import { ScenePerf2 } from "./scenePerf2.js";
 import { ScenePerf3 } from "./scenePerf3.js";
 
+const dataPath = "./data/";
+
 // First check if the show is open
 fetch("./data/showtimes.json")
   .then((response) => response.json())
@@ -39,6 +41,7 @@ function runShow() {
   const progressBar = document.getElementById("progress-bar");
   const loadingOverlay = document.getElementById("loading-overlay");
   const startButton = document.getElementById("start-button");
+  const fullscrButton = document.getElementById("fullscr-button");
 
   let currentScene = "lobby";
   // Loading manager
@@ -58,16 +61,23 @@ function runShow() {
     startButton.style.animation = "fadein 5s";
 
     // Skip play for now
-    currentScene = "perf2";
-    perf2.render();
+    // currentScene = "perf2";
+    // perf2.render();
+
     // lobby.render();
     // lobby.play();
-    startButton.style.visibility = "hidden";
-    loadingOverlay.style.visibility = "hidden";
+    // startButton.style.visibility = "hidden";
+    // loadingOverlay.style.visibility = "hidden";
 
     startButton.addEventListener("click", () => {
-      lobby.render();
-      lobby.play();
+      // lobby.render();
+      // lobby.play();
+      // sfxLobbyBase.play();
+      // sfxLobbyVO.play(10);
+
+      currentScene = "perf2";
+      perf2.render();
+      sfxPerf2.play();
       startButton.style.visibility = "hidden";
       loadingOverlay.style.visibility = "hidden";
     });
@@ -111,6 +121,83 @@ function runShow() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
+  // Setup the audio
+  const audioLoader = new THREE.AudioLoader(manager);
+  const audioListener = new THREE.AudioListener();
+  const sfxLobbyBase = new THREE.Audio(audioListener);
+  const sfxLobbyVO = new THREE.Audio(audioListener);
+  const sfxPerf1 = new THREE.Audio(audioListener);
+  const sfxPerf2 = new THREE.Audio(audioListener);
+  const sfxPerf3 = new THREE.Audio(audioListener);
+  const sfxPerf1Add = new THREE.Audio(audioListener);
+  const sfxPerf2Add = new THREE.Audio(audioListener);
+  const sfxPerf3Add = new THREE.Audio(audioListener);
+  const sfxPerf3AddB = new THREE.Audio(audioListener);
+  audioLoader.load(`${dataPath}sfx/lobby_base.ogg`, function (audioBuffer) {
+    sfxLobbyBase.setBuffer(audioBuffer);
+    sfxLobbyBase.setLoop(true);
+  });
+  audioLoader.load(`${dataPath}sfx/lobby_vo.ogg`, function (audioBuffer) {
+    sfxLobbyVO.setBuffer(audioBuffer);
+  });
+  audioLoader.load(`${dataPath}sfx/perf1.ogg`, function (audioBuffer) {
+    sfxPerf1.setBuffer(audioBuffer);
+  });
+  audioLoader.load(`${dataPath}sfx/perf2.ogg`, function (audioBuffer) {
+    sfxPerf2.setBuffer(audioBuffer);
+  });
+  audioLoader.load(`${dataPath}sfx/perf3.ogg`, function (audioBuffer) {
+    sfxPerf3.setBuffer(audioBuffer);
+  });
+  audioLoader.load(`${dataPath}sfx/perf1_add.ogg`, function (audioBuffer) {
+    sfxPerf1Add.setBuffer(audioBuffer);
+    sfxPerf1Add.setLoop(true);
+  });
+  audioLoader.load(`${dataPath}sfx/perf2_add.ogg`, function (audioBuffer) {
+    sfxPerf2Add.setBuffer(audioBuffer);
+    sfxPerf2Add.setLoop(true);
+  });
+  audioLoader.load(`${dataPath}sfx/perf3_add.ogg`, function (audioBuffer) {
+    sfxPerf3Add.setBuffer(audioBuffer);
+    sfxPerf3Add.setLoop(true);
+  });
+  audioLoader.load(
+    `${dataPath}sfx/perf3_add_birds.ogg`,
+    function (audioBuffer) {
+      sfxPerf3AddB.setBuffer(audioBuffer);
+      sfxPerf3AddB.setLoop(true);
+    }
+  );
+
+  let perf1Done = false,
+    perf2Done = false,
+    perf3Done = false;
+  function pauseAllLobbySFX() {
+    sfxLobbyBase.pause();
+    if (perf1Done) sfxPerf1Add.pause();
+    if (perf2Done) sfxPerf2Add.pause();
+    if (perf3Done) {
+      sfxPerf3Add.pause();
+      sfxPerf3AddB.pause();
+    }
+  }
+  function playAllLobbySFX() {
+    sfxLobbyBase.play();
+    if (perf1Done) {
+      sfxPerf1.stop();
+      sfxPerf1Add.play();
+    }
+    if (perf2Done) {
+      sfxPerf2.stop();
+      sfxPerf2Add.play();
+    }
+    if (perf3Done) {
+      sfxPerf3.stop();
+      sfxPerf3Add.play();
+      sfxPerf3AddB.play();
+    }
+  }
+
   // Show FPS stats
   const stats = new Stats();
   stats.domElement.style.position = "absolute";
@@ -123,6 +210,12 @@ function runShow() {
   const perf2 = new ScenePerf2(renderer, manager, stats);
   const perf3 = new ScenePerf3(renderer, manager, stats);
 
+  // Set cameras to listen to audio
+  lobby.camera.add(audioListener);
+  perf1.camera.add(audioListener);
+  perf2.camera.add(audioListener);
+  perf3.camera.add(audioListener);
+
   // Set scene callbacks to return to lobby
   perf1.lobbyCallback = switchCallback;
   perf2.lobbyCallback = switchCallback;
@@ -131,6 +224,17 @@ function runShow() {
   // Set cursor for body
   document.body.style.cursor = "url('./data/txt/cursor_grey.png') 16 16, auto";
   startButton.style.cursor = "url('./data/txt/cursor_white.png') 16 16, auto";
+  fullscrButton.style.cursor = "url('./data/txt/cursor_white.png') 16 16, auto";
+  fullscrButton.addEventListener("click", () => {
+    document.documentElement.requestFullscreen();
+  });
+  document.addEventListener("fullscreenchange", (event) => {
+    if (document.fullscreenElement) {
+      fullscrButton.style.visibility = "hidden";
+    } else {
+      fullscrButton.style.visibility = "visible";
+    }
+  });
 
   function switchCallback(perf) {
     switch (perf) {
@@ -138,34 +242,44 @@ function runShow() {
         perf1.render(false);
         perf2.render(false);
         perf3.render(false);
-        // When coming back to lobby the skybox should change based on the perf we were in
+        // When coming back to lobby the skybox should change based on the perf we were in + add sound
         switch (currentScene) {
           case "perf1":
             lobby.updateSkybox("purple");
+            perf1Done = true;
             break;
           case "perf2":
             lobby.updateSkybox("red");
+            perf2Done = true;
             break;
           case "perf3":
             lobby.updateSkybox("yellow");
+            perf3Done = true;
             break;
           default:
             break;
         }
+        playAllLobbySFX();
         lobby.render();
         currentScene = "lobby";
         break;
       case "perf1":
+        pauseAllLobbySFX();
+        sfxPerf1.play();
         lobby.render(false);
         perf1.render();
         currentScene = "perf1";
         break;
       case "perf2":
+        pauseAllLobbySFX();
+        sfxPerf2.play();
         lobby.render(false);
         perf2.render();
         currentScene = "perf2";
         break;
       case "perf3":
+        pauseAllLobbySFX();
+        sfxPerf3.play();
         lobby.render(false);
         perf3.render();
         currentScene = "perf3";
