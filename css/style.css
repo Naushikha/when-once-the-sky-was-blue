@@ -86,7 +86,6 @@ body {
 
 #showtime-overlay {
   background: rgba(0, 0, 0, 1);
-  visibility: hidden;
 }
 
 #showtime-overlay h1 {
@@ -125,6 +124,10 @@ body {
 
 #credits-overlay {
   background: rgba(0, 0, 0, 0);
+  visibility: hidden;
+}
+
+#loading-overlay {
   visibility: hidden;
 }
 

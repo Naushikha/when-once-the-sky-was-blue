@@ -17,15 +17,37 @@ fetch("./data/showtimes.json")
 
     switch (showState) {
       case "closed":
-        showtimeOverlay.visibility = "visible";
         warning.innerHTML =
-          "Looks like you have missed the showtime. <br> Check back again later.";
+          "Looks like you missed the showtime. <br> Check back again later.";
         throw new Error("Show's closed bruh.");
         break;
       case "scheduled":
-        showtimeOverlay.visibility = "visible";
-        warning.innerHTML =
-          "Looks like you have missed the showtime. <br> Check back again later at [SCHED]";
+        const timeNowUTC = Math.floor(new Date().getTime() / 1000);
+        // Is daily time okay?
+        const minsUTC =
+          new Date().getUTCHours() * 60 + new Date().getUTCMinutes();
+        const dailyStartUTC =
+          parseInt(data.dailyTimeStart.split(":")[0]) * 60 +
+          parseInt(data.dailyTimeStart.split(":")[1]);
+        const dailyEndUTC =
+          parseInt(data.dailyTimeStop.split(":")[0]) * 60 +
+          parseInt(data.dailyTimeStop.split(":")[1]);
+        if (dailyStartUTC <= minsUTC && minsUTC <= dailyEndUTC) {
+          showtimeOverlay.style.visibility = "hidden";
+          runShow();
+          break;
+        }
+        // If not a daily time then check for dates
+        for (let day of data.specificDays) {
+          const dateStartUTC = Math.floor(new Date(day[0]).getTime() / 1000);
+          const dateEndUTC = Math.floor(new Date(day[1]).getTime() / 1000);
+          if (dateStartUTC <= timeNowUTC && timeNowUTC <= dateEndUTC) {
+            showtimeOverlay.style.visibility = "hidden";
+            runShow();
+            break;
+          }
+        }
+        warning.innerHTML = `Looks like you missed the showtime. <br> Check back again later.`;
         throw new Error("Show's closed bruh.");
         break;
       case "open":
@@ -83,7 +105,11 @@ function runShow() {
         // Enable interaction in lobby after narration
         lobby.interactive = true;
       }, sfxLobbyVO.userData.duration + 10000); // Add in the delay VO is played
-      console.log(sfxLobbyVO.duration);
+
+      // currentScene = "perf2";
+      // perf2.render();
+      // sfxPerf2.play();
+
       startButton.style.visibility = "hidden";
       loadingOverlay.style.visibility = "hidden";
     });

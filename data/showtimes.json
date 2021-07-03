@@ -1,10 +1,9 @@
 {
-    "showState": "open",
-    "scheduleStart": "",
-    "scheduleStop": "",
-    "scheduleDays": [
-        ["startdate", "enddate"],
-        ["startdate", "enddate"],
-        ["startdate", "enddate"]
+    "showState": "scheduled",
+    "dailyTimeStart": "20:00",
+    "dailyTimeStop": "20:25",
+    "specificDays": [
+        ["01 Jan 2021 00:00:00 GMT", "03 Jul 2021 19:55:00 GMT"],
+        ["01 Jan 2021 00:00:00 GMT+0530", "04 Jul 2021 01:29:00 GMT+0530"]
     ]
 }
