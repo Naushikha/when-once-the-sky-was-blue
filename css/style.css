@@ -147,6 +147,12 @@ body {
   opacity: 1;
 }
 
+#loading-overlay #copy {
+  animation: fadein 2s forwards;
+  animation-delay: 20s;
+  opacity: 0;
+}
+
 #loading-overlay h1 {
   font-weight: 100;
   letter-spacing: 2px;
@@ -163,7 +169,7 @@ body {
 }
 
 #loading-overlay #best {
-  margin: 3em 0em 1em 0em;
+  margin: 1em 0em 1em 0em;
   animation: fadein 5s forwards;
   animation-delay: 8s;
   opacity: 0;
@@ -203,7 +209,7 @@ body {
 }
 #loading-overlay .stm2 {
   padding: 1em 0em;
-  padding-left: 4em;
+  padding-left: 2em;
   text-align: left !important;
   letter-spacing: 2px;
   font-size: 18px;
@@ -228,7 +234,8 @@ body {
   text-transform: uppercase;
   letter-spacing: 2px;
 
-  position: relative;
+  position: absolute;
+  bottom: 10vh;
   vertical-align: middle;
 }
 

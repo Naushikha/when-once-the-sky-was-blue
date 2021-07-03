@@ -77,7 +77,7 @@ class SceneLobby {
     this.skyboxTextures = skyboxTextures; // Export this for bloom
 
     const axesHelper = new THREE.AxesHelper(5);
-    this.scene.add(axesHelper);
+    // this.scene.add(axesHelper);
 
     const mtlLoader = new MTLLoader(manager);
 
@@ -631,13 +631,12 @@ class SceneLobby {
     this.setupBloomAnimations(switcher, perf);
   }
   play() {
-    // this.cameraPanDown();
-    this.controls.enabled = true;
-    this.interactive = true;
+    this.cameraPanDown();
+    // this.controls.enabled = true;
+    // this.interactive = true;
   }
   cameraPanDown() {
     // Pan Down Animation
-    this.interactive = false;
     this.controls.enabled = false;
     this.camera.rotation.x = 3;
     var posVec1 = {
@@ -655,7 +654,6 @@ class SceneLobby {
     panDown.onComplete(
       function () {
         this.controls.enabled = true;
-        this.interactive = true;
       }.bind(this)
     );
     panDown.easing(TWEEN.Easing.Quadratic.InOut);

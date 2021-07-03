@@ -59,29 +59,31 @@ function runShow() {
     loadingOverlay.style.visibility = "visible";
     startButton.style.visibility = "visible";
     startButton.style.animation = "fadein 5s";
+    // fullscrButton.style.animation = "fadein 5s";
 
     // Skip play for now
     // currentScene = "perf2";
     // perf2.render();
     // sfxPerf2.play();
 
-    lobby.render();
-    lobby.play();
-    sfxLobbyBase.play();
-    sfxLobbyVO.play(10);
+    // lobby.render();
+    // lobby.play();
+    // sfxLobbyBase.play();
+    // sfxLobbyVO.play(10);
 
-    startButton.style.visibility = "hidden";
-    loadingOverlay.style.visibility = "hidden";
+    // startButton.style.visibility = "hidden";
+    // loadingOverlay.style.visibility = "hidden";
 
     startButton.addEventListener("click", () => {
-      // lobby.render();
-      // lobby.play();
-      // sfxLobbyBase.play();
-      // sfxLobbyVO.play(10);
-
-      // currentScene = "perf2";
-      // perf2.render();
-      // sfxPerf2.play();
+      lobby.render();
+      lobby.play();
+      sfxLobbyBase.play();
+      sfxLobbyVO.play(10);
+      setTimeout(() => {
+        // Enable interaction in lobby after narration
+        lobby.interactive = true;
+      }, sfxLobbyVO.userData.duration + 10000); // Add in the delay VO is played
+      console.log(sfxLobbyVO.duration);
       startButton.style.visibility = "hidden";
       loadingOverlay.style.visibility = "hidden";
     });
@@ -92,14 +94,19 @@ function runShow() {
     "The experience is loading...",
     "Get comfortable.",
     "No distractions.",
+    "Don’t forget to breathe",
     "We are getting things ready...",
     "Props are being setup...",
+    "Actors are getting ready...",
     "Adjusting placements...",
     "Stage area is ready.",
     "Testing lighting...",
     "Performing sound checks...",
+    "Testing the mics...",
+    "Turning down the house lights",
     "Narrator is warming up...",
     "Anytime now...",
+    "The performance is about to begin",
     "Patience is a virtue.",
   ];
   let phraseCount = 0;
@@ -148,6 +155,7 @@ function runShow() {
   });
   audioLoader.load(`${dataPath}sfx/lobby_vo.ogg`, function (audioBuffer) {
     sfxLobbyVO.setBuffer(audioBuffer);
+    sfxLobbyVO.userData.duration = 80000; // 1:20
   });
   audioLoader.load(`${dataPath}sfx/perf1.ogg`, function (audioBuffer) {
     sfxPerf1.setBuffer(audioBuffer);
