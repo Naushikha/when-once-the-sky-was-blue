@@ -1,7 +1,5 @@
-18:54:56	 From Harshini Karunaratne (she/her) : http://roxham.nfb.ca/load?_gl=1%2a1q9qajn%2a_ga%2aNjI3MTMzNjMuMTYyNDcxMzcxMw..%2a_ga_EP6WV87GNV%2aMTYyNDcxMzcxMi4xLjAuMTYyNDcxMzcxMi4w
-18:56:10	 From Harshini Karunaratne (she/her) : https://github.com/chakohi/When-the-sky-was-blue
-18:56:32	 From Harshini Karunaratne (she/her) : https://wotswb.herokuapp.com/
-18:56:38	 From Harshini Karunaratne (she/her) : https://blueskybeta.herokuapp.com/
-18:57:16	 From Harshini Karunaratne (she/her) : https://harshinijk.myportfolio.com/sacred-body
-
-https://fonts.google.com/specimen/EB+Garamond
+http://roxham.nfb.ca/
+https://github.com/chakohi/When-the-sky-was-blue
+https://wotswb.herokuapp.com/
+https://blueskybeta.herokuapp.com/
+https://harshinijk.myportfolio.com/sacred-body

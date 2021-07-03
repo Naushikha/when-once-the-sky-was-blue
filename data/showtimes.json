@@ -1,5 +1,5 @@
 {
-    "showState": "scheduled",
+    "showState": "open",
     "dailyTimeStart": "20:00",
     "dailyTimeStop": "20:25",
     "specificDays": [

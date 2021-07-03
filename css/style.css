@@ -127,6 +127,13 @@ body {
   visibility: hidden;
 }
 
+#credits-overlay #credits-title {
+  font-size: 20px;
+}
+#credits-overlay #credits-name {
+  font-size: 30px;
+}
+
 #loading-overlay {
   visibility: hidden;
 }
