@@ -64,38 +64,7 @@ class ScenePerf2 {
     const axesHelper = new THREE.AxesHelper(5);
     this.scene.add(axesHelper);
 
-    var startVec1 = {
-      r: 255,
-      g: 231,
-      b: 97,
-    };
-    var endVec1 = {
-      r: 255,
-      g: 54,
-      b: 54,
-    };
-    var tmpVec1 = startVec1;
-    // var colorChange1 = new TWEEN.Tween(tmpVec1, this.animation).to(
-    //   endVec1,
-    //   5000
-    // );
-    // colorChange1.onUpdate(function () {
-    //   sphere.material.color.set(
-    //     `rgb(${Math.round(tmpVec1.r)},${Math.round(tmpVec1.g)},${Math.round(
-    //       tmpVec1.b
-    //     )})`
-    //   );
-    // });
-    // colorChange1.onComplete(function () {
-    //   let tmp = startVec1;
-    //   startVec1 = endVec1;
-    //   endVec1 = tmp;
-    //   tmpVec1 = startVec1;
-    //   colorChange1.start();
-    // });
-    // colorChange1.easing(TWEEN.Easing.Cubic.InOut);
-
-    // colorChange1.start();
+    this.setupAnimations();
 
     // Load subtitles
     loadSubtitle(`${this.dataPath}srt/chickentest.srt`).then((sub) => {
@@ -104,9 +73,12 @@ class ScenePerf2 {
       this.playSubtitles();
     });
 
-    const light = new THREE.PointLight(0xffffff, 7, 50, 2);
-    light.position.set(0, -14, 0);
-    this.scene.add(light);
+    const mainLight = new THREE.PointLight(0xffffff, 7, 50, 2);
+    mainLight.position.set(0, -14, 0);
+    this.scene.add(mainLight);
+    this.mainLight = mainLight;
+
+    this.camera.position.set(0, -10, 0);
 
     // Define the controls ------------------------------------------------------
     this.clock = new THREE.Clock(); // Flycontrols need a CLOCK!
@@ -117,6 +89,47 @@ class ScenePerf2 {
     this.controls.rollSpeed = Math.PI / 25; // 30
     this.controls.enabled = true;
     this.renderState = false; // We won't be rendering straight away
+  }
+  setupAnimations() {
+    const breatheTime = 2000; // milliseconds
+    const startVal1 = 7,
+      endVal1 = 8;
+    var posVec1 = {
+      i: startVal1,
+    };
+    var endVec1 = {
+      i: endVal1,
+    };
+    var breatheIn = new TWEEN.Tween(posVec1, this.animation).to(
+      endVec1,
+      breatheTime
+    );
+    breatheIn.onUpdate(
+      function () {
+        this.mainLight.intensity = posVec1.i;
+      }.bind(this)
+    );
+    breatheIn.onComplete(function () {
+      posVec1.i = endVal1;
+      endVec1.i = startVal1;
+      breatheOut.start();
+    });
+    var breatheOut = new TWEEN.Tween(posVec1, this.animation).to(
+      endVec1,
+      breatheTime
+    );
+    // breatheOut.delay(1000); // stay lit?
+    breatheOut.onUpdate(
+      function () {
+        this.mainLight.intensity = posVec1.i;
+      }.bind(this)
+    );
+    breatheOut.onComplete(function () {
+      posVec1.i = startVal1;
+      endVec1.i = endVal1;
+      breatheIn.start();
+    });
+    breatheIn.start();
   }
   setupLightning() {
     this.outlineColor = new THREE.Color(0xffffff);

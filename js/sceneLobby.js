@@ -8,6 +8,8 @@ import { EffectComposer } from "./lib/postprocessing/EffectComposer.js";
 import { RenderPass } from "./lib/postprocessing/RenderPass.js";
 import { ShaderPass } from "./lib/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "./lib/postprocessing/UnrealBloomPass.js";
+// FXAA
+import { FXAAShader } from "./lib/postprocessing/shaders/FXAAShader.js";
 
 class SceneLobby {
   dataPath = "./data/";
@@ -171,10 +173,17 @@ class SceneLobby {
     this.scene.add(bloom);
     this.bloom = bloom;
 
+    // Arc glow
+    arc1.layers.toggle(this.BLOOM_SCENE);
+    arc1.layers.enable(this.BLOOM_SCENE);
+    arc2.layers.toggle(this.BLOOM_SCENE);
+    arc2.layers.enable(this.BLOOM_SCENE);
+    arc3.layers.toggle(this.BLOOM_SCENE);
+    arc3.layers.enable(this.BLOOM_SCENE);
+
     // Lighting
     // Main light
     const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.4);
-    directionalLight1.castShadow = true;
     this.scene.add(directionalLight1);
     directionalLight1.position.set(0, 35, 40);
     // Lights for francis hover
@@ -224,6 +233,8 @@ class SceneLobby {
     this.camera.position.set(0, 16, 40);
     this.camera.rotation.x = 3; // To prevent pointing at francis at start
     this.renderState = false; // We won't be rendering straight away
+
+    this.interactive = false; // Do not allow any interactions with franci
   }
   setupFrancisAnimations() {
     // Francis 1 Animation
@@ -556,7 +567,7 @@ class SceneLobby {
       function () {
         // set bloom to default
         this.bloom.scale.setScalar(0);
-        this.blooming = false; // Stop rendering bloom
+        // this.blooming = false; // Stop rendering bloom
         switcher(perf); //switch to next perf
       }.bind(this)
     );
@@ -566,7 +577,7 @@ class SceneLobby {
     this.lookAtBloom = lookAtBloom;
     this.lookAtBloom.start();
     growBloom.start();
-    this.blooming = true; // Set the render state to blooming
+    // this.interactive = false; // Set the render state to blooming
   }
   setupBloom() {
     this.BLOOM_SCENE = 1; // SEPERATE SCENE FOR BLOOM
@@ -608,13 +619,27 @@ class SceneLobby {
     this.finalComposer = new EffectComposer(this.renderer);
     this.finalComposer.addPass(this.renderScene);
     this.finalComposer.addPass(this.finalPass);
+
+    // FXAA - to solve this jagged problem
+    const fxaaPass = new ShaderPass(FXAAShader);
+    fxaaPass.material.uniforms["resolution"].value.x = 1 / window.innerWidth;
+    fxaaPass.material.uniforms["resolution"].value.y = 1 / window.innerHeight;
+    this.finalComposer.addPass(fxaaPass);
   }
   enterPerformance(switcher, perf) {
     this.controls.enabled = false;
     this.setupBloomAnimations(switcher, perf);
   }
   play() {
+    // this.cameraPanDown();
+    this.controls.enabled = true;
+    this.interactive = true;
+  }
+  cameraPanDown() {
     // Pan Down Animation
+    this.interactive = false;
+    this.controls.enabled = false;
+    this.camera.rotation.x = 3;
     var posVec1 = {
       x: Math.PI / 2,
     };
@@ -630,11 +655,11 @@ class SceneLobby {
     panDown.onComplete(
       function () {
         this.controls.enabled = true;
+        this.interactive = true;
       }.bind(this)
     );
     panDown.easing(TWEEN.Easing.Quadratic.InOut);
-    // panDown.start();
-    this.controls.enabled = true;
+    panDown.start();
   }
   updateSkybox(skyboxName) {
     // Call from outside to change
@@ -659,7 +684,9 @@ class SceneLobby {
     if (this.controls.enabled) {
       this.controls.update(delta);
     }
-    this.renderer.render(this.scene, this.camera);
+    // this.renderer.render(this.scene, this.camera);
+    this.renderBloom();
+    this.finalComposer.render();
     this.stats.update();
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
@@ -676,21 +703,21 @@ class SceneLobby {
       true
     );
 
-    if (francis1Intersects.length && !this.blooming) {
+    if (francis1Intersects.length && this.interactive) {
       if (this.francis1Hover == false) this.franc1AnimLightUp.start();
       this.francis1Hover = true;
     } else {
       if (this.francis1Lit == true) this.franc1AnimLightDown.start();
       this.francis1Hover = false;
     }
-    if (francis2Intersects.length && !this.blooming) {
+    if (francis2Intersects.length && this.interactive) {
       if (this.francis2Hover == false) this.franc2AnimLightUp.start();
       this.francis2Hover = true;
     } else {
       if (this.francis2Lit == true) this.franc2AnimLightDown.start();
       this.francis2Hover = false;
     }
-    if (francis3Intersects.length && !this.blooming) {
+    if (francis3Intersects.length && this.interactive) {
       if (this.francis3Hover == false) this.franc3AnimLightUp.start();
       this.francis3Hover = true;
     } else {
@@ -706,12 +733,12 @@ class SceneLobby {
         "url('./data/txt/cursor_grey.png') 16 16, auto";
     }
     // this.statusText.innerHTML = JSON.stringify(francis2Intersects);
-    this.renderer.render(this.scene, this.camera);
+    // this.renderer.render(this.scene, this.camera);
 
-    if (this.blooming) {
-      this.renderBloom();
-      this.finalComposer.render();
-    }
+    // if (this.blooming) {
+    // this.renderBloom();
+    // this.finalComposer.render();
+    // }
   }
   renderBloom() {
     this.scene.traverse(darkenNonBloomed.bind(this));
@@ -737,10 +764,10 @@ class SceneLobby {
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-    if (this.blooming) {
-      this.bloomComposer.setSize(window.innerWidth, window.innerHeight);
-      this.finalComposer.setSize(window.innerWidth, window.innerHeight);
-    }
+    // if (this.blooming) {
+    this.bloomComposer.setSize(window.innerWidth, window.innerHeight);
+    this.finalComposer.setSize(window.innerWidth, window.innerHeight);
+    // }
   }
   onMouseMove(event) {
     // this.statusText.innerHTML = JSON.stringify(this.mouse);

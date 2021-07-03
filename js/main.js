@@ -61,12 +61,15 @@ function runShow() {
     startButton.style.animation = "fadein 5s";
 
     // Skip play for now
-    currentScene = "perf2";
-    perf2.render();
-    sfxPerf2.play();
+    // currentScene = "perf2";
+    // perf2.render();
+    // sfxPerf2.play();
 
-    // lobby.render();
-    // lobby.play();
+    lobby.render();
+    lobby.play();
+    sfxLobbyBase.play();
+    sfxLobbyVO.play(10);
+
     startButton.style.visibility = "hidden";
     loadingOverlay.style.visibility = "hidden";
 
@@ -119,8 +122,12 @@ function runShow() {
   setTimeout(showPhrases, 18000);
 
   // Setup the renderer
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  const renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    logarithmicDepthBuffer: true, // https://discourse.threejs.org/t/using-post-processing-through-effectcomposer-causes-jagged-artifacts-on-model-browser-safari/22918/5
+  });
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
   document.body.appendChild(renderer.domElement);
 
   // Setup the audio
@@ -264,6 +271,7 @@ function runShow() {
         }
         playAllLobbySFX();
         lobby.render();
+        lobby.cameraPanDown(); // Make camera cool
         currentScene = "lobby";
         break;
       case "perf1":
@@ -292,7 +300,7 @@ function runShow() {
     }
   }
 
-  // Handle all the click functions (only francis so far)
+  // Handle all the click functions (only franci so far)
   function sceneSwitchMouse() {
     switch (currentScene) {
       case "lobby":
