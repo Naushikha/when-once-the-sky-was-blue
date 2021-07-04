@@ -4,13 +4,14 @@
   font-weight: 400;
   font-display: swap;
   src: url("../data/font/garamond.woff2") format("woff2");
-  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F,
-    U+FE2E-FE2F;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
 }
 
 body {
   margin: 0;
-  font-family: "EB Garamond", sans-serif;
+  font-family: "EB Garamond", serif;
   user-select: none;
   overflow: hidden;
 }
@@ -50,18 +51,6 @@ body {
   text-align: center;
   color: white;
   transition: all 2s;
-}
-
-#copy {
-  display: block;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  z-index: 100;
-
-  color: white;
-  font-size: large;
-  letter-spacing: 1px;
 }
 
 #loading-overlay,
@@ -157,12 +146,6 @@ body {
   opacity: 1;
 }
 
-#loading-overlay #copy {
-  animation: fadein 2s forwards;
-  animation-delay: 20s;
-  opacity: 0;
-}
-
 #loading-overlay h1 {
   font-weight: 100;
   letter-spacing: 2px;
@@ -214,12 +197,12 @@ body {
 #loading-overlay .stm {
   margin: 2em 10em;
   text-align: center;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   font-size: 20px;
 }
 #loading-overlay .stm2 {
   padding: 1em 0em;
-  padding-left: 2em;
+  padding-left: 0em;
   text-align: left !important;
   letter-spacing: 2px;
   font-size: 18px;

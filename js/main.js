@@ -8,7 +8,7 @@ import { ScenePerf3 } from "./scenePerf3.js";
 const dataPath = "./data/";
 
 // First check if the show is open
-fetch("./data/showtimes.json")
+fetch(`${dataPath}showtimes.json`)
   .then((response) => response.json())
   .then((data) => {
     const showState = data.showState;
