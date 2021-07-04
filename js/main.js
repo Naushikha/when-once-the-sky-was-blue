@@ -290,14 +290,17 @@ function runShow() {
         switch (currentScene) {
           case "perf1":
             lobby.updateSkybox("purple");
+            lobby.setFranciTexture(lobby.francis1);
             perf1Done = true;
             break;
           case "perf2":
             lobby.updateSkybox("red");
+            lobby.setFranciTexture(lobby.francis2);
             perf2Done = true;
             break;
           case "perf3":
             lobby.updateSkybox("yellow");
+            lobby.setFranciTexture(lobby.francis3);
             perf3Done = true;
             break;
           default:
@@ -306,6 +309,7 @@ function runShow() {
         playAllLobbySFX();
         lobby.render();
         lobby.cameraPanDown(); // Make camera cool
+        lobby.interactive = true; // Make interactive from beginning
         currentScene = "lobby";
         break;
       case "perf1":

@@ -92,6 +92,11 @@ class SceneLobby {
         root.scale.set(0.1, 0.1, 0.1);
         this.scene.add(root);
         this.francis1 = root;
+        // Franci texture
+        root.userData.texture = new THREE.TextureLoader(this.manager).load(
+          `${this.dataPath}txt/francis1.jpg`
+        );
+        root.userData.perfNum = 1; // Franci performance not done yet
       });
     });
 
@@ -105,6 +110,11 @@ class SceneLobby {
         root.scale.set(0.1, 0.1, 0.1);
         this.scene.add(root);
         this.francis2 = root;
+        // Franci texture
+        root.userData.texture = new THREE.TextureLoader(this.manager).load(
+          `${this.dataPath}txt/francis2.jpg`
+        );
+        root.userData.perfNum = 2; // Franci performance not done yet
       });
     });
 
@@ -119,6 +129,11 @@ class SceneLobby {
         root.scale.set(0.1, 0.1, 0.1);
         this.scene.add(root);
         this.francis3 = root;
+        // Franci texture
+        root.userData.texture = new THREE.TextureLoader(this.manager).load(
+          `${this.dataPath}txt/francis3.jpg`
+        );
+        root.userData.perfNum = 3; // Franci performance not done yet
       });
     });
 
@@ -137,7 +152,7 @@ class SceneLobby {
       });
     });
 
-    // Arcs for Francis
+    // Arcs for Franci
     const arcTexture = new THREE.TextureLoader(this.manager).load(
       `${this.dataPath}txt/arch.png`
     );
@@ -197,9 +212,9 @@ class SceneLobby {
     this.francis1SpotLight = francis1SpotLight;
 
     const francis2SpotLight = new THREE.SpotLight(0xffffff, 0, 40, 0.33);
-    francis2SpotLight.position.set(0, 16, 24); // Camera position
+    francis2SpotLight.position.set(0, 17, 24); // Camera position
     const sp2Target = new THREE.Object3D();
-    sp2Target.position.set(0, 10, 0);
+    sp2Target.position.set(0, 11, 0);
     francis2SpotLight.target = sp2Target;
     this.scene.add(francis2SpotLight);
     this.scene.add(francis2SpotLight.target);
@@ -223,12 +238,12 @@ class SceneLobby {
     this.statusText = document.getElementById("copy"); // For debugging
 
     // Define the controls ------------------------------------------------------
+    // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls = new FlyControls(this.camera, this.renderer.domElement);
     this.controls.movementSpeed = 1;
     this.controls.domElement = this.renderer.domElement;
     this.controls.rollSpeed = Math.PI / 30; // 30
     this.controls.enabled = false; // Disable it after creation
-    // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
     this.camera.position.set(0, 16, 40);
     this.camera.rotation.x = 3; // To prevent pointing at francis at start
@@ -236,10 +251,36 @@ class SceneLobby {
 
     this.interactive = false; // Do not allow any interactions with franci
   }
+  setFranciTexture(whichFranci) {
+    // Change texture
+    whichFranci.traverse(function (child) {
+      if (child instanceof THREE.Mesh) {
+        child.material.map = whichFranci.userData.texture;
+        child.material.needsUpdate = true;
+      }
+    });
+    // Set light to max
+    const maxLight = 3;
+    switch (whichFranci.userData.perfNum) {
+      case 1:
+        this.francis1SpotLight.intensity = maxLight;
+        break;
+      case 2:
+        this.francis2SpotLight.intensity = maxLight * 2;
+        break;
+      case 3:
+        this.francis3SpotLight.intensity = maxLight;
+        break;
+      default:
+        break;
+    }
+    whichFranci.userData.perfNum = 0; // This is also used as an indication to prevent interaction, checked later in the render loop
+  }
   setupFrancisAnimations() {
+    const floatHeight = 0.7;
     // Francis 1 Animation
     var posVec1 = {
-      y: 0.5,
+      y: floatHeight,
     };
     var endVec1 = {
       y: 0,
@@ -255,7 +296,7 @@ class SceneLobby {
     );
     franc1AnimUp.onComplete(function () {
       posVec1.y = 0;
-      endVec1.y = 0.5;
+      endVec1.y = floatHeight;
       franc1AnimDown.start();
     });
     var franc1AnimDown = new TWEEN.Tween(posVec1, this.animation).to(
@@ -268,7 +309,7 @@ class SceneLobby {
       }.bind(this)
     );
     franc1AnimDown.onComplete(function () {
-      posVec1.y = 0.5;
+      posVec1.y = floatHeight;
       endVec1.y = 0;
       franc1AnimUp.start();
     });
@@ -280,7 +321,7 @@ class SceneLobby {
       y: 0,
     };
     var endVec2 = {
-      y: 0.5,
+      y: floatHeight,
     };
     var franc2AnimUp = new TWEEN.Tween(posVec2, this.animation).to(
       endVec2,
@@ -292,7 +333,7 @@ class SceneLobby {
       }.bind(this)
     );
     franc2AnimUp.onComplete(function () {
-      posVec2.y = 0.5;
+      posVec2.y = floatHeight;
       endVec2.y = 0;
       franc2AnimDown.start();
     });
@@ -307,7 +348,7 @@ class SceneLobby {
     );
     franc2AnimDown.onComplete(function () {
       posVec2.y = 0;
-      endVec2.y = 0.5;
+      endVec2.y = floatHeight;
       franc2AnimUp.start();
     });
     franc2AnimUp.easing(TWEEN.Easing.Quadratic.InOut);
@@ -318,7 +359,7 @@ class SceneLobby {
       y: 0,
     };
     var endVec3 = {
-      y: 0.5,
+      y: floatHeight,
     };
     var franc3AnimUp = new TWEEN.Tween(posVec3, this.animation).to(
       endVec3,
@@ -330,7 +371,7 @@ class SceneLobby {
       }.bind(this)
     );
     franc3AnimUp.onComplete(function () {
-      posVec3.y = 0.5;
+      posVec3.y = floatHeight;
       endVec3.y = 0;
       franc3AnimDown.start();
     });
@@ -345,7 +386,7 @@ class SceneLobby {
     );
     franc3AnimDown.onComplete(function () {
       posVec3.y = 0;
-      endVec3.y = 0.5;
+      endVec3.y = floatHeight;
       franc3AnimUp.start();
     });
     franc3AnimUp.easing(TWEEN.Easing.Quadratic.InOut);
@@ -577,7 +618,7 @@ class SceneLobby {
     this.lookAtBloom = lookAtBloom;
     this.lookAtBloom.start();
     growBloom.start();
-    // this.interactive = false; // Set the render state to blooming
+    this.interactive = false; // Set the render state to blooming
   }
   setupBloom() {
     this.BLOOM_SCENE = 1; // SEPERATE SCENE FOR BLOOM
@@ -701,21 +742,33 @@ class SceneLobby {
       true
     );
 
-    if (francis1Intersects.length && this.interactive) {
+    if (
+      francis1Intersects.length &&
+      this.interactive &&
+      this.francis1.userData.perfNum
+    ) {
       if (this.francis1Hover == false) this.franc1AnimLightUp.start();
       this.francis1Hover = true;
     } else {
       if (this.francis1Lit == true) this.franc1AnimLightDown.start();
       this.francis1Hover = false;
     }
-    if (francis2Intersects.length && this.interactive) {
+    if (
+      francis2Intersects.length &&
+      this.interactive &&
+      this.francis2.userData.perfNum
+    ) {
       if (this.francis2Hover == false) this.franc2AnimLightUp.start();
       this.francis2Hover = true;
     } else {
       if (this.francis2Lit == true) this.franc2AnimLightDown.start();
       this.francis2Hover = false;
     }
-    if (francis3Intersects.length && this.interactive) {
+    if (
+      francis3Intersects.length &&
+      this.interactive &&
+      this.francis3.userData.perfNum
+    ) {
       if (this.francis3Hover == false) this.franc3AnimLightUp.start();
       this.francis3Hover = true;
     } else {
@@ -723,7 +776,12 @@ class SceneLobby {
       this.francis3Hover = false;
     }
     // Set cursor
-    if (this.francis1Hover || this.francis2Hover || this.francis3Hover) {
+    if (
+      ((this.francis1Hover && this.francis1.userData.perfNum) ||
+        (this.francis2Hover && this.francis2.userData.perfNum) ||
+        (this.francis3Hover && this.francis3.userData.perfNum)) &&
+      this.interactive
+    ) {
       document.body.style.cursor =
         "url('./data/txt/cursor_white.png') 16 16, auto";
     } else {
