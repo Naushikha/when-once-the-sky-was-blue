@@ -66,6 +66,8 @@ function runShow() {
   const startButton = document.getElementById("start-button");
   const fullscrButton = document.getElementById("fullscr-button");
 
+  loadingOverlay.style.visibility = "visible";
+
   let currentScene = "lobby";
 
   // Loading manager
@@ -78,7 +80,6 @@ function runShow() {
   manager.onLoad = function () {
     loadingState = false;
     progress.style.display = "none";
-    loadingOverlay.style.visibility = "visible";
     startButton.style.visibility = "visible";
     startButton.style.animation = "fadein 5s";
     // fullscrButton.style.animation = "fadein 5s";
