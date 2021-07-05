@@ -10,6 +10,8 @@ import { ShaderPass } from "./lib/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "./lib/postprocessing/UnrealBloomPass.js";
 // FXAA
 import { FXAAShader } from "./lib/postprocessing/shaders/FXAAShader.js";
+// Subtitles
+import { subtitleHandler } from "./subtitleHandler.js";
 
 class SceneLobby {
   dataPath = "./data/";
@@ -231,11 +233,19 @@ class SceneLobby {
 
     this.setupFrancisAnimations();
 
+    // Load subtitles
+    const subHandler = new subtitleHandler(
+      "captions-overlay",
+      "instruc",
+      "caption"
+    );
+    subHandler.load(`${this.dataPath}srt/lobby.srt`);
+    this.subHandler = subHandler;
+
+    // Interaction
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
     window.addEventListener("mousemove", this.onMouseMove.bind(this), false);
-
-    this.statusText = document.getElementById("copy"); // For debugging
 
     // Define the controls ------------------------------------------------------
     // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -673,6 +683,7 @@ class SceneLobby {
   }
   play() {
     this.cameraPanDown();
+    this.subHandler.playSubtitles();
     // this.controls.enabled = true;
     // this.interactive = true;
   }

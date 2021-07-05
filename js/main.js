@@ -100,11 +100,12 @@ function runShow() {
       lobby.render();
       lobby.play();
       sfxLobbyBase.play();
-      sfxLobbyVO.play(10);
+      sfxLobbyVO.play();
       setTimeout(() => {
         // Enable interaction in lobby after narration
         lobby.interactive = true;
-      }, sfxLobbyVO.userData.duration + 10000); // Add in the delay VO is played
+      }, sfxLobbyVO.userData.duration);
+      // lobby.interactive = true;
 
       // currentScene = "perf2";
       // perf2.render();
