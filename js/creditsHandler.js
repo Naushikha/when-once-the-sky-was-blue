@@ -1,17 +1,21 @@
 // Simple credits loader
 class creditsHandler {
-  constructor(titleElemID, nameElemID) {
+  constructor(overlayElemID, titleElemID, nameElemID) {
+    this.overlay = document.getElementById(overlayElemID);
     this.title = document.getElementById(titleElemID);
     this.name = document.getElementById(nameElemID);
     this.animation = new TWEEN.Group(); // Animation
   }
   async load(url) {
     function parseCredits(csv) {
-      const lines = csv.split("\n");
+      const lines = csv.slice(0, -1).split("\n");
       let credits = [];
       for (let line of lines) {
         const parts = line.split(",");
-        credits.push({ title: parts[0], name: parts[1] });
+        credits.push({
+          title: parts[0],
+          name: parts[1].replace(/\|/g, "<br/>"), // Replace | to go to newline
+        });
       }
       return credits;
     }
@@ -59,7 +63,7 @@ class creditsHandler {
     );
     fadeOut.onComplete(
       function () {
-        if (this.currentCredit < this.credits.length - 1) {
+        if (this.currentCredit < this.credits.length) {
           this.currentCredit += 1;
           this.title.innerHTML = this.credits[this.currentCredit].title;
           this.name.innerHTML = this.credits[this.currentCredit].name;
@@ -67,6 +71,7 @@ class creditsHandler {
         } else {
           cancelAnimationFrame(this.renderID);
           this.currentCredit = 0;
+          this.overlay.style.visibility = "hidden";
           this.renderState = false;
         }
       }.bind(this)
@@ -76,7 +81,9 @@ class creditsHandler {
     fadeIn.start();
   }
   playCredits() {
+    // console.log(this.credits);
     this.currentCredit = 0; // Start from this subtitle
+    this.overlay.style.visibility = "visible";
     this.title.innerHTML = this.credits[0].title;
     this.name.innerHTML = this.credits[0].name;
     this.render();

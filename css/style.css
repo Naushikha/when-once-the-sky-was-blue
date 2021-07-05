@@ -121,6 +121,7 @@ body {
 }
 #credits-overlay #credits-name {
   font-size: 30px;
+  text-align: center;
 }
 
 #loading-overlay {
@@ -157,30 +158,30 @@ body {
 #loading-overlay #intro {
   margin: 1em 10em;
   animation: fadein 5s forwards;
-  animation-delay: 3.5s;
+  animation-delay: 9.5s;
   opacity: 0;
 }
 
 #loading-overlay #best {
   margin: 1em 0em 1em 0em;
   animation: fadein 5s forwards;
-  animation-delay: 8s;
+  animation-delay: 17s;
   opacity: 0;
 }
 /* Recommendations */
 #loading-overlay #rec1 {
   animation: fadein 5s forwards;
-  animation-delay: 10s;
+  animation-delay: 3.5s;
   opacity: 0;
 }
 #loading-overlay #rec2 {
   animation: fadein 5s forwards;
-  animation-delay: 12s;
+  animation-delay: 5.5s;
   opacity: 0;
 }
 #loading-overlay #rec3 {
   animation: fadein 5s forwards;
-  animation-delay: 14s;
+  animation-delay: 7.5s;
   opacity: 0;
 }
 
@@ -225,6 +226,7 @@ body {
   color: #ffffff;
   padding: 12px 18px;
   text-transform: uppercase;
+  font-family: "EB Garamond", serif;
   letter-spacing: 2px;
 
   position: absolute;
