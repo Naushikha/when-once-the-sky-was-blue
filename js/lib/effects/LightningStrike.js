@@ -532,8 +532,8 @@ class LightningStrike extends BufferGeometry {
 
 	initSubray( subray, rayParameters ) {
 
-		subray.pos0.copy( rayParameters.destOffset );
-		subray.pos1.copy( rayParameters.sourceOffset );
+		subray.pos0.copy( rayParameters.sourceOffset );
+		subray.pos1.copy( rayParameters.destOffset );
 		subray.up0.copy( rayParameters.up0 );
 		subray.up1.copy( rayParameters.up1 );
 		subray.radius0 = rayParameters.radius0;
