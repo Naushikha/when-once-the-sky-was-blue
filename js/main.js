@@ -5,6 +5,9 @@ import { ScenePerf1 } from "./scenePerf1.js";
 import { ScenePerf2 } from "./scenePerf2.js";
 import { ScenePerf3 } from "./scenePerf3.js";
 
+import { FadeInOutEffect } from "./fadeInOutEffect.js";
+import { FadeOutEffect } from "./fadeOutEffect.js";
+
 const dataPath = "./data/";
 
 // First check if the show is open
@@ -110,12 +113,28 @@ function runShow() {
 
       // currentScene = "perf2";
       // perf2.render();
+      // perf2.play();
       // sfxPerf2.play();
 
       startButton.style.visibility = "hidden";
       loadingOverlay.style.visibility = "hidden";
     });
   };
+
+  // Set cursor for body
+  document.body.style.cursor = "url('./data/txt/cursor_grey.png') 16 16, auto";
+  startButton.style.cursor = "url('./data/txt/cursor_white.png') 16 16, auto";
+  fullscrButton.style.cursor = "url('./data/txt/cursor_white.png') 16 16, auto";
+  fullscrButton.addEventListener("click", () => {
+    document.documentElement.requestFullscreen();
+  });
+  document.addEventListener("fullscreenchange", (event) => {
+    if (document.fullscreenElement) {
+      fullscrButton.style.visibility = "hidden";
+    } else {
+      fullscrButton.style.visibility = "visible";
+    }
+  });
 
   // Some nice random loading phrases
   let phrases = [
@@ -219,13 +238,12 @@ function runShow() {
     perf2Done = false,
     perf3Done = false;
   function pauseAllLobbySFX() {
+    // Just pause everything
     sfxLobbyBase.pause();
-    if (perf1Done) sfxPerf1Add.pause();
-    if (perf2Done) sfxPerf2Add.pause();
-    if (perf3Done) {
-      sfxPerf3Add.pause();
-      sfxPerf3AddB.pause();
-    }
+    sfxPerf1Add.pause();
+    sfxPerf2Add.pause();
+    sfxPerf3Add.pause();
+    sfxPerf3AddB.pause();
   }
   function playAllLobbySFX() {
     sfxLobbyBase.play();
@@ -267,22 +285,20 @@ function runShow() {
   perf2.lobbyCallback = switchCallback;
   perf3.lobbyCallback = switchCallback;
 
-  // Set cursor for body
-  document.body.style.cursor = "url('./data/txt/cursor_grey.png') 16 16, auto";
-  startButton.style.cursor = "url('./data/txt/cursor_white.png') 16 16, auto";
-  fullscrButton.style.cursor = "url('./data/txt/cursor_white.png') 16 16, auto";
-  fullscrButton.addEventListener("click", () => {
-    document.documentElement.requestFullscreen();
-  });
-  document.addEventListener("fullscreenchange", (event) => {
-    if (document.fullscreenElement) {
-      fullscrButton.style.visibility = "hidden";
-    } else {
-      fullscrButton.style.visibility = "visible";
-    }
-  });
-
   function switchCallback(perf) {
+    const sfxList = [
+      sfxLobbyBase,
+      sfxPerf1Add,
+      sfxPerf2Add,
+      sfxPerf3Add,
+      sfxPerf3AddB,
+    ];
+    const onFadeOut = () => {
+      lobby.interactive = true;
+      currentScene = "lobby";
+    };
+    var fIO; // FadeInOut
+    var fO; // FadeOut
     switch (perf) {
       case "lobby":
         perf1.render(false);
@@ -291,49 +307,113 @@ function runShow() {
         // When coming back to lobby the skybox should change based on the perf we were in + add sound
         switch (currentScene) {
           case "perf1":
-            lobby.updateSkybox("purple");
-            lobby.setFranciTexture(lobby.francis1);
             perf1Done = true;
+            playAllLobbySFX();
+            fIO = new FadeInOutEffect(
+              "transition-overlay",
+              "white",
+              8000,
+              () => {
+                lobby.updateSkybox("purple");
+                lobby.setFranciTexture(lobby.francis1);
+                lobby.render();
+                lobby.cameraPanDown(); // Make camera cool
+              },
+              onFadeOut,
+              sfxList // To vary audio with fading
+            );
+            fIO.playEffect();
             break;
           case "perf2":
-            lobby.updateSkybox("red");
-            lobby.setFranciTexture(lobby.francis2);
             perf2Done = true;
+            playAllLobbySFX();
+            fIO = new FadeInOutEffect(
+              "transition-overlay",
+              "white",
+              8000,
+              () => {
+                lobby.updateSkybox("red");
+                lobby.setFranciTexture(lobby.francis2);
+                lobby.render();
+                lobby.cameraPanDown(); // Make camera cool
+              },
+              onFadeOut,
+              sfxList // To vary audio with fading
+            );
+            fIO.playEffect();
             break;
           case "perf3":
-            lobby.updateSkybox("yellow");
-            lobby.setFranciTexture(lobby.francis3);
             perf3Done = true;
+            playAllLobbySFX();
+            fIO = new FadeInOutEffect(
+              "transition-overlay",
+              "white",
+              8000,
+              () => {
+                lobby.updateSkybox("yellow");
+                lobby.setFranciTexture(lobby.francis3);
+                lobby.render();
+                lobby.cameraPanDown(); // Make camera cool
+              },
+              onFadeOut,
+              sfxList // To vary audio with fading
+            );
+            fIO.playEffect();
             break;
           default:
             break;
         }
-        playAllLobbySFX();
-        lobby.render();
-        lobby.cameraPanDown(); // Make camera cool
-        lobby.interactive = true; // Make interactive from beginning
-        currentScene = "lobby";
         break;
       case "perf1":
-        pauseAllLobbySFX();
-        sfxPerf1.play();
         lobby.render(false);
         perf1.render();
-        currentScene = "perf1";
+        fO = new FadeOutEffect(
+          "transition-overlay",
+          "white",
+          4000,
+          () => {
+            pauseAllLobbySFX();
+            sfxPerf1.play();
+            perf1.play(); // Play the effects
+            currentScene = "perf1";
+          },
+          sfxList // To vary audio with fading
+        );
+        fO.playEffect();
         break;
       case "perf2":
-        pauseAllLobbySFX();
-        sfxPerf2.play();
         lobby.render(false);
         perf2.render();
-        currentScene = "perf2";
+        fO = new FadeOutEffect(
+          "transition-overlay",
+          "white",
+          4000,
+          () => {
+            pauseAllLobbySFX();
+            sfxPerf2.play();
+            perf2.play(); // Play the effects
+            currentScene = "perf2";
+          },
+          sfxList // To vary audio with fading
+        );
+        fO.playEffect();
         break;
       case "perf3":
-        pauseAllLobbySFX();
-        sfxPerf3.play();
         lobby.render(false);
         perf3.render();
-        currentScene = "perf3";
+        fO = new FadeOutEffect(
+          "transition-overlay",
+          "white",
+          4000,
+          () => {
+            pauseAllLobbySFX();
+            sfxPerf3.play();
+            perf3.play(); // Play the effects
+            currentScene = "perf3";
+          },
+          sfxList // To vary audio with fading
+        );
+        fO.playEffect();
         break;
       default:
         break;

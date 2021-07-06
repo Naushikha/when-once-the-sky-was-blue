@@ -11,7 +11,7 @@ import { UnrealBloomPass } from "./lib/postprocessing/UnrealBloomPass.js";
 // FXAA
 import { FXAAShader } from "./lib/postprocessing/shaders/FXAAShader.js";
 // Subtitles
-import { subtitleHandler } from "./subtitleHandler.js";
+import { SubtitleHandler } from "./subtitleHandler.js";
 
 class SceneLobby {
   dataPath = "./data/";
@@ -234,7 +234,7 @@ class SceneLobby {
     this.setupFrancisAnimations();
 
     // Load subtitles
-    const subHandler = new subtitleHandler(
+    const subHandler = new SubtitleHandler(
       "captions-overlay",
       "instruc",
       "caption"

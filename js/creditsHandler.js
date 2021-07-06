@@ -1,5 +1,5 @@
 // Simple credits loader
-class creditsHandler {
+class CreditsHandler {
   constructor(overlayElemID, titleElemID, nameElemID) {
     this.overlay = document.getElementById(overlayElemID);
     this.title = document.getElementById(titleElemID);
@@ -95,4 +95,4 @@ class creditsHandler {
   }
 }
 
-export { creditsHandler };
+export { CreditsHandler };

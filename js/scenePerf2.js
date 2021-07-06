@@ -12,7 +12,7 @@ import { UnrealBloomPass } from "./lib/postprocessing/UnrealBloomPass.js";
 // FXAA
 import { FXAAShader } from "./lib/postprocessing/shaders/FXAAShader.js";
 // For subtitles
-import { subtitleHandler } from "./subtitleHandler.js";
+import { SubtitleHandler } from "./subtitleHandler.js";
 class ScenePerf2 {
   dataPath = "./data/";
   lobbyCallback;
@@ -94,7 +94,7 @@ class ScenePerf2 {
     //   "caption"
     // );
     // subHandler.load(`${this.dataPath}srt/perf2.srt`)
-    
+
     const mainLight = new THREE.PointLight(0xffffff, 7, 50, 2);
     mainLight.position.set(0, -16, 0);
     this.scene.add(mainLight);
@@ -116,7 +116,7 @@ class ScenePerf2 {
     const geometry = new THREE.BufferGeometry();
     const vertices = [];
 
-    const textureLoader = new THREE.TextureLoader();
+    const textureLoader = new THREE.TextureLoader(this.manager);
 
     const sprite1 = textureLoader.load(`${this.dataPath}/txt/ember2.png`);
     const sprite3 = textureLoader.load(`${this.dataPath}/txt/ember1.png`);
@@ -340,19 +340,30 @@ class ScenePerf2 {
         this.ember[3].material.opacity = softE.d;
       }.bind(this)
     );
-
+    this.anim = {
+      breatheIn: breatheIn,
+      toRed: toRed,
+      toBlack: toBlack,
+      lGetAggressive: lGetAggressive,
+      lGetLost: lGetLost,
+      eSlowStart: eSlowStart,
+      eIntense: eIntense,
+      eReduce: eReduce,
+    };
+  }
+  play() {
     // Life ring animation, start straightaway
-    breatheIn.start();
+    this.anim.breatheIn.start();
 
-    // toBlack.start();
-    // eSlowStart.start();
+    // this.anim.toBlack.start();
+    // this.anim.eSlowStart.start();
 
     // Background color animations
     setTimeout(() => {
-      toRed.start();
+      this.anim.toRed.start();
     }, 48000); // Start @ 0:48 -> 1:50 = 62
     setTimeout(() => {
-      toBlack.start();
+      this.anim.toBlack.start();
     }, 150000); // Start @ 2:30 -> 3:03 = 33
 
     // Lightning animations
@@ -360,23 +371,28 @@ class ScenePerf2 {
       this.storm.dynamic = 3;
     }, 6000); // Start @ 0:06
     setTimeout(() => {
-      lGetAggressive.start();
+      this.anim.lGetAggressive.start();
     }, 20000); // Start @ 0:20 -> 0:40 = 20
     setTimeout(() => {
-      lGetLost.start();
+      this.anim.lGetLost.start();
     }, 40000); // Start @ 0:42 -> 0:46 = 4
 
     // Ember animations
     // (slowStart -> Med) -> (Intense -> Fast) -> Reduce
     setTimeout(() => {
-      eSlowStart.start();
+      this.anim.eSlowStart.start();
     }, 48000); // Start @ 0:48 -> 1:05 = 17
     setTimeout(() => {
-      eIntense.start();
+      this.anim.eIntense.start();
     }, 105000); // Start @ 1:45 -> 2:00 = 15
     setTimeout(() => {
-      eReduce.start();
+      this.anim.eReduce.start();
     }, 155000); // Start @ 2:35 -> 3:17 = 42
+
+    // End callback
+    setTimeout(() => {
+      this.lobbyCallback("lobby");
+    }, 278000); // End @ 4:38
   }
   setupLightning() {
     this.outlineColor = new THREE.Color(0xffffff);
@@ -495,7 +511,6 @@ class ScenePerf2 {
   }
   render(state = true) {
     if (state) {
-      this.transition(255, 255, 255, 1, 0, 0, 0, 0); // Do transition animation
       this.renderLoop();
       this.controls.enabled = true;
       this.renderState = true;
@@ -591,30 +606,6 @@ class ScenePerf2 {
     // Remove the event listener we setup
     window.removeEventListener("resize", this.onWindowResize.bind(this));
     // Remove stuff in the scene as here well
-  }
-  transition(sR, sG, sB, sA, eR, eG, eB, eA) {
-    const transitionOverlay = document.getElementById("transition-overlay");
-    var posVec1 = {
-      r: sR,
-      g: sG,
-      b: sB,
-      a: sA,
-    };
-    var endVec1 = {
-      r: eR,
-      g: eG,
-      b: eB,
-      a: eA,
-    };
-    var transitionAni = new TWEEN.Tween(posVec1, this.animation).to(
-      endVec1,
-      4000
-    );
-    transitionAni.onUpdate(function () {
-      transitionOverlay.style.background = `rgba(${posVec1.r}, ${posVec1.g}, ${posVec1.b}, ${posVec1.a})`;
-    });
-    transitionAni.easing(TWEEN.Easing.Cubic.InOut);
-    transitionAni.start();
   }
 }
 

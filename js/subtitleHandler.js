@@ -1,6 +1,6 @@
 // Passes SRT Subtitles
 // https://stackoverflow.com/questions/33145762/parse-a-srt-file-with-jquery-javascript/33147421
-class subtitleHandler {
+class SubtitleHandler {
   constructor(overlayElemID, instructElemID, captionElemID) {
     this.overlay = document.getElementById(overlayElemID);
     this.instruc = document.getElementById(instructElemID);
@@ -135,4 +135,4 @@ class subtitleHandler {
   }
 }
 
-export { subtitleHandler };
+export { SubtitleHandler };

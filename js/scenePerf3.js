@@ -55,7 +55,6 @@ class ScenePerf3 {
   }
   render(state = true) {
     if (state) {
-      this.transition(255, 255, 255, 1, 0, 0, 0, 0); // Do transition animation
       this.renderLoop();
       this.controls.enabled = true;
       this.renderState = true;
@@ -64,6 +63,9 @@ class ScenePerf3 {
       this.controls.enabled = false;
       this.renderState = false;
     }
+  }
+  play() {
+    console.log("playing perf3");
   }
   renderLoop() {
     this.renderID = requestAnimationFrame(this.renderLoop.bind(this));
@@ -81,30 +83,6 @@ class ScenePerf3 {
     // Remove the event listener we setup
     window.removeEventListener("resize", this.onWindowResize.bind(this));
     // Remove stuff in the scene as here well
-  }
-  transition(sR, sG, sB, sA, eR, eG, eB, eA) {
-    const transitionOverlay = document.getElementById("transition-overlay");
-    var posVec1 = {
-      r: sR,
-      g: sG,
-      b: sB,
-      a: sA,
-    };
-    var endVec1 = {
-      r: eR,
-      g: eG,
-      b: eB,
-      a: eA,
-    };
-    var transitionAni = new TWEEN.Tween(posVec1, this.animation).to(
-      endVec1,
-      4000
-    );
-    transitionAni.onUpdate(function () {
-      transitionOverlay.style.background = `rgba(${posVec1.r}, ${posVec1.g}, ${posVec1.b}, ${posVec1.a})`;
-    });
-    transitionAni.easing(TWEEN.Easing.Cubic.InOut);
-    transitionAni.start();
   }
 }
 
