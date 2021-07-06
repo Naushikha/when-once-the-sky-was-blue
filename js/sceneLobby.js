@@ -145,9 +145,9 @@ class SceneLobby {
       const objLoader = new OBJLoader(manager);
       objLoader.setMaterials(mtl);
       objLoader.load(`${this.dataPath}mdl/francis.obj`, (root) => {
-        root.position.z = 38;
+        root.position.z = 38.7;
         root.position.y = -1;
-        root.rotation.x += Math.PI / 8;
+        root.rotation.x += Math.PI / 9;
         root.scale.set(0.2, 0.2, 0.2);
         this.scene.add(root);
         this.francisUs = root;
@@ -230,6 +230,14 @@ class SceneLobby {
     this.scene.add(francis3SpotLight);
     this.scene.add(francis3SpotLight.target);
     this.francis3SpotLight = francis3SpotLight;
+
+    const francis4SpotLight = new THREE.SpotLight(0xffffff, 0.5, 40, 0.4);
+    francis4SpotLight.position.set(0, 16, 20); // Camera position
+    const sp4Target = new THREE.Object3D();
+    sp4Target.position.set(0, 8, 38);
+    francis4SpotLight.target = sp4Target;
+    this.scene.add(francis4SpotLight);
+    this.scene.add(francis4SpotLight.target);
 
     this.setupFrancisAnimations();
 
