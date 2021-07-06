@@ -276,7 +276,7 @@ class ScenePerf2 {
       d: 0,
     };
     var sharpE = {
-      d: 1, // 1 is max, looks sharp
+      d: 0.7, // 1 is max, looks sharp
     };
     var eSlowStart = new TWEEN.Tween(softE, this.animation).to(sharpE, 17000);
     eSlowStart.onUpdate(
@@ -311,7 +311,7 @@ class ScenePerf2 {
       }.bind(this)
     );
     eIntense.onComplete(function () {
-      softE.d = 1;
+      softE.d = 0.7;
       sharpE.d = 0; // Ugly way to do this
       eFast.start();
     });
@@ -340,6 +340,23 @@ class ScenePerf2 {
         this.ember[3].material.opacity = softE.d;
       }.bind(this)
     );
+    // Kill the life ring at the end
+    var deadState = {
+      i: 1,
+    };
+    var deadFinally = {
+      i: 0,
+    };
+    var killLifeRing = new TWEEN.Tween(deadState, this.animation).to(
+      deadFinally,
+      24000
+    );
+    killLifeRing.onUpdate(
+      function () {
+        this.lifeRing.material.opacity = deadState.i;
+      }.bind(this)
+    );
+
     this.anim = {
       breatheIn: breatheIn,
       toRed: toRed,
@@ -349,6 +366,7 @@ class ScenePerf2 {
       eSlowStart: eSlowStart,
       eIntense: eIntense,
       eReduce: eReduce,
+      killLifeRing: killLifeRing,
     };
   }
   play() {
@@ -388,6 +406,12 @@ class ScenePerf2 {
     setTimeout(() => {
       this.anim.eReduce.start();
     }, 155000); // Start @ 2:35 -> 3:17 = 42
+
+    // LifeRing die
+    setTimeout(() => {
+      this.lifeRing.material.transparent = true; // Set transparent first
+      this.anim.killLifeRing.start();
+    }, 252000); // Start @ 4:12 -> 4:36 = 24
 
     // End callback
     setTimeout(() => {
@@ -524,7 +548,6 @@ class ScenePerf2 {
     this.renderID = requestAnimationFrame(this.renderLoop.bind(this));
     const delta = this.clock.getDelta();
     this.animation.update();
-    // this.renderer.render(this.scene, this.camera);
     if (this.controls.enabled) {
       this.controls.update(delta);
     }
