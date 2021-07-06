@@ -88,9 +88,9 @@ function runShow() {
     // fullscrButton.style.animation = "fadein 5s";
 
     // Skip play for now
-    // currentScene = "perf2";
-    // perf2.render();
-    // sfxPerf2.play();
+    // currentScene = "perf3";
+    // perf3.render();
+    // sfxPerf3.play();
 
     // lobby.render();
     // lobby.play();
@@ -102,13 +102,16 @@ function runShow() {
 
     startButton.addEventListener("click", () => {
       lobby.render();
-      lobby.play();
-      sfxLobbyBase.play();
-      sfxLobbyVO.play();
       setTimeout(() => {
-        // Enable interaction in lobby after narration
-        lobby.interactive = true;
-      }, sfxLobbyVO.userData.duration);
+        lobby.play();
+        sfxLobbyBase.play();
+        sfxLobbyVO.play();
+        setTimeout(() => {
+          // Enable interaction in lobby after narration
+          lobby.interactive = true;
+        }, sfxLobbyVO.userData.duration);
+        loadingOverlay.style.visibility = "hidden";
+      }, 6000);
       // lobby.interactive = true;
 
       // currentScene = "perf2";
@@ -116,8 +119,8 @@ function runShow() {
       // perf2.play();
       // sfxPerf2.play();
 
+      loadingOverlay.style.animation = "fadeout 4s forwards";
       startButton.style.visibility = "hidden";
-      loadingOverlay.style.visibility = "hidden";
     });
   };
 
