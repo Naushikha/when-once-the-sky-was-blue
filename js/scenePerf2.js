@@ -389,6 +389,9 @@ class ScenePerf2 {
       this.anim.eReduce.start();
     }, 155000); // Start @ 2:35 -> 3:17 = 42
 
+    // LifeRing dissappear
+    // Start @ 4:12 -> 4:36 = 24
+
     // End callback
     setTimeout(() => {
       this.lobbyCallback("lobby");
@@ -524,7 +527,6 @@ class ScenePerf2 {
     this.renderID = requestAnimationFrame(this.renderLoop.bind(this));
     const delta = this.clock.getDelta();
     this.animation.update();
-    // this.renderer.render(this.scene, this.camera);
     if (this.controls.enabled) {
       this.controls.update(delta);
     }

@@ -256,7 +256,7 @@ class SceneLobby {
     this.controls.enabled = false; // Disable it after creation
 
     this.camera.position.set(0, 16, 40);
-    this.camera.rotation.x = 3; // To prevent pointing at francis at start
+    this.camera.rotation.x = Math.PI / 2; // To prevent pointing at francis at start
     this.renderState = false; // We won't be rendering straight away
 
     this.interactive = false; // Do not allow any interactions with franci
@@ -690,14 +690,13 @@ class SceneLobby {
   cameraPanDown() {
     // Pan Down Animation
     this.controls.enabled = false;
-    this.camera.rotation.x = 3;
     var posVec1 = {
       x: Math.PI / 2,
     };
     var endVec1 = {
       x: -Math.PI / 21,
     };
-    var panDown = new TWEEN.Tween(posVec1, this.animation).to(endVec1, 15000);
+    var panDown = new TWEEN.Tween(posVec1, this.animation).to(endVec1, 18000);
     panDown.onUpdate(
       function () {
         this.camera.rotation.x = posVec1.x;
@@ -719,7 +718,6 @@ class SceneLobby {
   render(state = true) {
     if (state) {
       this.renderLoop();
-      this.controls.enabled = true;
       this.renderState = true;
     } else {
       cancelAnimationFrame(this.renderID);
