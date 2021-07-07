@@ -117,7 +117,18 @@ class ScenePerf1 {
     this.setupAnimations();
   }
   play() {
-    console.log("playing perf1");
+    this.anim.camMove1.start();
+    this.controls.enabled = true;
+    // // Enable controls after 6 secs
+    // setTimeout(() => {
+    //   this.controls.enabled = true;
+    //   this.camera.rotation.y = 0; // The camera controls are fucked, so need this hack to fix it
+    //   this.camera.rotation.x = Math.PI;
+    // }, 6000);
+    // End callback
+    setTimeout(() => {
+      this.lobbyCallback("lobby");
+    }, 364000); // End @ 6:04
   }
   setupAnimations() {
     const timeMove1 = 180000;
@@ -160,8 +171,9 @@ class ScenePerf1 {
         // this.camera.lookAt(-100, 315, 134);
       }.bind(this)
     );
-
-    camMove1.start();
+    this.anim = {
+      camMove1: camMove1,
+    };
   }
   setupBloom() {
     this.BLOOM_SCENE = 1; // SEPERATE SCENE FOR BLOOM
