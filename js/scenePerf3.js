@@ -1,6 +1,6 @@
 import * as THREE from "./lib/three.module.js";
 import { OrbitControls } from "./lib/OrbitControls.js";
-import { FlyControls } from "./lib/FlyControlsUnrestricted.js";
+import { FlyControls } from "./lib/FlyControlsRestricted.js";
 // Bloom (Transition light effect) imports
 import { EffectComposer } from "./lib/postprocessing/EffectComposer.js";
 import { RenderPass } from "./lib/postprocessing/RenderPass.js";
@@ -125,7 +125,7 @@ class ScenePerf3 {
     this.controls.enabled = true;
 
     this.camera.position.set(0, 10, 0);
-    this.camera.lookAt(0, 0, 1000);
+    // this.camera.lookAt(0, 0, 1000);
     this.renderState = false; // We won't be rendering straight away
   }
   setupAnimations() {
@@ -295,7 +295,7 @@ class ScenePerf3 {
   play() {
     this.anim.sunRise.start();
     this.anim.camMove.start();
-
+    this.camera.rotation.x = Math.PI;
     // End callback
     setTimeout(() => {
       this.lobbyCallback("lobby");
