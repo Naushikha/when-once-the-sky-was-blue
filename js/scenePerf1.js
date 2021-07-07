@@ -1,6 +1,6 @@
 import * as THREE from "./lib/three.module.js";
 import { OrbitControls } from "./lib/OrbitControls.js";
-import { FlyControls } from "./lib/FlyControlsRestricted2.js";
+import { FirstPersonControls } from "./lib/FirstPersonControls.js";
 // Bloom (Transition light effect) imports
 import { EffectComposer } from "./lib/postprocessing/EffectComposer.js";
 import { RenderPass } from "./lib/postprocessing/RenderPass.js";
@@ -60,16 +60,40 @@ class ScenePerf1 {
       objLoader.load(`${this.dataPath}mdl/earth_compressed.obj`, (root) => {
         root.scale.set(4, 4, 4);
         this.scene.add(root);
+        root.position.y = 0.1;
         const eTxt = new THREE.MeshStandardMaterial({
-          color: "rgb(200,0,0)",
+          color: "rgb(255,0,0)", // color: "rgb(255,255,255)",
         });
         root.traverse(function (child) {
           if (child instanceof THREE.Mesh) {
             child.material = eTxt;
-            // child.material.wireframe = true;
+            child.material.wireframe = true;
             child.material.needsUpdate = true;
           }
         });
+        this.earth = root;
+      });
+    });
+
+    mtlLoader.load(`${this.dataPath}mdl/earth_compressed.mtl`, (mtl) => {
+      mtl.preload();
+      const objLoader = new OBJLoader(manager);
+      objLoader.setMaterials(mtl);
+      objLoader.load(`${this.dataPath}mdl/earth_compressed.obj`, (root) => {
+        root.scale.set(4, 4, 4);
+        this.scene.add(root);
+        const eTxt = new THREE.MeshStandardMaterial({
+          color: "rgb(50,50,50)", // color: "rgb(50,50,50)",
+        });
+        root.traverse(function (child) {
+          if (child instanceof THREE.Mesh) {
+            child.material = eTxt;
+            child.material.transparent = true;
+            child.material.opacity = 0;
+            child.material.needsUpdate = true;
+          }
+        });
+        this.earth2 = root;
       });
     });
 
@@ -87,7 +111,7 @@ class ScenePerf1 {
     lifeRing.position.set(-100, 315, 134);
     this.scene.add(lifeRing);
 
-    const pointLight1 = new THREE.PointLight(0xffffff, 2, 100);
+    const pointLight1 = new THREE.PointLight(0xffffff, 8, 100);
     this.scene.add(pointLight1);
     pointLight1.position.set(-100, 315, 134);
 
@@ -95,21 +119,19 @@ class ScenePerf1 {
     this.scene.add(directionalLight1);
     directionalLight1.position.set(-61, 665, 1075);
 
-    const geometry = new THREE.SphereGeometry(5, 32, 32);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const sphere = new THREE.Mesh(geometry, material);
-    this.scene.add(sphere);
-
-    const axesHelper = new THREE.AxesHelper(5);
-    this.scene.add(axesHelper);
+    // const axesHelper = new THREE.AxesHelper(5);
+    // this.scene.add(axesHelper);
 
     // Define the controls ------------------------------------------------------
-    this.clock = new THREE.Clock(); // Flycontrols need a CLOCK!
+    this.clock = new THREE.Clock(); // FPSControls need a CLOCK!
     // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls = new FlyControls(this.camera, this.renderer.domElement);
-    this.controls.movementSpeed = 1;
+    this.controls = new FirstPersonControls(
+      this.camera,
+      this.renderer.domElement
+    );
+    this.controls.movementSpeed = 0;
+    this.controls.lookSpeed = 0.03;
     this.controls.domElement = this.renderer.domElement;
-    this.controls.rollSpeed = Math.PI / 25; // 30
     this.controls.enabled = true;
     this.camera.position.set(10, 350, 30);
     this.renderState = false; // We won't be rendering straight away
@@ -117,14 +139,14 @@ class ScenePerf1 {
     this.setupAnimations();
   }
   play() {
+    this.controls.lookAt(-100, 350, 14);
     this.anim.camMove1.start();
-    this.controls.enabled = true;
-    // // Enable controls after 6 secs
-    // setTimeout(() => {
-    //   this.controls.enabled = true;
-    //   this.camera.rotation.y = 0; // The camera controls are fucked, so need this hack to fix it
-    //   this.camera.rotation.x = Math.PI;
-    // }, 6000);
+    this.anim.wfWhite.start();
+    this.controls.enabled = false;
+    // Enable controls after 6 secs
+    setTimeout(() => {
+      this.controls.enabled = true;
+    }, 6000);
     // End callback
     setTimeout(() => {
       this.lobbyCallback("lobby");
@@ -133,6 +155,8 @@ class ScenePerf1 {
   setupAnimations() {
     const timeMove1 = 180000;
     const timeMove2 = 182000;
+    const timeWF = 6000;
+    const timeOP = 6000;
     var posVec1 = {
       x: 650,
       y: 82,
@@ -155,7 +179,6 @@ class ScenePerf1 {
     camMove1.onUpdate(
       function () {
         this.camera.position.set(posVec1.x, posVec1.y, posVec1.z);
-        // this.camera.lookAt(-100, 315, 134);
       }.bind(this)
     );
     camMove1.onComplete(function () {
@@ -168,11 +191,58 @@ class ScenePerf1 {
     camMove2.onUpdate(
       function () {
         this.camera.position.set(posVec2.x, posVec2.y, posVec2.z);
-        // this.camera.lookAt(-100, 315, 134);
       }.bind(this)
     );
+    // Transition the earth to grey
+    var trans1 = {
+      r: 255,
+      g: 0,
+      b: 0,
+    };
+    var trans2 = {
+      r: 255,
+      g: 255,
+      b: 255,
+    };
+    var trans3 = {
+      o: 0,
+    };
+    var trans4 = {
+      o: 1,
+    };
+    var wfWhite = new TWEEN.Tween(trans1, this.animation).to(trans2, timeWF);
+    wfWhite.onUpdate(
+      function () {
+        this.earth.traverse(function (child) {
+          if (child instanceof THREE.Mesh) {
+            child.material.color.set(
+              `rgb(${Math.floor(trans1.r)},${Math.floor(trans1.g)},${Math.floor(
+                trans1.b
+              )})`
+            );
+            child.material.needsUpdate = true;
+          }
+        });
+      }.bind(this)
+    );
+    wfWhite.onComplete(function () {
+      earth2Visi.start();
+    });
+    var earth2Visi = new TWEEN.Tween(trans3, this.animation).to(trans4, timeOP); // Make earth2 visible
+    earth2Visi.onUpdate(
+      function () {
+        this.earth2.traverse(function (child) {
+          if (child instanceof THREE.Mesh) {
+            child.material.opacity = trans3.o;
+            child.material.needsUpdate = true;
+          }
+        });
+      }.bind(this)
+    );
+
     this.anim = {
       camMove1: camMove1,
+      wfWhite: wfWhite,
     };
   }
   setupBloom() {

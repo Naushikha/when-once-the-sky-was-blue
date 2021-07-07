@@ -1,6 +1,6 @@
 import * as THREE from "./lib/three.module.js";
 import { OrbitControls } from "./lib/OrbitControls.js";
-import { FlyControls } from "./lib/FlyControlsRestricted.js";
+import { FirstPersonControls } from "./lib/FirstPersonControls.js";
 // Bloom (Transition light effect) imports
 import { EffectComposer } from "./lib/postprocessing/EffectComposer.js";
 import { RenderPass } from "./lib/postprocessing/RenderPass.js";
@@ -118,12 +118,15 @@ class ScenePerf3 {
     // this.scene.add(axesHelper);
 
     // Define the controls ------------------------------------------------------
-    this.clock = new THREE.Clock(); // Flycontrols need a CLOCK!
+    this.clock = new THREE.Clock(); // FPSControls need a CLOCK!
     // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls = new FlyControls(this.camera, this.renderer.domElement);
-    this.controls.movementSpeed = 1;
+    this.controls = new FirstPersonControls(
+      this.camera,
+      this.renderer.domElement
+    );
+    this.controls.movementSpeed = 0;
+    this.controls.lookSpeed = 0.03;
     this.controls.domElement = this.renderer.domElement;
-    this.controls.rollSpeed = Math.PI / 25; // 30
     this.controls.enabled = false; // Stop this!
 
     this.camera.position.set(0, 10, 0);
@@ -301,8 +304,7 @@ class ScenePerf3 {
     // Enable controls after 6 secs
     setTimeout(() => {
       this.controls.enabled = true;
-      this.camera.rotation.y = 0; // The camera controls are fucked, so need this hack to fix it
-      this.camera.rotation.x = Math.PI;
+      this.controls.lookAt(0, 0, 20000);
     }, 6000);
     // End callback
     setTimeout(() => {
