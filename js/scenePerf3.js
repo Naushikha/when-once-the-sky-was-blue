@@ -99,7 +99,7 @@ class ScenePerf3 {
     skyUniforms["mieDirectionalG"].value = 0.8;
 
     const sunParameters = {
-      elevation: 2,
+      elevation: 183,
       azimuth: 180,
     };
     this.sunParameters = sunParameters;
@@ -109,6 +109,8 @@ class ScenePerf3 {
 
     const sun = new THREE.Vector3();
     this.sun = sun;
+
+    this.updateSky();
 
     this.setupAnimations();
 
@@ -122,10 +124,10 @@ class ScenePerf3 {
     this.controls.movementSpeed = 1;
     this.controls.domElement = this.renderer.domElement;
     this.controls.rollSpeed = Math.PI / 25; // 30
-    this.controls.enabled = true;
+    this.controls.enabled = false; // Stop this!
 
     this.camera.position.set(0, 10, 0);
-    // this.camera.lookAt(0, 0, 1000);
+    this.camera.rotation.y = Math.PI;
     this.renderState = false; // We won't be rendering straight away
   }
   setupAnimations() {
@@ -284,7 +286,6 @@ class ScenePerf3 {
   render(state = true) {
     if (state) {
       this.renderLoop();
-      this.controls.enabled = true;
       this.renderState = true;
     } else {
       cancelAnimationFrame(this.renderID);
@@ -295,7 +296,14 @@ class ScenePerf3 {
   play() {
     this.anim.sunRise.start();
     this.anim.camMove.start();
-    this.camera.rotation.x = Math.PI;
+    this.controls.enabled = false;
+    this.camera.rotation.y = Math.PI;
+    // Enable controls after 6 secs
+    setTimeout(() => {
+      this.controls.enabled = true;
+      this.camera.rotation.y = 0; // The camera controls are fucked, so need this hack to fix it
+      this.camera.rotation.x = Math.PI;
+    }, 6000);
     // End callback
     setTimeout(() => {
       this.lobbyCallback("lobby");
