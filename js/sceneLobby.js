@@ -691,7 +691,9 @@ class SceneLobby {
   }
   play() {
     this.cameraPanDown();
-    this.subHandler.playSubtitles();
+    setTimeout(() => {
+      this.subHandler.playSubtitles();
+    }, 8000);
     // this.controls.enabled = true;
     // this.interactive = true;
   }

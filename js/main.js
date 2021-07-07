@@ -90,12 +90,14 @@ function runShow() {
     // Skip play for now
     // currentScene = "perf3";
     // perf3.render();
+    // perf3.play();
     // sfxPerf3.play();
 
     // lobby.render();
     // lobby.play();
     // sfxLobbyBase.play();
-    // sfxLobbyVO.play(10);
+    // sfxLobbyVO.play();
+    // lobby.interactive = true;
 
     // startButton.style.visibility = "hidden";
     // loadingOverlay.style.visibility = "hidden";
@@ -105,11 +107,11 @@ function runShow() {
       setTimeout(() => {
         lobby.play();
         sfxLobbyBase.play();
-        sfxLobbyVO.play();
+        sfxLobbyVO.play(8);
         setTimeout(() => {
           // Enable interaction in lobby after narration
           lobby.interactive = true;
-        }, sfxLobbyVO.userData.duration);
+        }, sfxLobbyVO.userData.duration + 8000);
         loadingOverlay.style.visibility = "hidden";
       }, 6000);
       // lobby.interactive = true;
