@@ -119,6 +119,8 @@ class ScenePerf1 {
     this.scene.add(directionalLight1);
     directionalLight1.position.set(-61, 665, 1075);
 
+    this.setupAnimations();
+
     // const axesHelper = new THREE.AxesHelper(5);
     // this.scene.add(axesHelper);
 
@@ -132,20 +134,20 @@ class ScenePerf1 {
     this.controls.movementSpeed = 0;
     this.controls.lookSpeed = 0.03;
     this.controls.domElement = this.renderer.domElement;
-    this.controls.enabled = true;
-    this.camera.position.set(10, 350, 30);
-    this.renderState = false; // We won't be rendering straight away
+    this.controls.enabled = false;
 
-    this.setupAnimations();
+    this.camera.position.set(650, 82, -132);
+    this.controls.lookAt(192, 170, -285);
+    this.renderState = false; // We won't be rendering straight away
   }
   play() {
-    this.controls.lookAt(-100, 350, 14);
-    this.anim.camMove1.start();
-    this.anim.wfWhite.start();
     this.controls.enabled = false;
+    this.anim.camMove1.start();
+    this.anim.wfWhite.start(); // Start Earth animation chain
     // Enable controls after 6 secs
     setTimeout(() => {
       this.controls.enabled = true;
+      this.controls.lookAt(192, 170, -285);
     }, 6000);
     // End callback
     setTimeout(() => {

@@ -88,15 +88,15 @@ function runShow() {
     // fullscrButton.style.animation = "fadein 5s";
 
     // Skip play for now
-    // currentScene = "perf3";
-    // perf3.render();
-    // perf3.play();
-    // sfxPerf3.play();
+    // currentScene = "perf1";
+    // perf1.render();
+    // perf1.play();
+    // sfxPerf1.play();
 
     // lobby.render();
     // lobby.play();
-    // sfxLobbyBase.play();
-    // sfxLobbyVO.play();
+    // // sfxLobbyBase.play();
+    // // sfxLobbyVO.play(8);
     // lobby.interactive = true;
 
     // startButton.style.visibility = "hidden";
@@ -299,7 +299,6 @@ function runShow() {
       sfxPerf3AddB,
     ];
     const onFadeOut = () => {
-      lobby.interactive = true;
       currentScene = "lobby";
     };
     var fIO; // FadeInOut
@@ -322,7 +321,7 @@ function runShow() {
                 lobby.updateSkybox("purple");
                 lobby.setFranciTexture(lobby.francis1);
                 lobby.render();
-                lobby.cameraPanDown(); // Make camera cool
+                lobby.cameraPanDown(true); // Make camera cool
               },
               onFadeOut,
               sfxList // To vary audio with fading
@@ -340,7 +339,7 @@ function runShow() {
                 lobby.updateSkybox("red");
                 lobby.setFranciTexture(lobby.francis2);
                 lobby.render();
-                lobby.cameraPanDown(); // Make camera cool
+                lobby.cameraPanDown(true); // Make camera cool
               },
               onFadeOut,
               sfxList // To vary audio with fading
@@ -358,7 +357,7 @@ function runShow() {
                 lobby.updateSkybox("yellow");
                 lobby.setFranciTexture(lobby.francis3);
                 lobby.render();
-                lobby.cameraPanDown(); // Make camera cool
+                lobby.cameraPanDown(true); // Make camera cool
               },
               onFadeOut,
               sfxList // To vary audio with fading
@@ -367,6 +366,13 @@ function runShow() {
             break;
           default:
             break;
+        }
+        // Play end scene if all perfs are done
+        if (perf1Done && perf2Done && perf3Done) {
+          // Set a timeout here and play lobby ending
+          setTimeout(() => {
+            lobby.playEnding();
+          }, 25000);
         }
         break;
       case "perf1":

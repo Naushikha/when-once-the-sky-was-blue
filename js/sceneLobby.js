@@ -14,6 +14,7 @@ import { FXAAShader } from "./lib/postprocessing/shaders/FXAAShader.js";
 import { SubtitleHandler } from "./subtitleHandler.js";
 // Credits
 import { CreditsHandler } from "./creditsHandler.js";
+import { FadeInOutEffect } from "./fadeInOutEffect.js";
 
 class SceneLobby {
   dataPath = "./data/";
@@ -684,12 +685,11 @@ class SceneLobby {
     lookAtBloom.easing(TWEEN.Easing.Quadratic.InOut);
     growBloom.easing(TWEEN.Easing.Quadratic.In);
 
-    this.lookAtBloom = lookAtBloom;
-    this.lookAtBloom.start();
+    this.interactive = false; // Prevent interactions with franci
+    lookAtBloom.start();
     growBloom.start();
-    this.interactive = false; // Set the render state to blooming
   }
-  setupEndingAnimations() {
+  playEnding() {
     // Move all the franci to 0,0,0
     var posVec1 = {
       x1: this.francis1.position.x,
@@ -789,7 +789,10 @@ class SceneLobby {
         }, 5000);
       }.bind(this)
     );
-
+    const fIO = new FadeInOutEffect("transition-overlay", "white", 3000);
+    setTimeout(() => {
+      fIO.playEffect();
+    }, 43000); // Everything ends @ 45000
     const credHandler = new CreditsHandler(
       "credits-overlay",
       "credits-title",
@@ -851,15 +854,15 @@ class SceneLobby {
     this.setupBloomAnimations(switcher, perf);
   }
   play() {
-    this.cameraPanDown();
+    this.cameraPanDown(false);
     setTimeout(() => {
       this.subHandler.playSubtitles();
     }, 8000);
-    // this.setupEndingAnimations();
+    // this.playEnding();
     // this.controls.enabled = true;
     // this.interactive = true;
   }
-  cameraPanDown() {
+  cameraPanDown(interactiveToggle = false) {
     // Pan Down Animation
     this.controls.enabled = false;
     var posVec1 = {
@@ -877,6 +880,10 @@ class SceneLobby {
     panDown.onComplete(
       function () {
         this.controls.enabled = true;
+        this.controls.lookAt(0, 5, -35); // Look at francis 2 mid point sorta
+        if (interactiveToggle) {
+          this.interactive = true;
+        }
       }.bind(this)
     );
     panDown.easing(TWEEN.Easing.Quadratic.InOut);
