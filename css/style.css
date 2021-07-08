@@ -85,6 +85,11 @@ body {
   text-align: center;
   font-size: 1.3em;
 }
+#showtime-overlay #showtime-countdown {
+  text-align: center;
+  padding-top: 2em;
+  font-size: 1.7em;
+}
 
 #transition-overlay {
   background: rgba(255, 255, 255, 0);
@@ -140,6 +145,7 @@ body {
   padding-right: 1em;
   transition: all 0.1s;
   opacity: 0.6;
+  animation: fullscr-blink 1s 10;
 }
 
 #loading-overlay #fullscr-button:hover {
@@ -312,5 +318,17 @@ button::after {
   }
   100% {
     opacity: 0;
+  }
+}
+
+@keyframes fullscr-blink {
+  0% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
   }
 }
