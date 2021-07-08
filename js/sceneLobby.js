@@ -1,5 +1,5 @@
 import * as THREE from "./lib/three.module.js";
-import { FlyControls } from "./lib/FlyControls.js";
+import { FirstPersonControls } from "./lib/FirstPersonControls.js";
 import { OrbitControls } from "./lib/OrbitControls.js";
 import { MTLLoader } from "./lib/MTLLoader.js";
 import { OBJLoader } from "./lib/OBJLoader.js";
@@ -12,6 +12,9 @@ import { UnrealBloomPass } from "./lib/postprocessing/UnrealBloomPass.js";
 import { FXAAShader } from "./lib/postprocessing/shaders/FXAAShader.js";
 // Subtitles
 import { SubtitleHandler } from "./subtitleHandler.js";
+// Credits
+import { CreditsHandler } from "./creditsHandler.js";
+import { FadeInOutEffect } from "./fadeInOutEffect.js";
 
 class SceneLobby {
   dataPath = "./data/";
@@ -73,6 +76,14 @@ class SceneLobby {
         "txt/yellow_sb_bottom.png",
         "txt/yellow_sb_left.png",
         "txt/yellow_sb_right.png",
+      ]),
+      blue: skyBoxLoader.load([
+        "txt/blue_sb_front.png",
+        "txt/blue_sb_back.png",
+        "txt/blue_sb_top.png",
+        "txt/blue_sb_bottom.png",
+        "txt/blue_sb_left.png",
+        "txt/blue_sb_right.png",
       ]),
     };
     this.scene.background = skyboxTextures[this.currentSkybox];
@@ -158,9 +169,25 @@ class SceneLobby {
     const arcTexture = new THREE.TextureLoader(this.manager).load(
       `${this.dataPath}txt/arch.png`
     );
+    const arcPTexture = new THREE.TextureLoader(this.manager).load(
+      // Portal arc
+      `${this.dataPath}txt/arch_portal.png`
+    );
     const arcGeometry = new THREE.PlaneGeometry(20, 40);
     const arcMaterial = new THREE.MeshBasicMaterial({
       map: arcTexture,
+      color: 0xcccccc,
+      transparent: true,
+      side: THREE.DoubleSide,
+    });
+    const arcMaterial2 = new THREE.MeshBasicMaterial({
+      map: arcTexture,
+      color: 0xcccccc,
+      transparent: true,
+      side: THREE.DoubleSide,
+    });
+    const arcPMaterial = new THREE.MeshBasicMaterial({
+      map: arcPTexture,
       color: 0xcccccc,
       transparent: true,
       side: THREE.DoubleSide,
@@ -169,13 +196,22 @@ class SceneLobby {
     arc1.position.set(30, 10, -20);
     arc1.rotation.y -= Math.PI / 6;
     this.scene.add(arc1);
-    const arc2 = new THREE.Mesh(arcGeometry, arcMaterial);
+    const arc2 = new THREE.Mesh(arcGeometry, arcMaterial2);
     arc2.position.set(0, 10, -25);
     this.scene.add(arc2);
+    const arcP = new THREE.Mesh(arcGeometry, arcPMaterial); // This is infront of arc2 to appear in at the end
+    arcP.position.set(0, 10, -24.9);
+    this.scene.add(arcP);
     const arc3 = new THREE.Mesh(arcGeometry, arcMaterial);
     arc3.position.set(-30, 10, -20);
     arc3.rotation.y += Math.PI / 6;
     this.scene.add(arc3);
+    this.arcs = {
+      a1: arc1,
+      a2: arc2,
+      a3: arc3,
+      ap: arcP,
+    };
 
     this.setupBloom();
 
@@ -197,6 +233,8 @@ class SceneLobby {
     arc2.layers.enable(this.BLOOM_SCENE);
     arc3.layers.toggle(this.BLOOM_SCENE);
     arc3.layers.enable(this.BLOOM_SCENE);
+    arcP.layers.enable(this.BLOOM_SCENE);
+    arcP.material.opacity = 0;
 
     // Lighting
     // Main light
@@ -257,8 +295,13 @@ class SceneLobby {
 
     // Define the controls ------------------------------------------------------
     // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls = new FlyControls(this.camera, this.renderer.domElement);
-    this.controls.movementSpeed = 1;
+    // this.controls = new FlyControls(this.camera, this.renderer.domElement);
+    this.controls = new FirstPersonControls(
+      this.camera,
+      this.renderer.domElement
+    );
+    this.controls.movementSpeed = 0;
+    this.controls.lookSpeed = 0.03;
     this.controls.domElement = this.renderer.domElement;
     this.controls.rollSpeed = Math.PI / 30; // 30
     this.controls.enabled = false; // Disable it after creation
@@ -293,6 +336,15 @@ class SceneLobby {
         break;
     }
     whichFranci.userData.perfNum = 0; // This is also used as an indication to prevent interaction, checked later in the render loop
+  }
+  setFranciOpacity(whichFranci, opacity) {
+    whichFranci.traverse(function (child) {
+      if (child instanceof THREE.Mesh) {
+        child.material.transparent = true;
+        child.material.opacity = opacity;
+        child.material.needsUpdate = true;
+      }
+    });
   }
   setupFrancisAnimations() {
     const floatHeight = 0.7;
@@ -633,10 +685,122 @@ class SceneLobby {
     lookAtBloom.easing(TWEEN.Easing.Quadratic.InOut);
     growBloom.easing(TWEEN.Easing.Quadratic.In);
 
-    this.lookAtBloom = lookAtBloom;
-    this.lookAtBloom.start();
+    this.interactive = false; // Prevent interactions with franci
+    lookAtBloom.start();
     growBloom.start();
-    this.interactive = false; // Set the render state to blooming
+  }
+  playEnding() {
+    // Move all the franci to 0,0,0
+    var posVec1 = {
+      x1: this.francis1.position.x,
+      z1: this.francis1.position.z,
+      x2: this.francis2.position.x,
+      z2: this.francis2.position.z,
+      x3: this.francis3.position.x,
+      z3: this.francis3.position.z,
+      a: 1,
+    };
+    var endVec1 = {
+      x1: 0,
+      z1: 0,
+      x2: 0,
+      z2: 0,
+      x3: 0,
+      z3: 0,
+      a: 0,
+    };
+    var francMerge = new TWEEN.Tween(posVec1, this.animation).to(
+      endVec1,
+      20000
+    );
+    francMerge.onUpdate(
+      function () {
+        this.francis1.position.x = posVec1.x1;
+        this.francis1.position.z = posVec1.z1;
+        this.francis2.position.x = posVec1.x2;
+        this.francis2.position.z = posVec1.z2;
+        this.francis3.position.x = posVec1.x3;
+        this.francis3.position.z = posVec1.z3;
+        this.setFranciOpacity(this.francis1, posVec1.a);
+        this.setFranciOpacity(this.francis2, posVec1.a);
+        this.setFranciOpacity(this.francis3, posVec1.a);
+        this.setFranciOpacity(this.francisUs, posVec1.a);
+        this.arcs.a1.material.opacity = posVec1.a;
+        this.arcs.a3.material.opacity = posVec1.a;
+      }.bind(this)
+    );
+    francMerge.onComplete(
+      function () {
+        this.francis1.position.x = 20000; // Throw these dudes away
+        this.francis2.position.x = 20000;
+        this.francis3.position.x = 20000;
+        this.francisUs.position.x = 20000;
+        this.arcs.a1.position.x = 20000;
+        this.arcs.a3.position.x = 20000;
+        portalGlow.start();
+      }.bind(this)
+    );
+    // Make blue portal appear
+    var posVec2 = {
+      a: 0,
+    };
+    var endVec2 = {
+      a: 1,
+    };
+    var portalGlow = new TWEEN.Tween(posVec2, this.animation).to(endVec2, 5000);
+    portalGlow.onUpdate(
+      function () {
+        this.arcs.ap.material.opacity = posVec2.a;
+      }.bind(this)
+    );
+    portalGlow.onComplete(
+      function () {
+        this.arcs.a2.position.x = 20000;
+        moveIntoPortal.start();
+      }.bind(this)
+    );
+    // Move towards it
+    var posVec3 = {
+      x: this.camera.position.x,
+      y: this.camera.position.y,
+      z: this.camera.position.z,
+    };
+    var endVec3 = {
+      x: this.arcs.ap.position.x,
+      y: this.arcs.ap.position.y,
+      z: this.arcs.ap.position.z,
+    };
+    var moveIntoPortal = new TWEEN.Tween(posVec3, this.animation).to(
+      endVec3,
+      20000
+    );
+    moveIntoPortal.onUpdate(
+      function () {
+        this.camera.position.set(posVec3.x, posVec3.y, posVec3.z);
+        if (posVec3.z - endVec3.z < 0.1) {
+          this.updateSkybox("blue");
+        }
+      }.bind(this)
+    );
+    moveIntoPortal.onComplete(
+      function () {
+        setTimeout(() => {
+          credHandler.playCredits();
+        }, 5000);
+      }.bind(this)
+    );
+    const fIO = new FadeInOutEffect("transition-overlay", "white", 3000);
+    setTimeout(() => {
+      fIO.playEffect();
+    }, 43000); // Everything ends @ 45000
+    const credHandler = new CreditsHandler(
+      "credits-overlay",
+      "credits-title",
+      "credits-name"
+    );
+    credHandler.load(`${this.dataPath}credits.csv`);
+
+    francMerge.start();
   }
   setupBloom() {
     this.BLOOM_SCENE = 1; // SEPERATE SCENE FOR BLOOM
@@ -690,14 +854,15 @@ class SceneLobby {
     this.setupBloomAnimations(switcher, perf);
   }
   play() {
-    this.cameraPanDown();
+    this.cameraPanDown(false);
     setTimeout(() => {
       this.subHandler.playSubtitles();
     }, 8000);
+    // this.playEnding();
     // this.controls.enabled = true;
     // this.interactive = true;
   }
-  cameraPanDown() {
+  cameraPanDown(interactiveToggle = false) {
     // Pan Down Animation
     this.controls.enabled = false;
     var posVec1 = {
@@ -715,6 +880,10 @@ class SceneLobby {
     panDown.onComplete(
       function () {
         this.controls.enabled = true;
+        this.controls.lookAt(0, 5, -35); // Look at francis 2 mid point sorta
+        if (interactiveToggle) {
+          this.interactive = true;
+        }
       }.bind(this)
     );
     panDown.easing(TWEEN.Easing.Quadratic.InOut);

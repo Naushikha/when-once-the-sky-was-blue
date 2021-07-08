@@ -187,15 +187,9 @@ class FlyControls extends EventDispatcher {
 			const moveMult = delta * scope.movementSpeed;
 			const rotMult = delta * scope.rollSpeed;
 
-			// scope.object.translateX( scope.moveVector.x * moveMult );
-			// scope.object.translateY( scope.moveVector.y * moveMult );
-			// scope.object.translateZ( scope.moveVector.z * moveMult );
-
-			if (scope.object.rotation.x > Math.PI/4) scope.object.rotation.x = Math.PI/4;
-			if (scope.object.rotation.x < -Math.PI/4) scope.object.rotation.x = -Math.PI/4;
-			if (scope.object.rotation.y > Math.PI/8) scope.object.rotation.y = Math.PI/8;
-			if (scope.object.rotation.y < -Math.PI/8) scope.object.rotation.y = -Math.PI/8;
-			scope.object.rotation.z = 0;
+			scope.object.translateX( scope.moveVector.x * moveMult );
+			scope.object.translateY( scope.moveVector.y * moveMult );
+			scope.object.translateZ( scope.moveVector.z * moveMult );
 
 			scope.tmpQuaternion.set( scope.rotationVector.x * rotMult, scope.rotationVector.y * rotMult, scope.rotationVector.z * rotMult, 1 ).normalize();
 			scope.object.quaternion.multiply( scope.tmpQuaternion );

@@ -1,6 +1,6 @@
 import * as THREE from "./lib/three.module.js";
 import { OrbitControls } from "./lib/OrbitControls.js";
-import { FlyControls } from "./lib/FlyControlsUnrestricted.js";
+import { FlyControls } from "./lib/FlyControls.js";
 // Lightning imports
 import { LightningStorm } from "./lib/effects/LightningStorm.js";
 import { EffectComposer } from "./lib/postprocessing/EffectComposer.js";
@@ -106,7 +106,7 @@ class ScenePerf2 {
     this.clock = new THREE.Clock(); // Flycontrols need a CLOCK!
     // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls = new FlyControls(this.camera, this.renderer.domElement);
-    this.controls.movementSpeed = 1;
+    this.controls.movementSpeed = 0;
     this.controls.domElement = this.renderer.domElement;
     this.controls.rollSpeed = Math.PI / 25; // 30
     this.controls.enabled = true;

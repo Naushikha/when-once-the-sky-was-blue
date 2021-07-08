@@ -119,8 +119,6 @@ class SubtitleHandler {
         }
       }.bind(this)
     );
-    fadeIn.easing(TWEEN.Easing.Quadratic.InOut);
-    fadeOut.easing(TWEEN.Easing.Quadratic.InOut);
     fadeIn.start();
   }
   playSubtitles() {

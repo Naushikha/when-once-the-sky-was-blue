@@ -54,7 +54,7 @@ class CreditsHandler {
       endVec1,
       quarterTime
     );
-    fadeOut.delay(quarterTime * 2); // Show the subthis.title for this long
+    fadeOut.delay(quarterTime * 2); // Show the credit for this long
     fadeOut.onUpdate(
       function () {
         this.title.style.opacity = posVec1.o;
@@ -81,7 +81,6 @@ class CreditsHandler {
     fadeIn.start();
   }
   playCredits() {
-    // console.log(this.credits);
     this.currentCredit = 0; // Start from this subtitle
     this.overlay.style.visibility = "visible";
     this.title.innerHTML = this.credits[0].title;
