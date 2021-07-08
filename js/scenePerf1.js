@@ -132,7 +132,7 @@ class ScenePerf1 {
       this.renderer.domElement
     );
     this.controls.movementSpeed = 0;
-    this.controls.lookSpeed = 0.03;
+    this.controls.lookSpeed = 0.017;
     this.controls.domElement = this.renderer.domElement;
     this.controls.enabled = false;
 
