@@ -301,7 +301,7 @@ class SceneLobby {
       this.renderer.domElement
     );
     this.controls.movementSpeed = 0;
-    this.controls.lookSpeed = 0.03;
+    this.controls.lookSpeed = 0.017;
     this.controls.domElement = this.renderer.domElement;
     this.controls.rollSpeed = Math.PI / 30; // 30
     this.controls.enabled = false; // Disable it after creation
@@ -699,15 +699,17 @@ class SceneLobby {
       x3: this.francis3.position.x,
       z3: this.francis3.position.z,
       a: 1,
+      l: 0.4, // Make spotlight wider
     };
     var endVec1 = {
       x1: 0,
-      z1: 0,
+      z1: 10,
       x2: 0,
-      z2: 0,
+      z2: 10,
       x3: 0,
-      z3: 0,
+      z3: 10,
       a: 0,
+      l: 0.7,
     };
     var francMerge = new TWEEN.Tween(posVec1, this.animation).to(
       endVec1,
@@ -727,6 +729,16 @@ class SceneLobby {
         this.setFranciOpacity(this.francisUs, posVec1.a);
         this.arcs.a1.material.opacity = posVec1.a;
         this.arcs.a3.material.opacity = posVec1.a;
+        // Spotlights
+        this.francis1SpotLight.target.position.x = posVec1.x1;
+        this.francis1SpotLight.target.position.z = posVec1.z1;
+        this.francis2SpotLight.target.position.x = posVec1.x2;
+        this.francis2SpotLight.target.position.z = posVec1.z2;
+        this.francis3SpotLight.target.position.x = posVec1.x3;
+        this.francis3SpotLight.target.position.z = posVec1.z3;
+        this.francis1SpotLight.angle = posVec1.l;
+        this.francis2SpotLight.angle = posVec1.l;
+        this.francis3SpotLight.angle = posVec1.l;
       }.bind(this)
     );
     francMerge.onComplete(

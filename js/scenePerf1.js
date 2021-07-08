@@ -11,6 +11,8 @@ import { FXAAShader } from "./lib/postprocessing/shaders/FXAAShader.js";
 // Loading earth
 import { MTLLoader } from "./lib/MTLLoader.js";
 import { OBJLoader } from "./lib/OBJLoader.js";
+// Subtitles
+import { SubtitleHandler } from "./subtitleHandler.js";
 
 class ScenePerf1 {
   dataPath = "./data/";
@@ -62,7 +64,7 @@ class ScenePerf1 {
         this.scene.add(root);
         root.position.y = 0.1;
         const eTxt = new THREE.MeshStandardMaterial({
-          color: "rgb(255,0,0)", // color: "rgb(255,255,255)",
+          color: "rgb(255,255,255)",
         });
         root.traverse(function (child) {
           if (child instanceof THREE.Mesh) {
@@ -89,7 +91,6 @@ class ScenePerf1 {
           if (child instanceof THREE.Mesh) {
             child.material = eTxt;
             child.material.transparent = true;
-            child.material.opacity = 0;
             child.material.needsUpdate = true;
           }
         });
@@ -110,16 +111,26 @@ class ScenePerf1 {
     lifeRing.rotation.x += Math.PI / 2;
     lifeRing.position.set(-100, 315, 134);
     this.scene.add(lifeRing);
-
     const pointLight1 = new THREE.PointLight(0xffffff, 8, 100);
     this.scene.add(pointLight1);
     pointLight1.position.set(-100, 315, 134);
+    this.lifeRing = lifeRing;
+    this.lifeRingLight = pointLight1;
 
     const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.4);
     this.scene.add(directionalLight1);
     directionalLight1.position.set(-61, 665, 1075);
 
     this.setupAnimations();
+
+    // Load subtitles
+    const subHandler = new SubtitleHandler(
+      "captions-overlay",
+      "instruc",
+      "caption"
+    );
+    subHandler.load(`${this.dataPath}srt/perf1.srt`);
+    this.subHandler = subHandler;
 
     // const axesHelper = new THREE.AxesHelper(5);
     // this.scene.add(axesHelper);
@@ -132,7 +143,7 @@ class ScenePerf1 {
       this.renderer.domElement
     );
     this.controls.movementSpeed = 0;
-    this.controls.lookSpeed = 0.03;
+    this.controls.lookSpeed = 0.017;
     this.controls.domElement = this.renderer.domElement;
     this.controls.enabled = false;
 
@@ -143,12 +154,30 @@ class ScenePerf1 {
   play() {
     this.controls.enabled = false;
     this.anim.camMove1.start();
-    this.anim.wfWhite.start(); // Start Earth animation chain
+    this.anim.breatheIn.start();
+    this.subHandler.playSubtitles();
     // Enable controls after 6 secs
     setTimeout(() => {
       this.controls.enabled = true;
       this.controls.lookAt(192, 170, -285);
     }, 6000);
+    // Wireframe, white to red
+    setTimeout(() => {
+      this.anim.wfWhite.start();
+    }, 155000); // Start @ 2:35 -> 4:08 = 93
+    //Increase bloom
+    setTimeout(() => {
+      this.anim.bloomUp.start();
+    }, 275000); // Start @ 4:35 -> 5:05 = 30
+    // Decrease bloom
+    setTimeout(() => {
+      this.anim.bloomDown.start();
+    }, 310000); // Start @ 5:10 -> 5:26 = 16
+    // Stop light ring breathing
+    setTimeout(() => {
+      this.lifeRingDone = true;
+    }, 248000); // End @ 4:08
+
     // End callback
     setTimeout(() => {
       this.lobbyCallback("lobby");
@@ -158,7 +187,6 @@ class ScenePerf1 {
     const timeMove1 = 180000;
     const timeMove2 = 182000;
     const timeWF = 6000;
-    const timeOP = 6000;
     var posVec1 = {
       x: 650,
       y: 82,
@@ -195,22 +223,16 @@ class ScenePerf1 {
         this.camera.position.set(posVec2.x, posVec2.y, posVec2.z);
       }.bind(this)
     );
-    // Transition the earth to grey
+    // Transition the Earth
     var trans1 = {
-      r: 255,
-      g: 0,
-      b: 0,
-    };
-    var trans2 = {
       r: 255,
       g: 255,
       b: 255,
     };
-    var trans3 = {
-      o: 0,
-    };
-    var trans4 = {
-      o: 1,
+    var trans2 = {
+      r: 255,
+      g: 0,
+      b: 0,
     };
     var wfWhite = new TWEEN.Tween(trans1, this.animation).to(trans2, timeWF);
     wfWhite.onUpdate(
@@ -227,24 +249,88 @@ class ScenePerf1 {
         });
       }.bind(this)
     );
-    wfWhite.onComplete(function () {
-      earth2Visi.start();
-    });
-    var earth2Visi = new TWEEN.Tween(trans3, this.animation).to(trans4, timeOP); // Make earth2 visible
-    earth2Visi.onUpdate(
+    // Life ring breathe
+    const breatheTime = 2000; // milliseconds
+    const startVal1 = 1,
+      endVal1 = 0.2;
+    const startVal2 = 8,
+      endVal2 = 1;
+    var breatheVec1 = {
+      i: startVal1,
+      l: startVal2,
+    };
+    var breatheVec2 = {
+      i: endVal1,
+      l: endVal2,
+    };
+    var breatheIn = new TWEEN.Tween(breatheVec1, this.animation).to(
+      breatheVec2,
+      breatheTime
+    );
+    breatheIn.onUpdate(
       function () {
-        this.earth2.traverse(function (child) {
-          if (child instanceof THREE.Mesh) {
-            child.material.opacity = trans3.o;
-            child.material.needsUpdate = true;
-          }
-        });
+        if (this.lifeRingDone) {
+          this.lifeRing.material.opacity = startVal1;
+          this.lifeRingLight.intensity = startVal2;
+          breatheIn.stop();
+          breatheOut.stop();
+        }
+        this.lifeRing.material.opacity = breatheVec1.i;
+        this.lifeRingLight.intensity = breatheVec1.l;
+      }.bind(this)
+    );
+    breatheIn.onComplete(function () {
+      breatheVec1.i = endVal1;
+      breatheVec2.i = startVal1;
+      breatheVec1.l = endVal2;
+      breatheVec2.l = startVal2;
+      breatheOut.start();
+    });
+    var breatheOut = new TWEEN.Tween(breatheVec1, this.animation).to(
+      breatheVec2,
+      breatheTime
+    );
+    breatheOut.onUpdate(
+      function () {
+        this.lifeRing.material.opacity = breatheVec1.i;
+        this.lifeRingLight.intensity = breatheVec1.l;
+      }.bind(this)
+    );
+    breatheOut.onComplete(function () {
+      breatheVec1.i = startVal1;
+      breatheVec2.i = endVal1;
+      breatheVec1.l = startVal2;
+      breatheVec2.l = endVal2;
+      breatheIn.start();
+    });
+    var bloom1 = {
+      n: 1,
+    };
+    var bloom2 = {
+      n: 5,
+    };
+    var bloom3 = {
+      n: 1,
+    };
+    var bloomUp = new TWEEN.Tween(bloom1, this.animation).to(bloom2, 30000);
+    bloomUp.onUpdate(
+      function () {
+        this.bloomPass.strength = Number(bloom1.n);
+      }.bind(this)
+    );
+    var bloomDown = new TWEEN.Tween(bloom2, this.animation).to(bloom3, 16000);
+    bloomDown.onUpdate(
+      function () {
+        this.bloomPass.strength = Number(bloom2.n);
       }.bind(this)
     );
 
     this.anim = {
       camMove1: camMove1,
       wfWhite: wfWhite,
+      breatheIn: breatheIn,
+      bloomUp: bloomUp,
+      bloomDown: bloomDown,
     };
   }
   setupBloom() {
