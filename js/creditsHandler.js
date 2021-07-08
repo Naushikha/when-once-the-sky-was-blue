@@ -28,17 +28,15 @@ class CreditsHandler {
       });
   }
   showCredit() {
-    const quarterTime = 5000 / 4; // Duration of a credit display
+    const dispTime = 5000; // Duration of a credit display
+    const fIOTime = 2000; // Duration of a credit fade in and out
     var posVec1 = {
       o: 0,
     };
     var endVec1 = {
       o: 1,
     };
-    var fadeIn = new TWEEN.Tween(posVec1, this.animation).to(
-      endVec1,
-      quarterTime
-    );
+    var fadeIn = new TWEEN.Tween(posVec1, this.animation).to(endVec1, fIOTime);
     fadeIn.onUpdate(
       function () {
         this.title.style.opacity = posVec1.o;
@@ -50,11 +48,8 @@ class CreditsHandler {
       endVec1.o = 0;
       fadeOut.start();
     });
-    var fadeOut = new TWEEN.Tween(posVec1, this.animation).to(
-      endVec1,
-      quarterTime
-    );
-    fadeOut.delay(quarterTime * 2); // Show the credit for this long
+    var fadeOut = new TWEEN.Tween(posVec1, this.animation).to(endVec1, fIOTime);
+    fadeOut.delay(dispTime); // Show the credit for this long
     fadeOut.onUpdate(
       function () {
         this.title.style.opacity = posVec1.o;
@@ -67,7 +62,7 @@ class CreditsHandler {
           this.currentCredit += 1;
           this.title.innerHTML = this.credits[this.currentCredit].title;
           this.name.innerHTML = this.credits[this.currentCredit].name;
-          setTimeout(this.showCredit.bind(this), quarterTime);
+          setTimeout(this.showCredit.bind(this), fIOTime);
         } else {
           cancelAnimationFrame(this.renderID);
           this.currentCredit = 0;
