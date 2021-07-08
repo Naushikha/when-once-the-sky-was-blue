@@ -134,12 +134,12 @@ class ScenePerf3 {
     this.renderState = false; // We won't be rendering straight away
   }
   setupAnimations() {
-    const timeRise = 313000;
+    const timeRise = 266000;
     var posVec1 = {
       i: 183,
     };
     var endVec1 = {
-      i: 181,
+      i: 180.5,
     };
     var sunRise = new TWEEN.Tween(posVec1, this.animation).to(
       endVec1,
@@ -151,8 +151,7 @@ class ScenePerf3 {
         this.updateSky();
       }.bind(this)
     );
-    // Move camera towards sun rise
-    const timeMove = 313000; // Keep moving it will the transition occurs
+    // Move camera till sun rise
     var posVec2 = {
       z: 0,
     };
@@ -161,7 +160,7 @@ class ScenePerf3 {
     };
     var camMove = new TWEEN.Tween(posVec2, this.animation).to(
       endVec2,
-      timeMove
+      timeRise
     );
     camMove.onUpdate(
       function () {
@@ -173,9 +172,7 @@ class ScenePerf3 {
         ) {
           // Send the just passed life ring to the back
           this.lastLifeRingZ += this.lifeRingSpace;
-          // this.lifeRings[this.currentLifeRing];
-          this.glowRing(this.lifeRings[this.currentLifeRing]); // Make it gloww
-
+          this.fadeRing(this.lifeRings[this.currentLifeRing]); // Make it fade then glow
           // Set proper count
           if (this.currentLifeRing < this.lifeRings.length - 1) {
             this.currentLifeRing += 1;
@@ -207,6 +204,27 @@ class ScenePerf3 {
     glowy.start();
     lifeRing.material.opacity = 0;
     lifeRing.position.z = this.lastLifeRingZ;
+  }
+  fadeRing(lifeRing) {
+    const fadeTime = 1000;
+    var posVec1 = {
+      i: 1,
+    };
+    var endVec1 = {
+      i: 0,
+    };
+    var fady = new TWEEN.Tween(posVec1, this.animation).to(endVec1, fadeTime);
+    fady.onUpdate(
+      function () {
+        lifeRing.material.opacity = posVec1.i;
+      }.bind(this)
+    );
+    fady.onComplete(
+      function () {
+        this.glowRing(lifeRing);
+      }.bind(this)
+    );
+    fady.start();
   }
   setupBloom() {
     this.BLOOM_SCENE = 1; // SEPERATE SCENE FOR BLOOM
@@ -309,7 +327,7 @@ class ScenePerf3 {
     // End callback
     setTimeout(() => {
       this.lobbyCallback("lobby");
-    }, 313000); // End @ 5:13
+    }, 266000); // End @ 4:26
   }
   renderLoop() {
     this.renderID = requestAnimationFrame(this.renderLoop.bind(this));
