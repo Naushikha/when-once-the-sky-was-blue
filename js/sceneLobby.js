@@ -157,8 +157,8 @@ class SceneLobby {
       objLoader.setMaterials(mtl);
       objLoader.load(`${this.dataPath}mdl/francis.obj`, (root) => {
         root.position.z = 38.7;
-        root.position.y = -1;
-        root.rotation.x += Math.PI / 9;
+        root.position.y = -20;
+        root.rotation.y += Math.PI;
         root.scale.set(0.2, 0.2, 0.2);
         this.scene.add(root);
         this.francisUs = root;
@@ -269,10 +269,10 @@ class SceneLobby {
     this.scene.add(francis3SpotLight.target);
     this.francis3SpotLight = francis3SpotLight;
 
-    const francis4SpotLight = new THREE.SpotLight(0xffffff, 0.5, 40, 0.4);
+    const francis4SpotLight = new THREE.SpotLight(0xffffff, 0.5, 40, 0.6);
     francis4SpotLight.position.set(0, 16, 20); // Camera position
     const sp4Target = new THREE.Object3D();
-    sp4Target.position.set(0, 8, 38);
+    sp4Target.position.set(0, 3, 38);
     francis4SpotLight.target = sp4Target;
     this.scene.add(francis4SpotLight);
     this.scene.add(francis4SpotLight.target);
@@ -462,9 +462,49 @@ class SceneLobby {
     franc3AnimUp.easing(TWEEN.Easing.Quadratic.InOut);
     franc3AnimDown.easing(TWEEN.Easing.Quadratic.InOut);
 
+    // Francis 4 Animation
+    const franc4Offset = -20;
+    var posVec4 = {
+      y: 0,
+    };
+    var endVec4 = {
+      y: floatHeight,
+    };
+    var franc4AnimUp = new TWEEN.Tween(posVec4, this.animation).to(
+      endVec4,
+      5000
+    );
+    franc4AnimUp.onUpdate(
+      function () {
+        this.francisUs.position.y = posVec4.y + franc4Offset;
+      }.bind(this)
+    );
+    franc4AnimUp.onComplete(function () {
+      posVec4.y = floatHeight;
+      endVec4.y = 0;
+      franc4AnimDown.start();
+    });
+    var franc4AnimDown = new TWEEN.Tween(posVec4, this.animation).to(
+      endVec4,
+      5000
+    );
+    franc4AnimDown.onUpdate(
+      function () {
+        this.francisUs.position.y = posVec4.y + franc4Offset;
+      }.bind(this)
+    );
+    franc4AnimDown.onComplete(function () {
+      posVec4.y = 0;
+      endVec4.y = floatHeight;
+      franc4AnimUp.start();
+    });
+    franc4AnimUp.easing(TWEEN.Easing.Quadratic.InOut);
+    franc4AnimDown.easing(TWEEN.Easing.Quadratic.InOut);
+
     franc1AnimUp.start();
     franc2AnimUp.start();
     franc3AnimUp.start();
+    franc4AnimUp.start();
 
     const maxLight = 3;
     // Light hover animations
@@ -922,6 +962,13 @@ class SceneLobby {
     this.animation.update();
     if (this.controls.enabled) {
       this.controls.update(delta);
+      // Move franci-us
+      const vector = this.camera.getWorldDirection();
+      const theta = Math.atan2(vector.x, vector.z);
+      const camRot = Math.PI + theta;
+      this.francisUs.rotation.y = theta;
+      this.francisUs.position.x = this.camera.position.x + Math.sin(camRot) * 3;
+      this.francisUs.position.z = this.camera.position.z + Math.cos(camRot) * 3;
     }
     // this.renderer.render(this.scene, this.camera);
     this.renderBloom();
