@@ -17,6 +17,7 @@ fetch(`${dataPath}showtimes.json`)
     const showState = data.showState;
     const showtimeOverlay = document.getElementById("showtime-overlay");
     const warning = document.getElementById("showtime-warn");
+    const countdown = document.getElementById("showtime-countdown");
 
     switch (showState) {
       case "closed":
@@ -41,6 +42,7 @@ fetch(`${dataPath}showtimes.json`)
           break;
         }
         // If not a daily time then check for dates
+        let tmpNextTime = [];
         for (let day of data.specificDays) {
           const dateStartUTC = Math.floor(new Date(day[0]).getTime() / 1000);
           const dateEndUTC = Math.floor(new Date(day[1]).getTime() / 1000);
@@ -49,9 +51,43 @@ fetch(`${dataPath}showtimes.json`)
             runShow();
             break;
           }
+          tmpNextTime.push(dateStartUTC);
         }
-        warning.innerHTML = `Looks like you missed the showtime. <br> Check back again later.`;
-        throw new Error("Show's closed bruh.");
+        tmpNextTime = tmpNextTime.filter((x) => {
+          return timeNowUTC < x;
+        });
+        tmpNextTime.sort();
+        if (tmpNextTime.length === 0) {
+          warning.innerHTML = `Looks like you missed the showtime. <br> Check back again later.`;
+          throw new Error("Show's closed bruh.");
+        }
+        let tmpNextDay = new Date(tmpNextTime[0] * 1000);
+        tmpNextTime = tmpNextTime[0] - timeNowUTC;
+        var timerx = setInterval(() => {
+          let days = Math.floor(tmpNextTime / (60 * 60 * 24));
+          let hours = Math.floor((tmpNextTime % (60 * 60 * 24)) / (60 * 60));
+          let minutes = Math.floor((tmpNextTime % (60 * 60)) / 60);
+          let seconds = Math.floor(tmpNextTime % 60);
+
+          countdown.innerHTML =
+            days +
+            " D &nbsp;" +
+            hours +
+            " H &nbsp;" +
+            minutes +
+            " M &nbsp;" +
+            seconds +
+            " S ";
+
+          tmpNextTime -= 1;
+          // If the count down is finished, write some text
+          if (tmpNextTime < 0) {
+            clearInterval(timerx);
+            countdown.innerHTML = "Please refresh this page to watch the show.";
+          }
+        }, 1000);
+        warning.innerHTML = `Looks like you missed the showtime. <br> Next showtime is on ${tmpNextDay}`;
+        throw new Error("Wait till the show opens bruh.");
         break;
       case "open":
         showtimeOverlay.style.visibility = "hidden";
@@ -88,15 +124,15 @@ function runShow() {
     // fullscrButton.style.animation = "fadein 5s";
 
     // Skip play for now
-    // currentScene = "perf1";
-    // perf1.render();
-    // perf1.play();
-    // sfxPerf1.play();
+    // currentScene = "perf3";
+    // perf3.render();
+    // perf3.play();
+    // sfxPerf3.play();
 
     // lobby.render();
     // lobby.play();
-    // // sfxLobbyBase.play();
-    // // sfxLobbyVO.play(8);
+    // sfxLobbyBase.play();
+    // sfxLobbyVO.play(8);
     // lobby.interactive = true;
 
     // startButton.style.visibility = "hidden";

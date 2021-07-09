@@ -156,9 +156,9 @@ class SceneLobby {
       const objLoader = new OBJLoader(manager);
       objLoader.setMaterials(mtl);
       objLoader.load(`${this.dataPath}mdl/francis.obj`, (root) => {
-        root.position.z = 38.7;
-        root.position.y = -1;
-        root.rotation.x += Math.PI / 9;
+        root.position.z = 45;
+        root.position.y = -20;
+        root.rotation.y += Math.PI;
         root.scale.set(0.2, 0.2, 0.2);
         this.scene.add(root);
         this.francisUs = root;
@@ -206,10 +206,14 @@ class SceneLobby {
     arc3.position.set(-30, 10, -20);
     arc3.rotation.y += Math.PI / 6;
     this.scene.add(arc3);
+    const arc4 = new THREE.Mesh(arcGeometry, arcMaterial2);
+    arc4.position.set(0, 10, 55);
+    this.scene.add(arc4);
     this.arcs = {
       a1: arc1,
       a2: arc2,
       a3: arc3,
+      a4: arc4,
       ap: arcP,
     };
 
@@ -233,6 +237,8 @@ class SceneLobby {
     arc2.layers.enable(this.BLOOM_SCENE);
     arc3.layers.toggle(this.BLOOM_SCENE);
     arc3.layers.enable(this.BLOOM_SCENE);
+    arc4.layers.toggle(this.BLOOM_SCENE);
+    arc4.layers.enable(this.BLOOM_SCENE);
     arcP.layers.enable(this.BLOOM_SCENE);
     arcP.material.opacity = 0;
 
@@ -269,10 +275,10 @@ class SceneLobby {
     this.scene.add(francis3SpotLight.target);
     this.francis3SpotLight = francis3SpotLight;
 
-    const francis4SpotLight = new THREE.SpotLight(0xffffff, 0.5, 40, 0.4);
+    const francis4SpotLight = new THREE.SpotLight(0xffffff, 0.5, 40, 0.6);
     francis4SpotLight.position.set(0, 16, 20); // Camera position
     const sp4Target = new THREE.Object3D();
-    sp4Target.position.set(0, 8, 38);
+    sp4Target.position.set(0, 3, 38);
     francis4SpotLight.target = sp4Target;
     this.scene.add(francis4SpotLight);
     this.scene.add(francis4SpotLight.target);
@@ -462,9 +468,49 @@ class SceneLobby {
     franc3AnimUp.easing(TWEEN.Easing.Quadratic.InOut);
     franc3AnimDown.easing(TWEEN.Easing.Quadratic.InOut);
 
+    // Francis 4 Animation
+    const franc4Offset = -20;
+    var posVec4 = {
+      y: 0,
+    };
+    var endVec4 = {
+      y: floatHeight,
+    };
+    var franc4AnimUp = new TWEEN.Tween(posVec4, this.animation).to(
+      endVec4,
+      5000
+    );
+    franc4AnimUp.onUpdate(
+      function () {
+        this.francisUs.position.y = posVec4.y + franc4Offset;
+      }.bind(this)
+    );
+    franc4AnimUp.onComplete(function () {
+      posVec4.y = floatHeight;
+      endVec4.y = 0;
+      franc4AnimDown.start();
+    });
+    var franc4AnimDown = new TWEEN.Tween(posVec4, this.animation).to(
+      endVec4,
+      5000
+    );
+    franc4AnimDown.onUpdate(
+      function () {
+        this.francisUs.position.y = posVec4.y + franc4Offset;
+      }.bind(this)
+    );
+    franc4AnimDown.onComplete(function () {
+      posVec4.y = 0;
+      endVec4.y = floatHeight;
+      franc4AnimUp.start();
+    });
+    franc4AnimUp.easing(TWEEN.Easing.Quadratic.InOut);
+    franc4AnimDown.easing(TWEEN.Easing.Quadratic.InOut);
+
     franc1AnimUp.start();
     franc2AnimUp.start();
     franc3AnimUp.start();
+    franc4AnimUp.start();
 
     const maxLight = 3;
     // Light hover animations
@@ -729,6 +775,7 @@ class SceneLobby {
         this.setFranciOpacity(this.francisUs, posVec1.a);
         this.arcs.a1.material.opacity = posVec1.a;
         this.arcs.a3.material.opacity = posVec1.a;
+        this.arcs.a4.material.opacity = posVec1.a;
         // Spotlights
         this.francis1SpotLight.target.position.x = posVec1.x1;
         this.francis1SpotLight.target.position.z = posVec1.z1;
@@ -749,6 +796,7 @@ class SceneLobby {
         this.francisUs.position.x = 20000;
         this.arcs.a1.position.x = 20000;
         this.arcs.a3.position.x = 20000;
+        this.arcs.a4.position.x = 20000;
         portalGlow.start();
       }.bind(this)
     );
@@ -922,6 +970,14 @@ class SceneLobby {
     this.animation.update();
     if (this.controls.enabled) {
       this.controls.update(delta);
+      // Move franci-us
+      let vector = new THREE.Vector3();
+      this.camera.getWorldDirection(vector);
+      const theta = Math.atan2(vector.x, vector.z);
+      const camRot = Math.PI + theta;
+      this.francisUs.rotation.y = theta;
+      this.francisUs.position.x = this.camera.position.x + Math.sin(camRot) * 3;
+      this.francisUs.position.z = this.camera.position.z + Math.cos(camRot) * 3;
     }
     // this.renderer.render(this.scene, this.camera);
     this.renderBloom();
