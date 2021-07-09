@@ -206,7 +206,7 @@ class SceneLobby {
     arc3.position.set(-30, 10, -20);
     arc3.rotation.y += Math.PI / 6;
     this.scene.add(arc3);
-    const arc4 = new THREE.Mesh(arcGeometry, arcMaterial2);
+    const arc4 = new THREE.Mesh(arcGeometry, arcMaterial);
     arc4.position.set(0, 10, 55);
     this.scene.add(arc4);
     this.arcs = {
