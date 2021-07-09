@@ -71,13 +71,13 @@ fetch(`${dataPath}showtimes.json`)
 
           countdown.innerHTML =
             days +
-            " D &nbsp;" +
+            " d &nbsp;" +
             hours +
-            " H &nbsp;" +
+            " h &nbsp;" +
             minutes +
-            " M &nbsp;" +
+            " m &nbsp;" +
             seconds +
-            " S ";
+            " s ";
 
           tmpNextTime -= 1;
           // If the count down is finished, write some text

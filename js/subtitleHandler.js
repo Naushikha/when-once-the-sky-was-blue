@@ -125,7 +125,10 @@ class SubtitleHandler {
     this.currentSub = 0; // Start from this subtitle
     this.overlay.style.visibility = "visible";
     this.render();
-    this.showSubtitle();
+    // Start first sub in proper time
+    setTimeout(() => {
+      this.showSubtitle();
+    }, this.subtitles[this.currentSub].startTime);
   }
   render() {
     this.renderID = requestAnimationFrame(this.render.bind(this));

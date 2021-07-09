@@ -206,7 +206,7 @@ class SceneLobby {
     arc3.position.set(-30, 10, -20);
     arc3.rotation.y += Math.PI / 6;
     this.scene.add(arc3);
-    const arc4 = new THREE.Mesh(arcGeometry, arcMaterial2);
+    const arc4 = new THREE.Mesh(arcGeometry, arcMaterial);
     arc4.position.set(0, 10, 55);
     this.scene.add(arc4);
     this.arcs = {
@@ -849,7 +849,7 @@ class SceneLobby {
         }, 5000);
       }.bind(this)
     );
-    const fIO = new FadeInOutEffect("transition-overlay", "white", 3000);
+    const fIO = new FadeInOutEffect("transition-overlay", "white", 3500);
     setTimeout(() => {
       fIO.playEffect();
     }, 43000); // Everything ends @ 45000
