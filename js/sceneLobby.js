@@ -156,7 +156,7 @@ class SceneLobby {
       const objLoader = new OBJLoader(manager);
       objLoader.setMaterials(mtl);
       objLoader.load(`${this.dataPath}mdl/francis.obj`, (root) => {
-        root.position.z = 38.7;
+        root.position.z = 45;
         root.position.y = -20;
         root.rotation.y += Math.PI;
         root.scale.set(0.2, 0.2, 0.2);
@@ -206,10 +206,14 @@ class SceneLobby {
     arc3.position.set(-30, 10, -20);
     arc3.rotation.y += Math.PI / 6;
     this.scene.add(arc3);
+    const arc4 = new THREE.Mesh(arcGeometry, arcMaterial2);
+    arc4.position.set(0, 10, 55);
+    this.scene.add(arc4);
     this.arcs = {
       a1: arc1,
       a2: arc2,
       a3: arc3,
+      a4: arc4,
       ap: arcP,
     };
 
@@ -233,6 +237,8 @@ class SceneLobby {
     arc2.layers.enable(this.BLOOM_SCENE);
     arc3.layers.toggle(this.BLOOM_SCENE);
     arc3.layers.enable(this.BLOOM_SCENE);
+    arc4.layers.toggle(this.BLOOM_SCENE);
+    arc4.layers.enable(this.BLOOM_SCENE);
     arcP.layers.enable(this.BLOOM_SCENE);
     arcP.material.opacity = 0;
 
@@ -769,6 +775,7 @@ class SceneLobby {
         this.setFranciOpacity(this.francisUs, posVec1.a);
         this.arcs.a1.material.opacity = posVec1.a;
         this.arcs.a3.material.opacity = posVec1.a;
+        this.arcs.a4.material.opacity = posVec1.a;
         // Spotlights
         this.francis1SpotLight.target.position.x = posVec1.x1;
         this.francis1SpotLight.target.position.z = posVec1.z1;
@@ -789,6 +796,7 @@ class SceneLobby {
         this.francisUs.position.x = 20000;
         this.arcs.a1.position.x = 20000;
         this.arcs.a3.position.x = 20000;
+        this.arcs.a4.position.x = 20000;
         portalGlow.start();
       }.bind(this)
     );
@@ -963,7 +971,8 @@ class SceneLobby {
     if (this.controls.enabled) {
       this.controls.update(delta);
       // Move franci-us
-      const vector = this.camera.getWorldDirection();
+      let vector = new THREE.Vector3();
+      this.camera.getWorldDirection(vector);
       const theta = Math.atan2(vector.x, vector.z);
       const camRot = Math.PI + theta;
       this.francisUs.rotation.y = theta;
