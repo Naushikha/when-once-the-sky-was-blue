@@ -88,12 +88,13 @@ class ScenePerf2 {
     this.setupAnimations();
 
     // Load subtitles
-    // const subHandler = new subtitleHandler(
-    //   "captions-overlay",
-    //   "instruc",
-    //   "caption"
-    // );
-    // subHandler.load(`${this.dataPath}srt/perf2.srt`)
+    const subHandler = new SubtitleHandler(
+      "captions-overlay",
+      "instruc",
+      "caption"
+    );
+    subHandler.load(`${this.dataPath}srt/perf2.srt`);
+    this.subHandler = subHandler;
 
     const mainLight = new THREE.PointLight(0xffffff, 7, 50, 2);
     mainLight.position.set(0, -16, 0);
@@ -372,10 +373,7 @@ class ScenePerf2 {
   play() {
     // Life ring animation, start straightaway
     this.anim.breatheIn.start();
-
-    // this.anim.toBlack.start();
-    // this.anim.eSlowStart.start();
-
+    this.subHandler.playSubtitles();
     // Background color animations
     setTimeout(() => {
       this.anim.toRed.start();

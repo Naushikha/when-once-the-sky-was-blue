@@ -849,7 +849,7 @@ class SceneLobby {
         }, 5000);
       }.bind(this)
     );
-    const fIO = new FadeInOutEffect("transition-overlay", "white", 3000);
+    const fIO = new FadeInOutEffect("transition-overlay", "white", 3500);
     setTimeout(() => {
       fIO.playEffect();
     }, 43000); // Everything ends @ 45000
