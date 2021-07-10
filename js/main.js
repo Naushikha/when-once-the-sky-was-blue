@@ -133,6 +133,7 @@ function runShow() {
     // lobby.play();
     // sfxLobbyBase.play();
     // sfxLobbyVO.play(8);
+    // lobby.playEnding();
     // lobby.interactive = true;
 
     // startButton.style.visibility = "hidden";
@@ -417,7 +418,7 @@ function runShow() {
         fO = new FadeOutEffect(
           "transition-overlay",
           "white",
-          4000,
+          5000,
           () => {
             pauseAllLobbySFX();
             sfxPerf1.play();
@@ -434,7 +435,7 @@ function runShow() {
         fO = new FadeOutEffect(
           "transition-overlay",
           "white",
-          4000,
+          5000,
           () => {
             pauseAllLobbySFX();
             sfxPerf2.play();
@@ -451,7 +452,7 @@ function runShow() {
         fO = new FadeOutEffect(
           "transition-overlay",
           "white",
-          4000,
+          5000,
           () => {
             pauseAllLobbySFX();
             sfxPerf3.play();
@@ -489,12 +490,15 @@ function runShow() {
   function sceneSwitchKey() {
     switch (currentScene) {
       case "perf1":
+        perf1.subHandler.stopSubtitles();
         switchCallback("lobby");
         break;
       case "perf2":
+        perf2.subHandler.stopSubtitles();
         switchCallback("lobby");
         break;
       case "perf3":
+        perf3.subHandler.stopSubtitles();
         switchCallback("lobby");
         break;
       default:
