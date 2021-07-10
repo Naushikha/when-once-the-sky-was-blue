@@ -14,6 +14,7 @@ body {
   font-family: "EB Garamond", serif;
   user-select: none;
   overflow: hidden;
+  background-color: black;
 }
 
 #info {
@@ -75,6 +76,7 @@ body {
 
 #showtime-overlay {
   background: rgba(0, 0, 0, 1);
+  visibility: hidden;
 }
 
 #showtime-overlay h1 {
@@ -133,10 +135,6 @@ body {
 #credits-overlay #credits-name {
   font-size: 30px;
   text-align: center;
-}
-
-#loading-overlay {
-  visibility: hidden;
 }
 
 #loading-overlay #fullscr-button {

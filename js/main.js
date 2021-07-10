@@ -21,6 +21,7 @@ fetch(`${dataPath}showtimes.json`)
 
     switch (showState) {
       case "closed":
+        showtimeOverlay.style.visibility = "visible";
         warning.innerHTML =
           "Looks like you missed the showtime. <br> Check back again later.";
         throw new Error("Show's closed bruh.");
@@ -58,6 +59,7 @@ fetch(`${dataPath}showtimes.json`)
         });
         tmpNextTime.sort();
         if (tmpNextTime.length === 0) {
+          showtimeOverlay.style.visibility = "visible";
           warning.innerHTML = `Looks like you missed the showtime. <br> Check back again later.`;
           throw new Error("Show's closed bruh.");
         }
@@ -86,6 +88,7 @@ fetch(`${dataPath}showtimes.json`)
             countdown.innerHTML = "Please refresh this page to watch the show.";
           }
         }, 1000);
+        showtimeOverlay.style.visibility = "visible";
         warning.innerHTML = `Looks like you missed the showtime. <br> Next showtime is on ${tmpNextDay}`;
         throw new Error("Wait till the show opens bruh.");
         break;
@@ -104,9 +107,7 @@ function runShow() {
   const loadingOverlay = document.getElementById("loading-overlay");
   const startButton = document.getElementById("start-button");
   const fullscrButton = document.getElementById("fullscr-button");
-
-  loadingOverlay.style.visibility = "visible";
-
+  
   let currentScene = "lobby";
 
   // Loading manager
