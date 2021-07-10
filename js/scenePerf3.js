@@ -11,7 +11,8 @@ import { FXAAShader } from "./lib/postprocessing/shaders/FXAAShader.js";
 // Water & sky
 import { Water } from "./lib/effects/Water.js";
 import { Sky } from "./lib/effects/Sky.js";
-
+// For subtitles
+import { SubtitleHandler } from "./subtitleHandler.js";
 class ScenePerf3 {
   dataPath = "./data/";
   lobbyCallback;
@@ -116,6 +117,15 @@ class ScenePerf3 {
 
     const axesHelper = new THREE.AxesHelper(5);
     // this.scene.add(axesHelper);
+
+    // Load subtitles
+    const subHandler = new SubtitleHandler(
+      "captions-overlay",
+      "instruc",
+      "caption"
+    );
+    subHandler.load(`${this.dataPath}srt/perf3.srt`);
+    this.subHandler = subHandler;
 
     // Define the controls ------------------------------------------------------
     this.clock = new THREE.Clock(); // FPSControls need a CLOCK!
@@ -319,6 +329,7 @@ class ScenePerf3 {
     this.anim.camMove.start();
     this.controls.enabled = false;
     this.camera.rotation.y = Math.PI;
+    this.subHandler.playSubtitles();
     // Enable controls after 6 secs
     setTimeout(() => {
       this.controls.enabled = true;

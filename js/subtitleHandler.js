@@ -115,7 +115,6 @@ class SubtitleHandler {
           cancelAnimationFrame(this.renderID);
           this.currentSub = 0;
           this.overlay.style.visibility = "hidden";
-          this.renderState = false;
         }
       }.bind(this)
     );
@@ -129,6 +128,11 @@ class SubtitleHandler {
     setTimeout(() => {
       this.showSubtitle();
     }, this.subtitles[this.currentSub].startTime);
+  }
+  stopSubtitles() {
+    cancelAnimationFrame(this.renderID);
+    this.currentSub = 0;
+    this.overlay.style.visibility = "hidden";
   }
   render() {
     this.renderID = requestAnimationFrame(this.render.bind(this));
