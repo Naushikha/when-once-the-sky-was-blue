@@ -54,12 +54,12 @@ class SceneLobby {
         "txt/black_sb_right.png",
       ]),
       purple: skyBoxLoader.load([
-        "txt/purple2_sb_front.png",
-        "txt/purple2_sb_back.png",
-        "txt/purple2_sb_top.png",
-        "txt/purple2_sb_bottom.png",
-        "txt/purple2_sb_left.png",
-        "txt/purple2_sb_right.png",
+        "txt/purple_sb_front.png",
+        "txt/purple_sb_back.png",
+        "txt/purple_sb_top.png",
+        "txt/purple_sb_bottom.png",
+        "txt/purple_sb_left.png",
+        "txt/purple_sb_right.png",
       ]),
       red: skyBoxLoader.load([
         "txt/red_sb_front.png",
