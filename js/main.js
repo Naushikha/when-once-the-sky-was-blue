@@ -107,7 +107,7 @@ function runShow() {
   const loadingOverlay = document.getElementById("loading-overlay");
   const startButton = document.getElementById("start-button");
   const fullscrButton = document.getElementById("fullscr-button");
-  
+
   let currentScene = "lobby";
 
   // Loading manager
@@ -134,7 +134,13 @@ function runShow() {
     // lobby.play();
     // sfxLobbyBase.play();
     // sfxLobbyVO.play(8);
-    // lobby.playEnding();
+    // setTimeout(() => {
+    //   lobby.playEnding();
+    // }, 8000);
+
+    // lobby.setFranciTexture(lobby.francis1);
+    // lobby.setFranciTexture(lobby.francis2);
+    // lobby.setFranciTexture(lobby.francis3);
     // lobby.interactive = true;
 
     // startButton.style.visibility = "hidden";
@@ -239,42 +245,45 @@ function runShow() {
   const sfxPerf2Add = new THREE.Audio(audioListener);
   const sfxPerf3Add = new THREE.Audio(audioListener);
   const sfxPerf3AddB = new THREE.Audio(audioListener);
-  audioLoader.load(`${dataPath}sfx/lobby_base.ogg`, function (audioBuffer) {
-    sfxLobbyBase.setBuffer(audioBuffer);
-    sfxLobbyBase.setLoop(true);
-  });
-  audioLoader.load(`${dataPath}sfx/lobby_vo.ogg`, function (audioBuffer) {
-    sfxLobbyVO.setBuffer(audioBuffer);
-    sfxLobbyVO.userData.duration = 80000; // 1:20
-  });
-  audioLoader.load(`${dataPath}sfx/perf1.ogg`, function (audioBuffer) {
-    sfxPerf1.setBuffer(audioBuffer);
-  });
-  audioLoader.load(`${dataPath}sfx/perf2.ogg`, function (audioBuffer) {
-    sfxPerf2.setBuffer(audioBuffer);
-  });
-  audioLoader.load(`${dataPath}sfx/perf3.ogg`, function (audioBuffer) {
-    sfxPerf3.setBuffer(audioBuffer);
-  });
-  audioLoader.load(`${dataPath}sfx/perf1_add.ogg`, function (audioBuffer) {
-    sfxPerf1Add.setBuffer(audioBuffer);
-    sfxPerf1Add.setLoop(true);
-  });
-  audioLoader.load(`${dataPath}sfx/perf2_add.ogg`, function (audioBuffer) {
-    sfxPerf2Add.setBuffer(audioBuffer);
-    sfxPerf2Add.setLoop(true);
-  });
-  audioLoader.load(`${dataPath}sfx/perf3_add.ogg`, function (audioBuffer) {
-    sfxPerf3Add.setBuffer(audioBuffer);
-    sfxPerf3Add.setLoop(true);
-  });
-  audioLoader.load(
-    `${dataPath}sfx/perf3_add_birds.ogg`,
-    function (audioBuffer) {
-      sfxPerf3AddB.setBuffer(audioBuffer);
-      sfxPerf3AddB.setLoop(true);
-    }
-  );
+  const loadAllAudio = () => {
+    audioLoader.load(`${dataPath}sfx/lobby_base.ogg`, function (audioBuffer) {
+      sfxLobbyBase.setBuffer(audioBuffer);
+      sfxLobbyBase.setLoop(true);
+    });
+    audioLoader.load(`${dataPath}sfx/lobby_vo.ogg`, function (audioBuffer) {
+      sfxLobbyVO.setBuffer(audioBuffer);
+      sfxLobbyVO.userData.duration = 80000; // 1:20
+    });
+    audioLoader.load(`${dataPath}sfx/perf1.ogg`, function (audioBuffer) {
+      sfxPerf1.setBuffer(audioBuffer);
+    });
+    audioLoader.load(`${dataPath}sfx/perf2.ogg`, function (audioBuffer) {
+      sfxPerf2.setBuffer(audioBuffer);
+    });
+    audioLoader.load(`${dataPath}sfx/perf3.ogg`, function (audioBuffer) {
+      sfxPerf3.setBuffer(audioBuffer);
+    });
+    audioLoader.load(`${dataPath}sfx/perf1_add.ogg`, function (audioBuffer) {
+      sfxPerf1Add.setBuffer(audioBuffer);
+      sfxPerf1Add.setLoop(true);
+    });
+    audioLoader.load(`${dataPath}sfx/perf2_add.ogg`, function (audioBuffer) {
+      sfxPerf2Add.setBuffer(audioBuffer);
+      sfxPerf2Add.setLoop(true);
+    });
+    audioLoader.load(`${dataPath}sfx/perf3_add.ogg`, function (audioBuffer) {
+      sfxPerf3Add.setBuffer(audioBuffer);
+      sfxPerf3Add.setLoop(true);
+    });
+    audioLoader.load(
+      `${dataPath}sfx/perf3_add_birds.ogg`,
+      function (audioBuffer) {
+        sfxPerf3AddB.setBuffer(audioBuffer);
+        sfxPerf3AddB.setLoop(true);
+      }
+    );
+  };
+  // loadAllAudio();
 
   // Handle lobby and performance sound pausing/playing
   let perf1Done = false,
@@ -313,9 +322,9 @@ function runShow() {
 
   // Setup scenes
   const lobby = new SceneLobby(renderer, manager, stats);
-  const perf1 = new ScenePerf1(renderer, manager, stats);
-  const perf2 = new ScenePerf2(renderer, manager, stats);
-  const perf3 = new ScenePerf3(renderer, manager, stats);
+  var perf1 = new ScenePerf1(renderer, manager, stats);
+  var perf2 = new ScenePerf2(renderer, manager, stats);
+  var perf3 = new ScenePerf3(renderer, manager, stats);
 
   // Set cameras to listen to audio
   lobby.camera.add(audioListener);
@@ -343,12 +352,11 @@ function runShow() {
     var fO; // FadeOut
     switch (perf) {
       case "lobby":
-        perf1.render(false);
-        perf2.render(false);
-        perf3.render(false);
         // When coming back to lobby the skybox should change based on the perf we were in + add sound
         switch (currentScene) {
           case "perf1":
+            perf1.render(false);
+            perf1 = null; // Clear up memory
             perf1Done = true;
             playAllLobbySFX();
             fIO = new FadeInOutEffect(
@@ -367,6 +375,8 @@ function runShow() {
             fIO.playEffect();
             break;
           case "perf2":
+            perf2.render(false);
+            perf2 = null; // Clear up memory
             perf2Done = true;
             playAllLobbySFX();
             fIO = new FadeInOutEffect(
@@ -385,6 +395,8 @@ function runShow() {
             fIO.playEffect();
             break;
           case "perf3":
+            perf3.render(false);
+            perf3 = null; // Clear up memory
             perf3Done = true;
             playAllLobbySFX();
             fIO = new FadeInOutEffect(
