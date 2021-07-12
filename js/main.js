@@ -283,7 +283,7 @@ function runShow() {
       }
     );
   };
-  // loadAllAudio();
+  loadAllAudio();
 
   // Handle lobby and performance sound pausing/playing
   let perf1Done = false,
@@ -504,14 +504,17 @@ function runShow() {
     switch (currentScene) {
       case "perf1":
         perf1.subHandler.stopSubtitles();
+        clearTimeout(perf1.ending);
         switchCallback("lobby");
         break;
       case "perf2":
         perf2.subHandler.stopSubtitles();
+        clearTimeout(perf2.ending);
         switchCallback("lobby");
         break;
       case "perf3":
         perf3.subHandler.stopSubtitles();
+        clearTimeout(perf3.ending);
         switchCallback("lobby");
         break;
       default:

@@ -30,7 +30,7 @@ class ScenePerf3 {
       45,
       window.innerWidth / window.innerHeight,
       0.1,
-      400
+      1000
     );
     window.addEventListener("resize", this.onWindowResize, false);
 
@@ -64,7 +64,7 @@ class ScenePerf3 {
     this.lifeRingSpace = lifeRingSpace;
     this.currentLifeRing = 0; // The one that is right infront of us
 
-    const waterGeometry = new THREE.PlaneGeometry(3000, 3000);
+    const waterGeometry = new THREE.PlaneGeometry(10000, 10000);
     const water = new Water(waterGeometry, {
       textureWidth: 512,
       textureHeight: 512,
@@ -85,7 +85,7 @@ class ScenePerf3 {
     this.water = water;
 
     const sky = new Sky();
-    sky.scale.setScalar(3000);
+    sky.scale.setScalar(10000);
     this.scene.add(sky);
     this.sky = sky;
 
@@ -101,9 +101,6 @@ class ScenePerf3 {
       azimuth: 180,
     };
     this.sunParameters = sunParameters;
-
-    const pmremGenerator = new THREE.PMREMGenerator(this.renderer);
-    this.pmremGenerator = pmremGenerator;
 
     const sun = new THREE.Vector3();
     this.sun = sun;
@@ -309,7 +306,9 @@ class ScenePerf3 {
       .copy(this.sun)
       .normalize();
 
-    this.scene.environment = this.pmremGenerator.fromScene(this.sky).texture;
+    // const pmremGenerator = new THREE.PMREMGenerator(this.renderer);
+
+    // this.scene.environment = pmremGenerator.fromScene(this.scene).texture;
   }
   render(state = true) {
     if (state) {
@@ -334,7 +333,7 @@ class ScenePerf3 {
       this.controls.lookAt(0, 0, 20000);
     }, 6000);
     // End callback
-    setTimeout(() => {
+    this.ending = setTimeout(() => {
       this.lobbyCallback("lobby");
     }, 266000); // End @ 4:26
   }
