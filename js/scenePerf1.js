@@ -33,7 +33,7 @@ class ScenePerf1 {
       0.1,
       1000
     );
-    window.addEventListener("resize", this.onWindowResize.bind(this), false);
+    window.addEventListener("resize", this.onWindowResize, false);
 
     // Load everything on to the screen -----------------------------------------
 
@@ -408,6 +408,7 @@ class ScenePerf1 {
       cancelAnimationFrame(this.renderID);
       this.controls.enabled = false;
       this.renderState = false;
+      this.cleanUp();
     }
   }
   renderLoop() {
@@ -424,15 +425,38 @@ class ScenePerf1 {
     this.finalComposer.render();
     this.stats.update();
   }
-  onWindowResize() {
+  onWindowResize = () => {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-  }
+  };
   cleanUp() {
     // Remove the event listener we setup
-    window.removeEventListener("resize", this.onWindowResize.bind(this));
+    window.removeEventListener("resize", this.onWindowResize, false);
     // Remove stuff in the scene as here well
+    function clearThree(obj) {
+      while (obj.children.length > 0) {
+        clearThree(obj.children[0]);
+        obj.remove(obj.children[0]);
+      }
+      if (obj.geometry) obj.geometry.dispose();
+      if (obj.material) {
+        //in case of map, bumpMap, normalMap, envMap ...
+        Object.keys(obj.material).forEach((prop) => {
+          if (!obj.material[prop]) return;
+          if (
+            obj.material[prop] !== null &&
+            typeof obj.material[prop].dispose === "function"
+          )
+            obj.material[prop].dispose();
+        });
+        obj.material.dispose();
+      }
+    }
+    clearThree(this.scene);
+    this.scene = null;
+    this.camera = null;
+    this.controls = null;
   }
 }
 

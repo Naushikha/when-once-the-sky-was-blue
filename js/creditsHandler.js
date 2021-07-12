@@ -67,7 +67,9 @@ class CreditsHandler {
           cancelAnimationFrame(this.renderID);
           this.currentCredit = 0;
           this.overlay.style.visibility = "hidden";
-          this.renderState = false;
+          setTimeout(() => {
+            location.reload();
+          }, 10000); // Refresh the page in 10 secs after credits
         }
       }.bind(this)
     );

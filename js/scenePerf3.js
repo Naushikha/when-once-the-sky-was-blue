@@ -11,7 +11,8 @@ import { FXAAShader } from "./lib/postprocessing/shaders/FXAAShader.js";
 // Water & sky
 import { Water } from "./lib/effects/Water.js";
 import { Sky } from "./lib/effects/Sky.js";
-
+// For subtitles
+import { SubtitleHandler } from "./subtitleHandler.js";
 class ScenePerf3 {
   dataPath = "./data/";
   lobbyCallback;
@@ -29,18 +30,15 @@ class ScenePerf3 {
       45,
       window.innerWidth / window.innerHeight,
       0.1,
-      1000
+      400
     );
-    window.addEventListener("resize", this.onWindowResize.bind(this), false);
+    window.addEventListener("resize", this.onWindowResize, false);
 
     // Load everything on to the screen -----------------------------------------
 
     this.setupBloom();
 
     const lifeRingGeometry = new THREE.TorusGeometry(6, 0.3, 16, 100);
-    // const lifeRingMaterial = new THREE.MeshBasicMaterial({
-    //   color: "rgb(200,200,200)",
-    // });
     const lifeRings = [];
     const lifeRingNum = 9;
     const lifeRingSpace = 25; // Space between two life rings
@@ -66,7 +64,7 @@ class ScenePerf3 {
     this.lifeRingSpace = lifeRingSpace;
     this.currentLifeRing = 0; // The one that is right infront of us
 
-    const waterGeometry = new THREE.PlaneGeometry(10000, 10000);
+    const waterGeometry = new THREE.PlaneGeometry(3000, 3000);
     const water = new Water(waterGeometry, {
       textureWidth: 512,
       textureHeight: 512,
@@ -87,7 +85,7 @@ class ScenePerf3 {
     this.water = water;
 
     const sky = new Sky();
-    sky.scale.setScalar(10000);
+    sky.scale.setScalar(3000);
     this.scene.add(sky);
     this.sky = sky;
 
@@ -116,6 +114,15 @@ class ScenePerf3 {
 
     const axesHelper = new THREE.AxesHelper(5);
     // this.scene.add(axesHelper);
+
+    // Load subtitles
+    const subHandler = new SubtitleHandler(
+      "captions-overlay",
+      "instruc",
+      "caption"
+    );
+    subHandler.load(`${this.dataPath}srt/perf3.srt`);
+    this.subHandler = subHandler;
 
     // Define the controls ------------------------------------------------------
     this.clock = new THREE.Clock(); // FPSControls need a CLOCK!
@@ -312,6 +319,7 @@ class ScenePerf3 {
       cancelAnimationFrame(this.renderID);
       this.controls.enabled = false;
       this.renderState = false;
+      this.cleanUp();
     }
   }
   play() {
@@ -319,6 +327,7 @@ class ScenePerf3 {
     this.anim.camMove.start();
     this.controls.enabled = false;
     this.camera.rotation.y = Math.PI;
+    this.subHandler.playSubtitles();
     // Enable controls after 6 secs
     setTimeout(() => {
       this.controls.enabled = true;
@@ -342,15 +351,38 @@ class ScenePerf3 {
     // animate water
     this.water.material.uniforms["time"].value += 0.3 / 60.0;
   }
-  onWindowResize() {
+  onWindowResize = () => {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-  }
+  };
   cleanUp() {
     // Remove the event listener we setup
-    window.removeEventListener("resize", this.onWindowResize.bind(this));
+    window.removeEventListener("resize", this.onWindowResize, false);
     // Remove stuff in the scene as here well
+    function clearThree(obj) {
+      while (obj.children.length > 0) {
+        clearThree(obj.children[0]);
+        obj.remove(obj.children[0]);
+      }
+      if (obj.geometry) obj.geometry.dispose();
+      if (obj.material) {
+        //in case of map, bumpMap, normalMap, envMap ...
+        Object.keys(obj.material).forEach((prop) => {
+          if (!obj.material[prop]) return;
+          if (
+            obj.material[prop] !== null &&
+            typeof obj.material[prop].dispose === "function"
+          )
+            obj.material[prop].dispose();
+        });
+        obj.material.dispose();
+      }
+    }
+    clearThree(this.scene);
+    this.scene = null;
+    this.camera = null;
+    this.controls = null;
   }
 }
 

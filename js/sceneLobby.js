@@ -275,7 +275,7 @@ class SceneLobby {
     this.scene.add(francis3SpotLight.target);
     this.francis3SpotLight = francis3SpotLight;
 
-    const francis4SpotLight = new THREE.SpotLight(0xffffff, 0.5, 40, 0.6);
+    const francis4SpotLight = new THREE.SpotLight(0xffffff, 3, 40, 0.8);
     francis4SpotLight.position.set(0, 16, 20); // Camera position
     const sp4Target = new THREE.Object3D();
     sp4Target.position.set(0, 3, 38);
@@ -301,7 +301,6 @@ class SceneLobby {
 
     // Define the controls ------------------------------------------------------
     // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    // this.controls = new FlyControls(this.camera, this.renderer.domElement);
     this.controls = new FirstPersonControls(
       this.camera,
       this.renderer.domElement
