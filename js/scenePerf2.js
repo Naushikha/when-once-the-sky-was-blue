@@ -412,7 +412,7 @@ class ScenePerf2 {
     }, 252000); // Start @ 4:12 -> 4:36 = 24
 
     // End callback
-    setTimeout(() => {
+    this.ending = setTimeout(() => {
       this.lobbyCallback("lobby");
     }, 278000); // End @ 4:38
   }
