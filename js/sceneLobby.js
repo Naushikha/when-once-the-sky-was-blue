@@ -524,106 +524,82 @@ class SceneLobby {
       lightEndVec1,
       1000
     );
-    franc1AnimLightUp.onUpdate(
-      function () {
-        if (this.francis1Hover) {
-          this.francis1SpotLight.intensity = lightStartVec1.y;
-        } else {
-          this.franc1AnimLightUp.stop();
-          lightEndVec1.y = 0;
-          this.franc1AnimLightDown.start();
-        }
-      }.bind(this)
-    );
-    franc1AnimLightUp.onComplete(
-      function () {
-        lightStartVec1.y = maxLight;
-        lightEndVec1.y = 0;
-        this.francis1Lit = true;
-      }.bind(this)
-    );
+    franc1AnimLightUp.onUpdate(() => {
+      this.franc1LightState = "lightup";
+      this.francis1SpotLight.intensity = lightStartVec1.y;
+    });
+    franc1AnimLightUp.onStop(() => {
+      lightEndVec1.y = 0;
+    });
+    franc1AnimLightUp.onComplete(() => {
+      lightStartVec1.y = maxLight;
+      lightEndVec1.y = 0;
+      this.franc1LightState = "lit";
+    });
     var franc1AnimLightDown = new TWEEN.Tween(
       lightStartVec1,
       this.animation
     ).to(lightEndVec1, 1000);
-    franc1AnimLightDown.onUpdate(
-      function () {
-        if (this.francis1Hover) {
-          this.franc1AnimLightDown.stop();
-          lightEndVec1.y = maxLight;
-          this.franc1AnimLightUp.start();
-        } else {
-          this.francis1SpotLight.intensity = lightStartVec1.y;
-        }
-      }.bind(this)
-    );
-    franc1AnimLightDown.onComplete(
-      function () {
-        lightStartVec1.y = 0;
-        lightEndVec1.y = maxLight;
-        this.francis1Lit = false;
-      }.bind(this)
-    );
+    franc1AnimLightDown.onUpdate(() => {
+      this.franc1LightState = "lightdown";
+      this.francis1SpotLight.intensity = lightStartVec1.y;
+    });
+    franc1AnimLightDown.onStop(() => {
+      lightEndVec1.y = maxLight;
+    });
+    franc1AnimLightDown.onComplete(() => {
+      lightStartVec1.y = 0;
+      lightEndVec1.y = maxLight;
+      this.franc1LightState = "dead";
+    });
     franc1AnimLightUp.easing(TWEEN.Easing.Quadratic.InOut);
     franc1AnimLightDown.easing(TWEEN.Easing.Quadratic.InOut);
 
     // Francis 2 Animation
     var lightStartVec2 = {
-      y: 0, // Doesn't have to be 'y', just put it for now
+      y: 0,
     };
     var lightEndVec2 = {
-      y: maxLight * 1.2,
+      y: maxLight * 1.6,
     };
     var franc2AnimLightUp = new TWEEN.Tween(lightStartVec2, this.animation).to(
       lightEndVec2,
       1000
     );
-    franc2AnimLightUp.onUpdate(
-      function () {
-        if (this.francis2Hover) {
-          this.francis2SpotLight.intensity = lightStartVec2.y;
-        } else {
-          this.franc2AnimLightUp.stop();
-          lightEndVec2.y = 0;
-          this.franc2AnimLightDown.start();
-        }
-      }.bind(this)
-    );
-    franc2AnimLightUp.onComplete(
-      function () {
-        lightStartVec2.y = maxLight * 1.2;
-        lightEndVec2.y = 0;
-        this.francis2Lit = true;
-      }.bind(this)
-    );
+    franc2AnimLightUp.onUpdate(() => {
+      this.franc2LightState = "lightup";
+      this.francis2SpotLight.intensity = lightStartVec2.y;
+    });
+    franc2AnimLightUp.onStop(() => {
+      lightEndVec2.y = 0;
+    });
+    franc2AnimLightUp.onComplete(() => {
+      lightStartVec2.y = maxLight * 1.6;
+      lightEndVec2.y = 0;
+      this.franc2LightState = "lit";
+    });
     var franc2AnimLightDown = new TWEEN.Tween(
       lightStartVec2,
       this.animation
     ).to(lightEndVec2, 1000);
-    franc2AnimLightDown.onUpdate(
-      function () {
-        if (this.francis2Hover) {
-          this.franc2AnimLightDown.stop();
-          lightEndVec2.y = maxLight * 1.2;
-          this.franc2AnimLightUp.start();
-        } else {
-          this.francis2SpotLight.intensity = lightStartVec2.y;
-        }
-      }.bind(this)
-    );
-    franc2AnimLightDown.onComplete(
-      function () {
-        lightStartVec2.y = 0;
-        lightEndVec2.y = maxLight * 1.2;
-        this.francis2Lit = false;
-      }.bind(this)
-    );
+    franc2AnimLightDown.onUpdate(() => {
+      this.franc2LightState = "lightdown";
+      this.francis2SpotLight.intensity = lightStartVec2.y;
+    });
+    franc2AnimLightDown.onStop(() => {
+      lightEndVec2.y = maxLight * 1.6;
+    });
+    franc2AnimLightDown.onComplete(() => {
+      lightStartVec2.y = 0;
+      lightEndVec2.y = maxLight * 1.6;
+      this.franc2LightState = "dead";
+    });
     franc2AnimLightUp.easing(TWEEN.Easing.Quadratic.InOut);
     franc2AnimLightDown.easing(TWEEN.Easing.Quadratic.InOut);
 
     // Francis 3 Animation
     var lightStartVec3 = {
-      y: 0, // Doesn't have to be 'y', just put it for now
+      y: 0,
     };
     var lightEndVec3 = {
       y: maxLight,
@@ -632,46 +608,34 @@ class SceneLobby {
       lightEndVec3,
       1000
     );
-    franc3AnimLightUp.onUpdate(
-      function () {
-        if (this.francis3Hover) {
-          this.francis3SpotLight.intensity = lightStartVec3.y;
-        } else {
-          this.franc3AnimLightUp.stop();
-          lightEndVec3.y = 0;
-          this.franc3AnimLightDown.start();
-        }
-      }.bind(this)
-    );
-    franc3AnimLightUp.onComplete(
-      function () {
-        lightStartVec3.y = maxLight;
-        lightEndVec3.y = 0;
-        this.francis3Lit = true;
-      }.bind(this)
-    );
+    franc3AnimLightUp.onUpdate(() => {
+      this.franc3LightState = "lightup";
+      this.francis3SpotLight.intensity = lightStartVec3.y;
+    });
+    franc3AnimLightUp.onStop(() => {
+      lightEndVec3.y = 0;
+    });
+    franc3AnimLightUp.onComplete(() => {
+      lightStartVec3.y = maxLight;
+      lightEndVec3.y = 0;
+      this.franc3LightState = "lit";
+    });
     var franc3AnimLightDown = new TWEEN.Tween(
       lightStartVec3,
       this.animation
     ).to(lightEndVec3, 1000);
-    franc3AnimLightDown.onUpdate(
-      function () {
-        if (this.francis3Hover) {
-          this.franc3AnimLightDown.stop();
-          lightEndVec3.y = maxLight;
-          this.franc3AnimLightUp.start();
-        } else {
-          this.francis3SpotLight.intensity = lightStartVec3.y;
-        }
-      }.bind(this)
-    );
-    franc3AnimLightDown.onComplete(
-      function () {
-        lightStartVec3.y = 0;
-        lightEndVec3.y = maxLight;
-        this.francis3Lit = false;
-      }.bind(this)
-    );
+    franc3AnimLightDown.onUpdate(() => {
+      this.franc3LightState = "lightdown";
+      this.francis3SpotLight.intensity = lightStartVec3.y;
+    });
+    franc3AnimLightDown.onStop(() => {
+      lightEndVec3.y = maxLight;
+    });
+    franc3AnimLightDown.onComplete(() => {
+      lightStartVec3.y = 0;
+      lightEndVec3.y = maxLight;
+      this.franc3LightState = "dead";
+    });
     franc3AnimLightUp.easing(TWEEN.Easing.Quadratic.InOut);
     franc3AnimLightDown.easing(TWEEN.Easing.Quadratic.InOut);
 
@@ -681,6 +645,9 @@ class SceneLobby {
     this.franc2AnimLightDown = franc2AnimLightDown;
     this.franc3AnimLightUp = franc3AnimLightUp;
     this.franc3AnimLightDown = franc3AnimLightDown;
+    this.franc1LightState = "dead";
+    this.franc2LightState = "dead";
+    this.franc3LightState = "dead";
   }
   setupBloomAnimations(switcher, perf) {
     var posVec1 = {
@@ -978,78 +945,109 @@ class SceneLobby {
       this.francisUs.position.x = this.camera.position.x + Math.sin(camRot) * 3;
       this.francisUs.position.z = this.camera.position.z + Math.cos(camRot) * 3;
     }
-    // this.renderer.render(this.scene, this.camera);
     this.renderBloom();
     this.finalComposer.render();
     this.stats.update();
 
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    const francis1Intersects = this.raycaster.intersectObjects(
-      [this.francis1],
-      true
-    );
-    const francis2Intersects = this.raycaster.intersectObjects(
-      [this.francis2],
-      true
-    );
-    const francis3Intersects = this.raycaster.intersectObjects(
-      [this.francis3],
-      true
-    );
+    const franciControls = () => {
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+      const francis1Intersects = this.raycaster.intersectObjects(
+        [this.francis1],
+        true
+      );
+      const francis2Intersects = this.raycaster.intersectObjects(
+        [this.francis2],
+        true
+      );
+      const francis3Intersects = this.raycaster.intersectObjects(
+        [this.francis3],
+        true
+      );
 
-    if (
-      francis1Intersects.length &&
-      this.interactive &&
-      this.francis1.userData.perfNum
-    ) {
-      if (this.francis1Hover == false) this.franc1AnimLightUp.start();
-      this.francis1Hover = true;
-    } else {
-      if (this.francis1Lit == true) this.franc1AnimLightDown.start();
-      this.francis1Hover = false;
-    }
-    if (
-      francis2Intersects.length &&
-      this.interactive &&
-      this.francis2.userData.perfNum
-    ) {
-      if (this.francis2Hover == false) this.franc2AnimLightUp.start();
-      this.francis2Hover = true;
-    } else {
-      if (this.francis2Lit == true) this.franc2AnimLightDown.start();
-      this.francis2Hover = false;
-    }
-    if (
-      francis3Intersects.length &&
-      this.interactive &&
-      this.francis3.userData.perfNum
-    ) {
-      if (this.francis3Hover == false) this.franc3AnimLightUp.start();
-      this.francis3Hover = true;
-    } else {
-      if (this.francis3Lit == true) this.franc3AnimLightDown.start();
-      this.francis3Hover = false;
-    }
-    // Set cursor
-    if (
-      ((this.francis1Hover && this.francis1.userData.perfNum) ||
-        (this.francis2Hover && this.francis2.userData.perfNum) ||
-        (this.francis3Hover && this.francis3.userData.perfNum)) &&
-      this.interactive
-    ) {
-      document.body.style.cursor =
-        "url('./data/txt/cursor_white.png') 16 16, auto";
-    } else {
-      document.body.style.cursor =
-        "url('./data/txt/cursor_grey.png') 16 16, auto";
-    }
-    // this.statusText.innerHTML = JSON.stringify(francis2Intersects);
-    // this.renderer.render(this.scene, this.camera);
-
-    // if (this.blooming) {
-    // this.renderBloom();
-    // this.finalComposer.render();
-    // }
+      if (
+        francis1Intersects.length &&
+        this.interactive &&
+        this.francis1.userData.perfNum
+      ) {
+        this.francis1Hover = true;
+        if (this.franc1LightState == "lightdown") {
+          this.franc1AnimLightDown.stop();
+          this.franc1AnimLightUp.start();
+        }
+        if (this.franc1LightState == "dead") {
+          this.franc1AnimLightUp.start();
+        }
+      } else {
+        this.francis1Hover = false;
+        if (this.franc1LightState == "lightup") {
+          this.franc1AnimLightUp.stop();
+          this.franc1AnimLightDown.start();
+        }
+        if (this.franc1LightState == "lit") {
+          this.franc1AnimLightDown.start();
+        }
+      }
+      if (
+        francis2Intersects.length &&
+        this.interactive &&
+        this.francis2.userData.perfNum
+      ) {
+        this.francis2Hover = true;
+        if (this.franc2LightState == "lightdown") {
+          this.franc2AnimLightDown.stop();
+          this.franc2AnimLightUp.start();
+        }
+        if (this.franc2LightState == "dead") {
+          this.franc2AnimLightUp.start();
+        }
+      } else {
+        this.francis2Hover = false;
+        if (this.franc2LightState == "lightup") {
+          this.franc2AnimLightUp.stop();
+          this.franc2AnimLightDown.start();
+        }
+        if (this.franc2LightState == "lit") {
+          this.franc2AnimLightDown.start();
+        }
+      }
+      if (
+        francis3Intersects.length &&
+        this.interactive &&
+        this.francis3.userData.perfNum
+      ) {
+        this.francis3Hover = true;
+        if (this.franc3LightState == "lightdown") {
+          this.franc3AnimLightDown.stop();
+          this.franc3AnimLightUp.start();
+        }
+        if (this.franc3LightState == "dead") {
+          this.franc3AnimLightUp.start();
+        }
+      } else {
+        this.francis3Hover = false;
+        if (this.franc3LightState == "lightup") {
+          this.franc3AnimLightUp.stop();
+          this.franc3AnimLightDown.start();
+        }
+        if (this.franc3LightState == "lit") {
+          this.franc3AnimLightDown.start();
+        }
+      }
+      // Set cursor
+      if (
+        ((this.francis1Hover && this.francis1.userData.perfNum) ||
+          (this.francis2Hover && this.francis2.userData.perfNum) ||
+          (this.francis3Hover && this.francis3.userData.perfNum)) &&
+        this.interactive
+      ) {
+        document.body.style.cursor =
+          "url('./data/txt/cursor_white.png') 16 16, auto";
+      } else {
+        document.body.style.cursor =
+          "url('./data/txt/cursor_grey.png') 16 16, auto";
+      }
+    };
+    franciControls();
   }
   renderBloom() {
     this.scene.traverse(darkenNonBloomed.bind(this));
