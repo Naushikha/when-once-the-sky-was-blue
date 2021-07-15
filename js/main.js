@@ -121,8 +121,10 @@ function runShow() {
   manager.onLoad = function () {
     loadingState = false;
     progress.style.display = "none";
+    setTimeout(() => {
     startButton.style.visibility = "visible";
     startButton.style.animation = "fadein 5s";
+    }, 5000); // This delay is to wait for phrases to disappear
 
     // Skip play for now
     // currentScene = "perf3";
