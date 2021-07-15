@@ -132,6 +132,7 @@ function runShow() {
 
     // lobby.render();
     // lobby.play();
+    // lobby.interactive = true;
     // sfxLobbyBase.play();
     // sfxLobbyVO.play(8);
     // setTimeout(() => {
@@ -245,6 +246,8 @@ function runShow() {
   const sfxPerf2Add = new THREE.Audio(audioListener);
   const sfxPerf3Add = new THREE.Audio(audioListener);
   const sfxPerf3AddB = new THREE.Audio(audioListener);
+  const sfxEndingBase = new THREE.Audio(audioListener);
+  const sfxEndingVO = new THREE.Audio(audioListener);
   const loadAllAudio = () => {
     audioLoader.load(`${dataPath}sfx/lobby_base.ogg`, function (audioBuffer) {
       sfxLobbyBase.setBuffer(audioBuffer);
@@ -282,6 +285,13 @@ function runShow() {
         sfxPerf3AddB.setLoop(true);
       }
     );
+    audioLoader.load(`${dataPath}sfx/ending_base.ogg`, function (audioBuffer) {
+      sfxEndingBase.setBuffer(audioBuffer);
+      sfxEndingBase.setLoop(true);
+    });
+    audioLoader.load(`${dataPath}sfx/ending_vo.ogg`, function (audioBuffer) {
+      sfxEndingVO.setBuffer(audioBuffer);
+    });
   };
   loadAllAudio();
 
@@ -419,9 +429,22 @@ function runShow() {
         }
         // Play end scene if all perfs are done
         if (perf1Done && perf2Done && perf3Done) {
-          // Set a timeout here and play lobby ending
+          const fIO = new FadeOutEffect(
+            "transition-overlay",
+            "white",
+            4000,
+            () => {
+              sfxEndingBase.play();
+              sfxEndingVO.play();
+              lobby.endingSubHandler.playSubtitles();
+              lobby.playEnding();
+            },
+            [sfxLobbyBase, sfxPerf1Add, sfxPerf2Add, sfxPerf3Add, sfxPerf3AddB],
+            true // No visual fadeout, just audio
+          );
+          // Set a timeout here and fadeout into lobby ending
           setTimeout(() => {
-            lobby.playEnding();
+            fIO.playEffect();
           }, 25000);
         }
         break;

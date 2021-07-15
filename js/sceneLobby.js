@@ -294,6 +294,14 @@ class SceneLobby {
     subHandler.load(`${this.dataPath}srt/lobby.srt`);
     this.subHandler = subHandler;
 
+    const endingSubHandler = new SubtitleHandler(
+      "captions-overlay",
+      "instruc",
+      "caption"
+    );
+    endingSubHandler.load(`${this.dataPath}srt/ending.srt`);
+    this.endingSubHandler = endingSubHandler;
+
     // Interaction
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();

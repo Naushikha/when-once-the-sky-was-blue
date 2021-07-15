@@ -4,13 +4,15 @@ class FadeOutEffect {
     color = "white",
     time = 4000,
     onFadeOut = null,
-    sfxList = null
+    sfxList = null,
+    justAudio = false // A fix for the ending
   ) {
     this.overlay = document.getElementById(overlayElemID);
     this.color = color;
     this.time = time;
     this.onFadeOut = onFadeOut;
     this.sfxList = sfxList; // We need to fade in the volumes of these guys
+    this.justAudio = justAudio;
     this.animation = new TWEEN.Group(); // Animation
   }
   showEffect() {
@@ -26,7 +28,9 @@ class FadeOutEffect {
     );
     fadeOut.onUpdate(
       function () {
-        this.overlay.style.opacity = posVec1.o;
+        if (!this.justAudio) {
+          this.overlay.style.opacity = posVec1.o;
+        }
         if (this.sfxList !== null) {
           for (let sfx of this.sfxList) {
             sfx.setVolume(posVec1.o);
@@ -49,7 +53,9 @@ class FadeOutEffect {
   }
   playEffect() {
     this.overlay.style.backgroundColor = this.color;
-    this.overlay.style.opacity = 1; // Just in case
+    if (!this.justAudio) {
+      this.overlay.style.opacity = 1; // Just in case
+    }
     this.showEffect();
     this.render();
   }
