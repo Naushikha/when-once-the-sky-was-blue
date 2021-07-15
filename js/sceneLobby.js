@@ -109,7 +109,7 @@ class SceneLobby {
         root.userData.texture = new THREE.TextureLoader(this.manager).load(
           `${this.dataPath}txt/francis1.jpg`
         );
-        root.userData.perfNum = 1; // Franci performance not done yet
+        root.userData.perfPending = 1; // Franci performance not done yet
       });
     });
 
@@ -127,7 +127,7 @@ class SceneLobby {
         root.userData.texture = new THREE.TextureLoader(this.manager).load(
           `${this.dataPath}txt/francis2.jpg`
         );
-        root.userData.perfNum = 2; // Franci performance not done yet
+        root.userData.perfPending = 2; // Franci performance not done yet
       });
     });
 
@@ -146,7 +146,7 @@ class SceneLobby {
         root.userData.texture = new THREE.TextureLoader(this.manager).load(
           `${this.dataPath}txt/francis3.jpg`
         );
-        root.userData.perfNum = 3; // Franci performance not done yet
+        root.userData.perfPending = 3; // Franci performance not done yet
       });
     });
 
@@ -335,7 +335,7 @@ class SceneLobby {
     });
     // Set light to max
     const maxLight = 3;
-    switch (whichFranci.userData.perfNum) {
+    switch (whichFranci.userData.perfPending) {
       case 1:
         this.francis1SpotLight.intensity = maxLight;
         break;
@@ -348,7 +348,7 @@ class SceneLobby {
       default:
         break;
     }
-    whichFranci.userData.perfNum = 0; // This is also used as an indication to prevent interaction, checked later in the render loop
+    whichFranci.userData.perfPending = 0; // This is also used as an indication to prevent interaction, checked later in the render loop
   }
   setFranciOpacity(whichFranci, opacity) {
     whichFranci.traverse(function (child) {
@@ -520,6 +520,7 @@ class SceneLobby {
     franc4AnimUp.start();
 
     const maxLight = 3;
+    const lightTime = 1000;
     // Light hover animations
     // Francis 1 Animation
     var lightStartVec1 = {
@@ -530,7 +531,7 @@ class SceneLobby {
     };
     var franc1AnimLightUp = new TWEEN.Tween(lightStartVec1, this.animation).to(
       lightEndVec1,
-      1000
+      lightTime
     );
     franc1AnimLightUp.onUpdate(() => {
       this.franc1LightState = "lightup";
@@ -538,6 +539,7 @@ class SceneLobby {
     });
     franc1AnimLightUp.onStop(() => {
       lightEndVec1.y = 0;
+      franc1AnimLightDown.start();
     });
     franc1AnimLightUp.onComplete(() => {
       lightStartVec1.y = maxLight;
@@ -547,13 +549,14 @@ class SceneLobby {
     var franc1AnimLightDown = new TWEEN.Tween(
       lightStartVec1,
       this.animation
-    ).to(lightEndVec1, 1000);
+    ).to(lightEndVec1, lightTime);
     franc1AnimLightDown.onUpdate(() => {
       this.franc1LightState = "lightdown";
       this.francis1SpotLight.intensity = lightStartVec1.y;
     });
     franc1AnimLightDown.onStop(() => {
       lightEndVec1.y = maxLight;
+      franc1AnimLightUp.start();
     });
     franc1AnimLightDown.onComplete(() => {
       lightStartVec1.y = 0;
@@ -572,7 +575,7 @@ class SceneLobby {
     };
     var franc2AnimLightUp = new TWEEN.Tween(lightStartVec2, this.animation).to(
       lightEndVec2,
-      1000
+      lightTime
     );
     franc2AnimLightUp.onUpdate(() => {
       this.franc2LightState = "lightup";
@@ -580,6 +583,7 @@ class SceneLobby {
     });
     franc2AnimLightUp.onStop(() => {
       lightEndVec2.y = 0;
+      franc2AnimLightDown.start();
     });
     franc2AnimLightUp.onComplete(() => {
       lightStartVec2.y = maxLight * 1.6;
@@ -589,13 +593,14 @@ class SceneLobby {
     var franc2AnimLightDown = new TWEEN.Tween(
       lightStartVec2,
       this.animation
-    ).to(lightEndVec2, 1000);
+    ).to(lightEndVec2, lightTime);
     franc2AnimLightDown.onUpdate(() => {
       this.franc2LightState = "lightdown";
       this.francis2SpotLight.intensity = lightStartVec2.y;
     });
     franc2AnimLightDown.onStop(() => {
       lightEndVec2.y = maxLight * 1.6;
+      franc2AnimLightUp.start();
     });
     franc2AnimLightDown.onComplete(() => {
       lightStartVec2.y = 0;
@@ -614,7 +619,7 @@ class SceneLobby {
     };
     var franc3AnimLightUp = new TWEEN.Tween(lightStartVec3, this.animation).to(
       lightEndVec3,
-      1000
+      lightTime
     );
     franc3AnimLightUp.onUpdate(() => {
       this.franc3LightState = "lightup";
@@ -622,6 +627,7 @@ class SceneLobby {
     });
     franc3AnimLightUp.onStop(() => {
       lightEndVec3.y = 0;
+      franc3AnimLightDown.start();
     });
     franc3AnimLightUp.onComplete(() => {
       lightStartVec3.y = maxLight;
@@ -631,13 +637,14 @@ class SceneLobby {
     var franc3AnimLightDown = new TWEEN.Tween(
       lightStartVec3,
       this.animation
-    ).to(lightEndVec3, 1000);
+    ).to(lightEndVec3, lightTime);
     franc3AnimLightDown.onUpdate(() => {
       this.franc3LightState = "lightdown";
       this.francis3SpotLight.intensity = lightStartVec3.y;
     });
     franc3AnimLightDown.onStop(() => {
       lightEndVec3.y = maxLight;
+      franc3AnimLightUp.start();
     });
     franc3AnimLightDown.onComplete(() => {
       lightStartVec3.y = 0;
@@ -884,6 +891,7 @@ class SceneLobby {
     this.finalComposer.addPass(fxaaPass);
   }
   enterPerformance(switcher, perf) {
+    this.interactive = false;
     this.controls.enabled = false;
     this.setupBloomAnimations(switcher, perf);
   }
@@ -972,81 +980,68 @@ class SceneLobby {
         true
       );
 
-      if (
-        francis1Intersects.length &&
-        this.interactive &&
-        this.francis1.userData.perfNum
-      ) {
-        this.francis1Hover = true;
-        if (this.franc1LightState == "lightdown") {
-          this.franc1AnimLightDown.stop();
-          this.franc1AnimLightUp.start();
-        }
-        if (this.franc1LightState == "dead") {
-          this.franc1AnimLightUp.start();
-        }
-      } else {
-        this.francis1Hover = false;
-        if (this.franc1LightState == "lightup") {
-          this.franc1AnimLightUp.stop();
-          this.franc1AnimLightDown.start();
-        }
-        if (this.franc1LightState == "lit") {
-          this.franc1AnimLightDown.start();
+      if (this.francis1.userData.perfPending) {
+        if (francis1Intersects.length) {
+          this.francis1Hover = true;
+          if (this.franc1LightState == "lightdown") {
+            this.franc1AnimLightDown.stop();
+          }
+          if (this.franc1LightState == "dead") {
+            this.franc1AnimLightUp.start();
+          }
+        } else {
+          this.francis1Hover = false;
+          if (this.franc1LightState == "lightup") {
+            this.franc1AnimLightUp.stop();
+          }
+          if (this.franc1LightState == "lit") {
+            this.franc1AnimLightDown.start();
+          }
         }
       }
-      if (
-        francis2Intersects.length &&
-        this.interactive &&
-        this.francis2.userData.perfNum
-      ) {
-        this.francis2Hover = true;
-        if (this.franc2LightState == "lightdown") {
-          this.franc2AnimLightDown.stop();
-          this.franc2AnimLightUp.start();
-        }
-        if (this.franc2LightState == "dead") {
-          this.franc2AnimLightUp.start();
-        }
-      } else {
-        this.francis2Hover = false;
-        if (this.franc2LightState == "lightup") {
-          this.franc2AnimLightUp.stop();
-          this.franc2AnimLightDown.start();
-        }
-        if (this.franc2LightState == "lit") {
-          this.franc2AnimLightDown.start();
+      if (this.francis2.userData.perfPending) {
+        if (francis2Intersects.length) {
+          this.francis2Hover = true;
+          if (this.franc2LightState == "lightdown") {
+            this.franc2AnimLightDown.stop();
+          }
+          if (this.franc2LightState == "dead") {
+            this.franc2AnimLightUp.start();
+          }
+        } else {
+          this.francis2Hover = false;
+          if (this.franc2LightState == "lightup") {
+            this.franc2AnimLightUp.stop();
+          }
+          if (this.franc2LightState == "lit") {
+            this.franc2AnimLightDown.start();
+          }
         }
       }
-      if (
-        francis3Intersects.length &&
-        this.interactive &&
-        this.francis3.userData.perfNum
-      ) {
-        this.francis3Hover = true;
-        if (this.franc3LightState == "lightdown") {
-          this.franc3AnimLightDown.stop();
-          this.franc3AnimLightUp.start();
-        }
-        if (this.franc3LightState == "dead") {
-          this.franc3AnimLightUp.start();
-        }
-      } else {
-        this.francis3Hover = false;
-        if (this.franc3LightState == "lightup") {
-          this.franc3AnimLightUp.stop();
-          this.franc3AnimLightDown.start();
-        }
-        if (this.franc3LightState == "lit") {
-          this.franc3AnimLightDown.start();
+      if (this.francis3.userData.perfPending) {
+        if (francis3Intersects.length) {
+          this.francis3Hover = true;
+          if (this.franc3LightState == "lightdown") {
+            this.franc3AnimLightDown.stop();
+          }
+          if (this.franc3LightState == "dead") {
+            this.franc3AnimLightUp.start();
+          }
+        } else {
+          this.francis3Hover = false;
+          if (this.franc3LightState == "lightup") {
+            this.franc3AnimLightUp.stop();
+          }
+          if (this.franc3LightState == "lit") {
+            this.franc3AnimLightDown.start();
+          }
         }
       }
       // Set cursor
       if (
-        ((this.francis1Hover && this.francis1.userData.perfNum) ||
-          (this.francis2Hover && this.francis2.userData.perfNum) ||
-          (this.francis3Hover && this.francis3.userData.perfNum)) &&
-        this.interactive
+        (this.francis1Hover && this.francis1.userData.perfPending) ||
+        (this.francis2Hover && this.francis2.userData.perfPending) ||
+        (this.francis3Hover && this.francis3.userData.perfPending)
       ) {
         document.body.style.cursor =
           "url('./data/txt/cursor_white.png') 16 16, auto";
@@ -1055,7 +1050,7 @@ class SceneLobby {
           "url('./data/txt/cursor_grey.png') 16 16, auto";
       }
     };
-    franciControls();
+    if (this.interactive) franciControls();
   }
   renderBloom() {
     this.scene.traverse(darkenNonBloomed.bind(this));

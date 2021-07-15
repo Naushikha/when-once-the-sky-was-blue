@@ -508,17 +508,23 @@ function runShow() {
   function sceneSwitchMouse() {
     switch (currentScene) {
       case "lobby":
-        if (lobby.francis1Hover) {
+        if (lobby.francis1Hover && lobby.francis1.userData.perfPending) {
+          lobby.francis1Hover = false; // Quick fix for multiple clicks bug
           lobby.enterPerformance(switchCallback, "perf1");
-        } else if (lobby.francis2Hover) {
+        } else if (lobby.francis2Hover && lobby.francis2.userData.perfPending) {
+          lobby.francis2Hover = false; // Quick fix for multiple clicks bug
           lobby.enterPerformance(switchCallback, "perf2");
-        } else if (lobby.francis3Hover) {
+        } else if (lobby.francis3Hover && lobby.francis3.userData.perfPending) {
+          lobby.francis3Hover = false; // Quick fix for multiple clicks bug
           lobby.enterPerformance(switchCallback, "perf3");
         }
         break;
       default:
         break;
     }
+    // Quick fix for multiple clicks bug
+    document.body.style.cursor =
+      "url('./data/txt/cursor_grey.png') 16 16, auto";
   }
   document.addEventListener("click", sceneSwitchMouse);
 
