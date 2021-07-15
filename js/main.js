@@ -426,23 +426,14 @@ function runShow() {
         }
         // Play end scene if all perfs are done
         if (perf1Done && perf2Done && perf3Done) {
-          const fIO = new FadeOutEffect(
-            "transition-overlay",
-            "white",
-            4000,
-            () => {
+          setTimeout(() => {
               sfxEndingBase.play();
               sfxEndingVO.play();
               lobby.endingSubHandler.playSubtitles();
+            setTimeout(() => {
               lobby.playEnding();
-            },
-            [sfxLobbyBase, sfxPerf1Add, sfxPerf2Add, sfxPerf3Add, sfxPerf3AddB],
-            true // No visual fadeout, just audio
-          );
-          // Set a timeout here and fadeout into lobby ending
-          setTimeout(() => {
-            fIO.playEffect();
-          }, 25000);
+            }, 1000);
+          }, 32000);
         }
         break;
       case "perf1":

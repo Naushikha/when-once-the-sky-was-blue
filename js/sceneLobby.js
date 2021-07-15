@@ -789,7 +789,7 @@ class SceneLobby {
     moveIntoPortal.onComplete(() => {
       setTimeout(() => {
         credHandler.playCredits();
-      }, 5000);
+      }, 23000); // Need to add a delay till ending audio finishes
     });
     const fIO = new FadeInOutEffect("transition-overlay", "white", 3500);
     setTimeout(() => {
