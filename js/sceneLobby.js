@@ -1,6 +1,6 @@
 import * as THREE from "./lib/three.module.js";
 import { FirstPersonControls } from "./lib/FirstPersonControls.js";
-import { OrbitControls } from "./lib/OrbitControls.js";
+// import { OrbitControls } from "./lib/OrbitControls.js";
 import { MTLLoader } from "./lib/MTLLoader.js";
 import { OBJLoader } from "./lib/OBJLoader.js";
 // Bloom (Transition light effect) imports
@@ -327,7 +327,7 @@ class SceneLobby {
   }
   setFranciTexture(whichFranci) {
     // Change texture
-    whichFranci.traverse(function (child) {
+    whichFranci.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         child.material.map = whichFranci.userData.texture;
         child.material.needsUpdate = true;
@@ -351,7 +351,7 @@ class SceneLobby {
     whichFranci.userData.perfPending = 0; // This is also used as an indication to prevent interaction, checked later in the render loop
   }
   setFranciOpacity(whichFranci, opacity) {
-    whichFranci.traverse(function (child) {
+    whichFranci.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         child.material.transparent = true;
         child.material.opacity = opacity;
@@ -372,12 +372,10 @@ class SceneLobby {
       endVec1,
       3000
     );
-    franc1AnimUp.onUpdate(
-      function () {
-        this.francis1.position.y = posVec1.y;
-      }.bind(this)
-    );
-    franc1AnimUp.onComplete(function () {
+    franc1AnimUp.onUpdate(() => {
+      this.francis1.position.y = posVec1.y;
+    });
+    franc1AnimUp.onComplete(() => {
       posVec1.y = 0;
       endVec1.y = floatHeight;
       franc1AnimDown.start();
@@ -386,12 +384,10 @@ class SceneLobby {
       endVec1,
       3000
     );
-    franc1AnimDown.onUpdate(
-      function () {
-        this.francis1.position.y = posVec1.y;
-      }.bind(this)
-    );
-    franc1AnimDown.onComplete(function () {
+    franc1AnimDown.onUpdate(() => {
+      this.francis1.position.y = posVec1.y;
+    });
+    franc1AnimDown.onComplete(() => {
       posVec1.y = floatHeight;
       endVec1.y = 0;
       franc1AnimUp.start();
@@ -410,12 +406,10 @@ class SceneLobby {
       endVec2,
       4000
     );
-    franc2AnimUp.onUpdate(
-      function () {
-        this.francis2.position.y = posVec2.y;
-      }.bind(this)
-    );
-    franc2AnimUp.onComplete(function () {
+    franc2AnimUp.onUpdate(() => {
+      this.francis2.position.y = posVec2.y;
+    });
+    franc2AnimUp.onComplete(() => {
       posVec2.y = floatHeight;
       endVec2.y = 0;
       franc2AnimDown.start();
@@ -424,12 +418,10 @@ class SceneLobby {
       endVec2,
       4000
     );
-    franc2AnimDown.onUpdate(
-      function () {
-        this.francis2.position.y = posVec2.y;
-      }.bind(this)
-    );
-    franc2AnimDown.onComplete(function () {
+    franc2AnimDown.onUpdate(() => {
+      this.francis2.position.y = posVec2.y;
+    });
+    franc2AnimDown.onComplete(() => {
       posVec2.y = 0;
       endVec2.y = floatHeight;
       franc2AnimUp.start();
@@ -448,12 +440,10 @@ class SceneLobby {
       endVec3,
       5000
     );
-    franc3AnimUp.onUpdate(
-      function () {
-        this.francis3.position.y = posVec3.y;
-      }.bind(this)
-    );
-    franc3AnimUp.onComplete(function () {
+    franc3AnimUp.onUpdate(() => {
+      this.francis3.position.y = posVec3.y;
+    });
+    franc3AnimUp.onComplete(() => {
       posVec3.y = floatHeight;
       endVec3.y = 0;
       franc3AnimDown.start();
@@ -462,12 +452,10 @@ class SceneLobby {
       endVec3,
       5000
     );
-    franc3AnimDown.onUpdate(
-      function () {
-        this.francis3.position.y = posVec3.y;
-      }.bind(this)
-    );
-    franc3AnimDown.onComplete(function () {
+    franc3AnimDown.onUpdate(() => {
+      this.francis3.position.y = posVec3.y;
+    });
+    franc3AnimDown.onComplete(() => {
       posVec3.y = 0;
       endVec3.y = floatHeight;
       franc3AnimUp.start();
@@ -487,12 +475,10 @@ class SceneLobby {
       endVec4,
       5000
     );
-    franc4AnimUp.onUpdate(
-      function () {
-        this.francisUs.position.y = posVec4.y + franc4Offset;
-      }.bind(this)
-    );
-    franc4AnimUp.onComplete(function () {
+    franc4AnimUp.onUpdate(() => {
+      this.francisUs.position.y = posVec4.y + franc4Offset;
+    });
+    franc4AnimUp.onComplete(() => {
       posVec4.y = floatHeight;
       endVec4.y = 0;
       franc4AnimDown.start();
@@ -501,12 +487,10 @@ class SceneLobby {
       endVec4,
       5000
     );
-    franc4AnimDown.onUpdate(
-      function () {
-        this.francisUs.position.y = posVec4.y + franc4Offset;
-      }.bind(this)
-    );
-    franc4AnimDown.onComplete(function () {
+    franc4AnimDown.onUpdate(() => {
+      this.francisUs.position.y = posVec4.y + franc4Offset;
+    });
+    franc4AnimDown.onComplete(() => {
       posVec4.y = 0;
       endVec4.y = floatHeight;
       franc4AnimUp.start();
@@ -679,16 +663,9 @@ class SceneLobby {
       endVec1,
       3000
     );
-    lookAtBloom.onUpdate(
-      function () {
-        this.camera.rotation.set(posVec1.x, posVec1.y, posVec1.z);
-      }.bind(this)
-    );
-    // lookAtBloom.onComplete(
-    //   function () {
-    //     growBloom.start();
-    //   }.bind(this)
-    // );
+    lookAtBloom.onUpdate(() => {
+      this.camera.rotation.set(posVec1.x, posVec1.y, posVec1.z);
+    });
     var posVec2 = {
       s: 0,
     };
@@ -696,19 +673,15 @@ class SceneLobby {
       s: 30,
     };
     var growBloom = new TWEEN.Tween(posVec2, this.animation).to(endVec2, 5000);
-    growBloom.onUpdate(
-      function () {
-        this.bloom.scale.setScalar(posVec2.s);
-      }.bind(this)
-    );
-    growBloom.onComplete(
-      function () {
-        // set bloom to default
-        this.bloom.scale.setScalar(0);
-        // this.blooming = false; // Stop rendering bloom
-        switcher(perf); //switch to next perf
-      }.bind(this)
-    );
+    growBloom.onUpdate(() => {
+      this.bloom.scale.setScalar(posVec2.s);
+    });
+    growBloom.onComplete(() => {
+      // set bloom to default
+      this.bloom.scale.setScalar(0);
+      // this.blooming = false; // Stop rendering bloom
+      switcher(perf); //switch to next perf
+    });
     lookAtBloom.easing(TWEEN.Easing.Quadratic.InOut);
     growBloom.easing(TWEEN.Easing.Quadratic.In);
 
@@ -742,45 +715,41 @@ class SceneLobby {
       endVec1,
       20000
     );
-    francMerge.onUpdate(
-      function () {
-        this.francis1.position.x = posVec1.x1;
-        this.francis1.position.z = posVec1.z1;
-        this.francis2.position.x = posVec1.x2;
-        this.francis2.position.z = posVec1.z2;
-        this.francis3.position.x = posVec1.x3;
-        this.francis3.position.z = posVec1.z3;
-        this.setFranciOpacity(this.francis1, posVec1.a);
-        this.setFranciOpacity(this.francis2, posVec1.a);
-        this.setFranciOpacity(this.francis3, posVec1.a);
-        this.setFranciOpacity(this.francisUs, posVec1.a);
-        this.arcs.a1.material.opacity = posVec1.a;
-        this.arcs.a3.material.opacity = posVec1.a;
-        this.arcs.a4.material.opacity = posVec1.a;
-        // Spotlights
-        this.francis1SpotLight.target.position.x = posVec1.x1;
-        this.francis1SpotLight.target.position.z = posVec1.z1;
-        this.francis2SpotLight.target.position.x = posVec1.x2;
-        this.francis2SpotLight.target.position.z = posVec1.z2;
-        this.francis3SpotLight.target.position.x = posVec1.x3;
-        this.francis3SpotLight.target.position.z = posVec1.z3;
-        this.francis1SpotLight.angle = posVec1.l;
-        this.francis2SpotLight.angle = posVec1.l;
-        this.francis3SpotLight.angle = posVec1.l;
-      }.bind(this)
-    );
-    francMerge.onComplete(
-      function () {
-        this.francis1.position.x = 20000; // Throw these dudes away
-        this.francis2.position.x = 20000;
-        this.francis3.position.x = 20000;
-        this.francisUs.position.x = 20000;
-        this.arcs.a1.position.x = 20000;
-        this.arcs.a3.position.x = 20000;
-        this.arcs.a4.position.x = 20000;
-        portalGlow.start();
-      }.bind(this)
-    );
+    francMerge.onUpdate(() => {
+      this.francis1.position.x = posVec1.x1;
+      this.francis1.position.z = posVec1.z1;
+      this.francis2.position.x = posVec1.x2;
+      this.francis2.position.z = posVec1.z2;
+      this.francis3.position.x = posVec1.x3;
+      this.francis3.position.z = posVec1.z3;
+      this.setFranciOpacity(this.francis1, posVec1.a);
+      this.setFranciOpacity(this.francis2, posVec1.a);
+      this.setFranciOpacity(this.francis3, posVec1.a);
+      this.setFranciOpacity(this.francisUs, posVec1.a);
+      this.arcs.a1.material.opacity = posVec1.a;
+      this.arcs.a3.material.opacity = posVec1.a;
+      this.arcs.a4.material.opacity = posVec1.a;
+      // Spotlights
+      this.francis1SpotLight.target.position.x = posVec1.x1;
+      this.francis1SpotLight.target.position.z = posVec1.z1;
+      this.francis2SpotLight.target.position.x = posVec1.x2;
+      this.francis2SpotLight.target.position.z = posVec1.z2;
+      this.francis3SpotLight.target.position.x = posVec1.x3;
+      this.francis3SpotLight.target.position.z = posVec1.z3;
+      this.francis1SpotLight.angle = posVec1.l;
+      this.francis2SpotLight.angle = posVec1.l;
+      this.francis3SpotLight.angle = posVec1.l;
+    });
+    francMerge.onComplete(() => {
+      this.francis1.position.x = 20000; // Throw these dudes away
+      this.francis2.position.x = 20000;
+      this.francis3.position.x = 20000;
+      this.francisUs.position.x = 20000;
+      this.arcs.a1.position.x = 20000;
+      this.arcs.a3.position.x = 20000;
+      this.arcs.a4.position.x = 20000;
+      portalGlow.start();
+    });
     // Make blue portal appear
     var posVec2 = {
       a: 0,
@@ -789,17 +758,13 @@ class SceneLobby {
       a: 1,
     };
     var portalGlow = new TWEEN.Tween(posVec2, this.animation).to(endVec2, 5000);
-    portalGlow.onUpdate(
-      function () {
-        this.arcs.ap.material.opacity = posVec2.a;
-      }.bind(this)
-    );
-    portalGlow.onComplete(
-      function () {
-        this.arcs.a2.position.x = 20000;
-        moveIntoPortal.start();
-      }.bind(this)
-    );
+    portalGlow.onUpdate(() => {
+      this.arcs.ap.material.opacity = posVec2.a;
+    });
+    portalGlow.onComplete(() => {
+      this.arcs.a2.position.x = 20000;
+      moveIntoPortal.start();
+    });
     // Move towards it
     var posVec3 = {
       x: this.camera.position.x,
@@ -815,21 +780,17 @@ class SceneLobby {
       endVec3,
       20000
     );
-    moveIntoPortal.onUpdate(
-      function () {
-        this.camera.position.set(posVec3.x, posVec3.y, posVec3.z);
-        if (posVec3.z - endVec3.z < 0.1) {
-          this.updateSkybox("blue");
-        }
-      }.bind(this)
-    );
-    moveIntoPortal.onComplete(
-      function () {
-        setTimeout(() => {
-          credHandler.playCredits();
-        }, 5000);
-      }.bind(this)
-    );
+    moveIntoPortal.onUpdate(() => {
+      this.camera.position.set(posVec3.x, posVec3.y, posVec3.z);
+      if (posVec3.z - endVec3.z < 0.1) {
+        this.updateSkybox("blue");
+      }
+    });
+    moveIntoPortal.onComplete(() => {
+      setTimeout(() => {
+        credHandler.playCredits();
+      }, 5000);
+    });
     const fIO = new FadeInOutEffect("transition-overlay", "white", 3500);
     setTimeout(() => {
       fIO.playEffect();
@@ -900,9 +861,6 @@ class SceneLobby {
     setTimeout(() => {
       this.subHandler.playSubtitles();
     }, 8000);
-    // this.playEnding();
-    // this.controls.enabled = true;
-    // this.interactive = true;
   }
   cameraPanDown(interactiveToggle = false) {
     // Pan Down Animation
@@ -914,20 +872,16 @@ class SceneLobby {
       x: -Math.PI / 21,
     };
     var panDown = new TWEEN.Tween(posVec1, this.animation).to(endVec1, 18000);
-    panDown.onUpdate(
-      function () {
-        this.camera.rotation.x = posVec1.x;
-      }.bind(this)
-    );
-    panDown.onComplete(
-      function () {
-        this.controls.enabled = true;
-        this.controls.lookAt(0, 5, -35); // Look at francis 2 mid point sorta
-        if (interactiveToggle) {
-          this.interactive = true;
-        }
-      }.bind(this)
-    );
+    panDown.onUpdate(() => {
+      this.camera.rotation.x = posVec1.x;
+    });
+    panDown.onComplete(() => {
+      this.controls.enabled = true;
+      this.controls.lookAt(0, 5, -35); // Look at francis 2 mid point sorta
+      if (interactiveToggle) {
+        this.interactive = true;
+      }
+    });
     panDown.easing(TWEEN.Easing.Quadratic.InOut);
     panDown.start();
   }
@@ -1076,13 +1030,10 @@ class SceneLobby {
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-    // if (this.blooming) {
     this.bloomComposer.setSize(window.innerWidth, window.innerHeight);
     this.finalComposer.setSize(window.innerWidth, window.innerHeight);
-    // }
   }
   onMouseMove(event) {
-    // this.statusText.innerHTML = JSON.stringify(this.mouse);
     this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   }

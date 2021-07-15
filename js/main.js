@@ -11,7 +11,7 @@ import { FadeOutEffect } from "./fadeOutEffect.js";
 const dataPath = "./data/";
 
 // First check if the show is open
-fetch(`${dataPath}showtimes.json`)
+fetch(`https://harshinijk.github.io/showtimes.json`)
   .then((response) => response.json())
   .then((data) => {
     const showState = data.showState;
@@ -23,7 +23,7 @@ fetch(`${dataPath}showtimes.json`)
       case "closed":
         showtimeOverlay.style.visibility = "visible";
         warning.innerHTML =
-          "Looks like you missed the showtime. <br> Check back again later.";
+          "The performance is currently closed. <br> Check back again later.";
         throw new Error("Show's closed bruh.");
         break;
       case "scheduled":
@@ -60,7 +60,7 @@ fetch(`${dataPath}showtimes.json`)
         tmpNextTime.sort();
         if (tmpNextTime.length === 0) {
           showtimeOverlay.style.visibility = "visible";
-          warning.innerHTML = `Looks like you missed the showtime. <br> Check back again later.`;
+          warning.innerHTML = `The performance is currently closed. <br> Check back again later.`;
           throw new Error("Show's closed bruh.");
         }
         let tmpNextDay = new Date(tmpNextTime[0] * 1000);
@@ -89,7 +89,7 @@ fetch(`${dataPath}showtimes.json`)
           }
         }, 1000);
         showtimeOverlay.style.visibility = "visible";
-        warning.innerHTML = `Looks like you missed the showtime. <br> Next showtime is on ${tmpNextDay}`;
+        warning.innerHTML = `Next showtime is on ${tmpNextDay}`;
         throw new Error("Wait till the show opens bruh.");
         break;
       case "open":
@@ -249,47 +249,44 @@ function runShow() {
   const sfxEndingBase = new THREE.Audio(audioListener);
   const sfxEndingVO = new THREE.Audio(audioListener);
   const loadAllAudio = () => {
-    audioLoader.load(`${dataPath}sfx/lobby_base.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/lobby_base.ogg`, (audioBuffer) => {
       sfxLobbyBase.setBuffer(audioBuffer);
       sfxLobbyBase.setLoop(true);
     });
-    audioLoader.load(`${dataPath}sfx/lobby_vo.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/lobby_vo.ogg`, (audioBuffer) => {
       sfxLobbyVO.setBuffer(audioBuffer);
       sfxLobbyVO.userData.duration = 80000; // 1:20
     });
-    audioLoader.load(`${dataPath}sfx/perf1.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/perf1.ogg`, (audioBuffer) => {
       sfxPerf1.setBuffer(audioBuffer);
     });
-    audioLoader.load(`${dataPath}sfx/perf2.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/perf2.ogg`, (audioBuffer) => {
       sfxPerf2.setBuffer(audioBuffer);
     });
-    audioLoader.load(`${dataPath}sfx/perf3.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/perf3.ogg`, (audioBuffer) => {
       sfxPerf3.setBuffer(audioBuffer);
     });
-    audioLoader.load(`${dataPath}sfx/perf1_add.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/perf1_add.ogg`, (audioBuffer) => {
       sfxPerf1Add.setBuffer(audioBuffer);
       sfxPerf1Add.setLoop(true);
     });
-    audioLoader.load(`${dataPath}sfx/perf2_add.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/perf2_add.ogg`, (audioBuffer) => {
       sfxPerf2Add.setBuffer(audioBuffer);
       sfxPerf2Add.setLoop(true);
     });
-    audioLoader.load(`${dataPath}sfx/perf3_add.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/perf3_add.ogg`, (audioBuffer) => {
       sfxPerf3Add.setBuffer(audioBuffer);
       sfxPerf3Add.setLoop(true);
     });
-    audioLoader.load(
-      `${dataPath}sfx/perf3_add_birds.ogg`,
-      function (audioBuffer) {
-        sfxPerf3AddB.setBuffer(audioBuffer);
-        sfxPerf3AddB.setLoop(true);
-      }
-    );
-    audioLoader.load(`${dataPath}sfx/ending_base.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/perf3_add_birds.ogg`, (audioBuffer) => {
+      sfxPerf3AddB.setBuffer(audioBuffer);
+      sfxPerf3AddB.setLoop(true);
+    });
+    audioLoader.load(`${dataPath}sfx/ending_base.ogg`, (audioBuffer) => {
       sfxEndingBase.setBuffer(audioBuffer);
       sfxEndingBase.setLoop(true);
     });
-    audioLoader.load(`${dataPath}sfx/ending_vo.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/ending_vo.ogg`, (audioBuffer) => {
       sfxEndingVO.setBuffer(audioBuffer);
     });
   };
@@ -328,7 +325,7 @@ function runShow() {
   const stats = new Stats();
   stats.domElement.style.position = "absolute";
   stats.domElement.style.top = "0px";
-  document.body.appendChild(stats.domElement);
+  // document.body.appendChild(stats.domElement);
 
   // Setup scenes
   const lobby = new SceneLobby(renderer, manager, stats);
