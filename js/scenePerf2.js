@@ -1,5 +1,5 @@
 import * as THREE from "./lib/three.module.js";
-import { OrbitControls } from "./lib/OrbitControls.js";
+// import { OrbitControls } from "./lib/OrbitControls.js";
 import { FlyControls } from "./lib/FlyControls.js";
 // Lightning imports
 import { LightningStorm } from "./lib/effects/LightningStorm.js";
@@ -37,8 +37,6 @@ class ScenePerf2 {
     // Load everything on to the screen -----------------------------------------
 
     // Skybox
-    // http://wwwtyro.github.io/space-3d
-
     const loader = new THREE.CubeTextureLoader(this.manager);
     loader.setPath(this.dataPath);
 
@@ -81,7 +79,7 @@ class ScenePerf2 {
     this.scene.add(sphere2);
     this.lifeRing = sphere2;
 
-    const axesHelper = new THREE.AxesHelper(5);
+    // const axesHelper = new THREE.AxesHelper(5);
     // this.scene.add(axesHelper);
 
     this.addEmber();
@@ -181,13 +179,10 @@ class ScenePerf2 {
       endVec1,
       breatheTime
     );
-    breatheIn.onUpdate(
-      function () {
-        this.lifeRing.position.y = posVec1.i;
-        // this.mainLight.intensity = posVec1.i;
-      }.bind(this)
-    );
-    breatheIn.onComplete(function () {
+    breatheIn.onUpdate(() => {
+      this.lifeRing.position.y = posVec1.i;
+    });
+    breatheIn.onComplete(() => {
       posVec1.i = endVal1;
       endVec1.i = startVal1;
       breatheOut.start();
@@ -196,13 +191,10 @@ class ScenePerf2 {
       endVec1,
       breatheTime
     );
-    breatheOut.onUpdate(
-      function () {
-        this.lifeRing.position.y = posVec1.i;
-        // this.mainLight.intensity = posVec1.i;
-      }.bind(this)
-    );
-    breatheOut.onComplete(function () {
+    breatheOut.onUpdate(() => {
+      this.lifeRing.position.y = posVec1.i;
+    });
+    breatheOut.onComplete(() => {
       posVec1.i = startVal1;
       endVec1.i = endVal1;
       breatheIn.start();
@@ -226,29 +218,24 @@ class ScenePerf2 {
       colorRed,
       10000
     );
-    toRed.onUpdate(
-      function () {
-        this.world.material.color.set(
-          `rgb(${Math.floor(colorYellow.r)},${Math.floor(
-            colorYellow.g
-          )},${Math.floor(colorYellow.b)})`
-        );
-      }.bind(this)
-    );
-    toRed.onComplete(function () {});
+    toRed.onUpdate(() => {
+      this.world.material.color.set(
+        `rgb(${Math.floor(colorYellow.r)},${Math.floor(
+          colorYellow.g
+        )},${Math.floor(colorYellow.b)})`
+      );
+    });
     var toBlack = new TWEEN.Tween(colorRed, this.animation).to(
       colorBlack,
       10000
     );
-    toBlack.onUpdate(
-      function () {
-        this.world.material.color.set(
-          `rgb(${Math.floor(colorRed.r)},${Math.floor(colorRed.g)},${Math.floor(
-            colorRed.b
-          )})`
-        );
-      }.bind(this)
-    );
+    toBlack.onUpdate(() => {
+      this.world.material.color.set(
+        `rgb(${Math.floor(colorRed.r)},${Math.floor(colorRed.g)},${Math.floor(
+          colorRed.b
+        )})`
+      );
+    });
     var stopL = {
       d: 0,
     };
@@ -262,17 +249,13 @@ class ScenePerf2 {
       aggressiveL,
       20000
     );
-    lGetAggressive.onUpdate(
-      function () {
-        this.storm.dynamic = softL.d;
-      }.bind(this)
-    );
+    lGetAggressive.onUpdate(() => {
+      this.storm.dynamic = softL.d;
+    });
     var lGetLost = new TWEEN.Tween(aggressiveL, this.animation).to(stopL, 4000);
-    lGetLost.onUpdate(
-      function () {
-        this.storm.dynamic = aggressiveL.d;
-      }.bind(this)
-    );
+    lGetLost.onUpdate(() => {
+      this.storm.dynamic = aggressiveL.d;
+    });
     var softE = {
       d: 0,
     };
@@ -280,13 +263,11 @@ class ScenePerf2 {
       d: 0.7, // 1 is max, looks sharp
     };
     var eSlowStart = new TWEEN.Tween(softE, this.animation).to(sharpE, 17000);
-    eSlowStart.onUpdate(
-      function () {
-        this.ember[0].material.opacity = softE.d;
-        this.ember[0].position.y += 0.05;
-      }.bind(this)
-    );
-    eSlowStart.onComplete(function () {
+    eSlowStart.onUpdate(() => {
+      this.ember[0].material.opacity = softE.d;
+      this.ember[0].position.y += 0.05;
+    });
+    eSlowStart.onComplete(() => {
       softE.d = 0;
       eMed.start();
     });
@@ -294,24 +275,20 @@ class ScenePerf2 {
       { null: 1 },
       40000
     );
-    eMed.onUpdate(
-      function () {
-        this.ember[0].position.y += 0.07;
-      }.bind(this)
-    );
+    eMed.onUpdate(() => {
+      this.ember[0].position.y += 0.07;
+    });
     var eIntense = new TWEEN.Tween(softE, this.animation).to(sharpE, 15000);
-    eIntense.onUpdate(
-      function () {
-        this.ember[0].position.y += 0.1;
-        this.ember[1].position.y += 0.15;
-        this.ember[2].position.y += 0.2;
-        this.ember[3].position.y += 0.3;
-        this.ember[1].material.opacity = softE.d;
-        this.ember[2].material.opacity = softE.d;
-        this.ember[3].material.opacity = softE.d;
-      }.bind(this)
-    );
-    eIntense.onComplete(function () {
+    eIntense.onUpdate(() => {
+      this.ember[0].position.y += 0.1;
+      this.ember[1].position.y += 0.15;
+      this.ember[2].position.y += 0.2;
+      this.ember[3].position.y += 0.3;
+      this.ember[1].material.opacity = softE.d;
+      this.ember[2].material.opacity = softE.d;
+      this.ember[3].material.opacity = softE.d;
+    });
+    eIntense.onComplete(() => {
       softE.d = 0.7;
       sharpE.d = 0; // Ugly way to do this
       eFast.start();
@@ -320,27 +297,23 @@ class ScenePerf2 {
       { null: 1 },
       35000
     );
-    eFast.onUpdate(
-      function () {
-        this.ember[0].position.y += 0.1;
-        this.ember[1].position.y += 0.15;
-        this.ember[2].position.y += 0.2;
-        this.ember[3].position.y += 0.3;
-      }.bind(this)
-    );
+    eFast.onUpdate(() => {
+      this.ember[0].position.y += 0.1;
+      this.ember[1].position.y += 0.15;
+      this.ember[2].position.y += 0.2;
+      this.ember[3].position.y += 0.3;
+    });
     var eReduce = new TWEEN.Tween(softE, this.animation).to(sharpE, 42000);
-    eReduce.onUpdate(
-      function () {
-        this.ember[0].position.y += 0.06;
-        this.ember[1].position.y += 0.08;
-        this.ember[2].position.y += 0.1;
-        this.ember[3].position.y += 0.15;
-        this.ember[0].material.opacity = softE.d;
-        this.ember[1].material.opacity = softE.d;
-        this.ember[2].material.opacity = softE.d;
-        this.ember[3].material.opacity = softE.d;
-      }.bind(this)
-    );
+    eReduce.onUpdate(() => {
+      this.ember[0].position.y += 0.06;
+      this.ember[1].position.y += 0.08;
+      this.ember[2].position.y += 0.1;
+      this.ember[3].position.y += 0.15;
+      this.ember[0].material.opacity = softE.d;
+      this.ember[1].material.opacity = softE.d;
+      this.ember[2].material.opacity = softE.d;
+      this.ember[3].material.opacity = softE.d;
+    });
     // Kill the life ring at the end
     var deadState = {
       i: 1,
@@ -352,11 +325,9 @@ class ScenePerf2 {
       deadFinally,
       24000
     );
-    killLifeRing.onUpdate(
-      function () {
-        this.lifeRing.material.opacity = deadState.i;
-      }.bind(this)
-    );
+    killLifeRing.onUpdate(() => {
+      this.lifeRing.material.opacity = deadState.i;
+    });
 
     this.anim = {
       breatheIn: breatheIn,
@@ -564,7 +535,6 @@ class ScenePerf2 {
     this.bloomLayer.set(this.BLOOM_SCENE);
     this.bloomDarkMaterial = new THREE.MeshBasicMaterial({ color: "black" });
     this.bloomMaterials = {};
-    // this.renderScene = new RenderPass(this.scene, this.camera);
     this.bloomPass = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
       1.5,
@@ -592,8 +562,6 @@ class ScenePerf2 {
       "baseTexture"
     );
     this.finalPass.needsSwap = true;
-    // this.finalComposer = new EffectComposer(this.renderer);
-    // this.composer.addPass(this.renderScene);
     this.composer.addPass(this.finalPass);
 
     // FXAA - to solve this jagged problem

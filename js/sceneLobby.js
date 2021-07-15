@@ -89,7 +89,7 @@ class SceneLobby {
     this.scene.background = skyboxTextures[this.currentSkybox];
     this.skyboxTextures = skyboxTextures; // Export this for bloom
 
-    const axesHelper = new THREE.AxesHelper(5);
+    // const axesHelper = new THREE.AxesHelper(5);
     // this.scene.add(axesHelper);
 
     const mtlLoader = new MTLLoader(manager);

@@ -1,5 +1,5 @@
 import * as THREE from "./lib/three.module.js";
-import { OrbitControls } from "./lib/OrbitControls.js";
+// import { OrbitControls } from "./lib/OrbitControls.js";
 import { FirstPersonControls } from "./lib/FirstPersonControls.js";
 // Bloom (Transition light effect) imports
 import { EffectComposer } from "./lib/postprocessing/EffectComposer.js";
@@ -38,8 +38,6 @@ class ScenePerf1 {
     // Load everything on to the screen -----------------------------------------
 
     // Skybox
-    // http://wwwtyro.github.io/space-3d
-
     const loader = new THREE.CubeTextureLoader(this.manager);
     loader.setPath(this.dataPath);
 
@@ -66,7 +64,7 @@ class ScenePerf1 {
         const eTxt = new THREE.MeshStandardMaterial({
           color: "rgb(255,255,255)",
         });
-        root.traverse(function (child) {
+        root.traverse((child) => {
           if (child instanceof THREE.Mesh) {
             child.material = eTxt;
             child.material.wireframe = true;
@@ -87,7 +85,7 @@ class ScenePerf1 {
         const eTxt = new THREE.MeshStandardMaterial({
           color: "rgb(50,50,50)", // color: "rgb(50,50,50)",
         });
-        root.traverse(function (child) {
+        root.traverse((child) => {
           if (child instanceof THREE.Mesh) {
             child.material = eTxt;
             child.material.transparent = true;
@@ -206,23 +204,19 @@ class ScenePerf1 {
       posVec2,
       timeMove1
     );
-    camMove1.onUpdate(
-      function () {
-        this.camera.position.set(posVec1.x, posVec1.y, posVec1.z);
-      }.bind(this)
-    );
-    camMove1.onComplete(function () {
+    camMove1.onUpdate(() => {
+      this.camera.position.set(posVec1.x, posVec1.y, posVec1.z);
+    });
+    camMove1.onComplete(() => {
       camMove2.start();
     });
     var camMove2 = new TWEEN.Tween(posVec2, this.animation).to(
       posVec3,
       timeMove2
     );
-    camMove2.onUpdate(
-      function () {
-        this.camera.position.set(posVec2.x, posVec2.y, posVec2.z);
-      }.bind(this)
-    );
+    camMove2.onUpdate(() => {
+      this.camera.position.set(posVec2.x, posVec2.y, posVec2.z);
+    });
     // Transition the Earth
     var trans1 = {
       r: 255,
@@ -235,20 +229,18 @@ class ScenePerf1 {
       b: 0,
     };
     var wfWhite = new TWEEN.Tween(trans1, this.animation).to(trans2, timeWF);
-    wfWhite.onUpdate(
-      function () {
-        this.earth.traverse(function (child) {
-          if (child instanceof THREE.Mesh) {
-            child.material.color.set(
-              `rgb(${Math.floor(trans1.r)},${Math.floor(trans1.g)},${Math.floor(
-                trans1.b
-              )})`
-            );
-            child.material.needsUpdate = true;
-          }
-        });
-      }.bind(this)
-    );
+    wfWhite.onUpdate(() => {
+      this.earth.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          child.material.color.set(
+            `rgb(${Math.floor(trans1.r)},${Math.floor(trans1.g)},${Math.floor(
+              trans1.b
+            )})`
+          );
+          child.material.needsUpdate = true;
+        }
+      });
+    });
     // Life ring breathe
     const breatheTime = 2000; // milliseconds
     const startVal1 = 1,
@@ -267,19 +259,17 @@ class ScenePerf1 {
       breatheVec2,
       breatheTime
     );
-    breatheIn.onUpdate(
-      function () {
-        if (this.lifeRingDone) {
-          this.lifeRing.material.opacity = startVal1;
-          this.lifeRingLight.intensity = startVal2;
-          breatheIn.stop();
-          breatheOut.stop();
-        }
-        this.lifeRing.material.opacity = breatheVec1.i;
-        this.lifeRingLight.intensity = breatheVec1.l;
-      }.bind(this)
-    );
-    breatheIn.onComplete(function () {
+    breatheIn.onUpdate(() => {
+      if (this.lifeRingDone) {
+        this.lifeRing.material.opacity = startVal1;
+        this.lifeRingLight.intensity = startVal2;
+        breatheIn.stop();
+        breatheOut.stop();
+      }
+      this.lifeRing.material.opacity = breatheVec1.i;
+      this.lifeRingLight.intensity = breatheVec1.l;
+    });
+    breatheIn.onComplete(() => {
       breatheVec1.i = endVal1;
       breatheVec2.i = startVal1;
       breatheVec1.l = endVal2;
@@ -290,13 +280,11 @@ class ScenePerf1 {
       breatheVec2,
       breatheTime
     );
-    breatheOut.onUpdate(
-      function () {
-        this.lifeRing.material.opacity = breatheVec1.i;
-        this.lifeRingLight.intensity = breatheVec1.l;
-      }.bind(this)
-    );
-    breatheOut.onComplete(function () {
+    breatheOut.onUpdate(() => {
+      this.lifeRing.material.opacity = breatheVec1.i;
+      this.lifeRingLight.intensity = breatheVec1.l;
+    });
+    breatheOut.onComplete(() => {
       breatheVec1.i = startVal1;
       breatheVec2.i = endVal1;
       breatheVec1.l = startVal2;
@@ -313,17 +301,13 @@ class ScenePerf1 {
       n: 1,
     };
     var bloomUp = new TWEEN.Tween(bloom1, this.animation).to(bloom2, 30000);
-    bloomUp.onUpdate(
-      function () {
-        this.bloomPass.strength = Number(bloom1.n);
-      }.bind(this)
-    );
+    bloomUp.onUpdate(() => {
+      this.bloomPass.strength = Number(bloom1.n);
+    });
     var bloomDown = new TWEEN.Tween(bloom2, this.animation).to(bloom3, 16000);
-    bloomDown.onUpdate(
-      function () {
-        this.bloomPass.strength = Number(bloom2.n);
-      }.bind(this)
-    );
+    bloomDown.onUpdate(() => {
+      this.bloomPass.strength = Number(bloom2.n);
+    });
 
     this.anim = {
       camMove1: camMove1,
@@ -382,10 +366,8 @@ class ScenePerf1 {
   }
   renderBloom() {
     this.scene.traverse(darkenNonBloomed.bind(this));
-    // this.scene.background = new THREE.Color(0x000000); // Make background black
     this.bloomComposer.render();
     this.scene.traverse(restoreMaterial.bind(this));
-    // this.scene.background = this.skyboxTextures[this.currentSkybox]; // Restore background
     function darkenNonBloomed(obj) {
       if (obj.isMesh && this.bloomLayer.test(obj.layers) === false) {
         this.bloomMaterials[obj.uuid] = obj.material;
@@ -402,7 +384,6 @@ class ScenePerf1 {
   render(state = true) {
     if (state) {
       this.renderLoop();
-      // this.controls.enabled = true;
       this.renderState = true;
     } else {
       cancelAnimationFrame(this.renderID);
@@ -412,9 +393,6 @@ class ScenePerf1 {
     }
   }
   renderLoop() {
-    // document.getElementById("test").innerHTML = JSON.stringify(
-    //   this.camera.position
-    // );
     this.renderID = requestAnimationFrame(this.renderLoop.bind(this));
     const delta = this.clock.getDelta();
     this.animation.update();

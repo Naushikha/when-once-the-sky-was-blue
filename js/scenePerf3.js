@@ -1,5 +1,5 @@
 import * as THREE from "./lib/three.module.js";
-import { OrbitControls } from "./lib/OrbitControls.js";
+// import { OrbitControls } from "./lib/OrbitControls.js";
 import { FirstPersonControls } from "./lib/FirstPersonControls.js";
 // Bloom (Transition light effect) imports
 import { EffectComposer } from "./lib/postprocessing/EffectComposer.js";
@@ -109,7 +109,7 @@ class ScenePerf3 {
 
     this.setupAnimations();
 
-    const axesHelper = new THREE.AxesHelper(5);
+    // const axesHelper = new THREE.AxesHelper(5);
     // this.scene.add(axesHelper);
 
     // Load subtitles
@@ -149,12 +149,10 @@ class ScenePerf3 {
       endVec1,
       timeRise
     );
-    sunRise.onUpdate(
-      function () {
-        this.sunParameters.elevation = posVec1.i;
-        this.updateSky();
-      }.bind(this)
-    );
+    sunRise.onUpdate(() => {
+      this.sunParameters.elevation = posVec1.i;
+      this.updateSky();
+    });
     // Move camera till sun rise
     var posVec2 = {
       z: 0,
@@ -166,26 +164,23 @@ class ScenePerf3 {
       endVec2,
       timeRise
     );
-    camMove.onUpdate(
-      function () {
-        this.camera.position.z = posVec2.z;
-        // Did we pass a light ring?
-        if (
-          this.camera.position.z >
-          this.lifeRings[this.currentLifeRing].position.z
-        ) {
-          // Send the just passed life ring to the back
-          this.lastLifeRingZ += this.lifeRingSpace;
-          this.fadeRing(this.lifeRings[this.currentLifeRing]); // Make it fade then glow
-          // Set proper count
-          if (this.currentLifeRing < this.lifeRings.length - 1) {
-            this.currentLifeRing += 1;
-          } else {
-            this.currentLifeRing = 0;
-          }
+    camMove.onUpdate(() => {
+      this.camera.position.z = posVec2.z;
+      // Did we pass a light ring?
+      if (
+        this.camera.position.z > this.lifeRings[this.currentLifeRing].position.z
+      ) {
+        // Send the just passed life ring to the back
+        this.lastLifeRingZ += this.lifeRingSpace;
+        this.fadeRing(this.lifeRings[this.currentLifeRing]); // Make it fade then glow
+        // Set proper count
+        if (this.currentLifeRing < this.lifeRings.length - 1) {
+          this.currentLifeRing += 1;
+        } else {
+          this.currentLifeRing = 0;
         }
-      }.bind(this)
-    );
+      }
+    });
     this.anim = {
       sunRise: sunRise,
       camMove: camMove,
@@ -200,11 +195,9 @@ class ScenePerf3 {
       i: 1,
     };
     var glowy = new TWEEN.Tween(posVec1, this.animation).to(endVec1, glowTime);
-    glowy.onUpdate(
-      function () {
-        lifeRing.material.opacity = posVec1.i;
-      }.bind(this)
-    );
+    glowy.onUpdate(() => {
+      lifeRing.material.opacity = posVec1.i;
+    });
     glowy.start();
     lifeRing.material.opacity = 0;
     lifeRing.position.z = this.lastLifeRingZ;
@@ -218,16 +211,12 @@ class ScenePerf3 {
       i: 0,
     };
     var fady = new TWEEN.Tween(posVec1, this.animation).to(endVec1, fadeTime);
-    fady.onUpdate(
-      function () {
-        lifeRing.material.opacity = posVec1.i;
-      }.bind(this)
-    );
-    fady.onComplete(
-      function () {
-        this.glowRing(lifeRing);
-      }.bind(this)
-    );
+    fady.onUpdate(() => {
+      lifeRing.material.opacity = posVec1.i;
+    });
+    fady.onComplete(() => {
+      this.glowRing(lifeRing);
+    });
     fady.start();
   }
   setupBloom() {
@@ -279,10 +268,8 @@ class ScenePerf3 {
   }
   renderBloom() {
     this.scene.traverse(darkenNonBloomed.bind(this));
-    // this.scene.background = new THREE.Color(0x000000); // Make background black
     this.bloomComposer.render();
     this.scene.traverse(restoreMaterial.bind(this));
-    // this.scene.background = this.skyboxTextures[this.currentSkybox]; // Restore background
     function darkenNonBloomed(obj) {
       if (obj.isMesh && this.bloomLayer.test(obj.layers) === false) {
         this.bloomMaterials[obj.uuid] = obj.material;
@@ -305,9 +292,7 @@ class ScenePerf3 {
     this.water.material.uniforms["sunDirection"].value
       .copy(this.sun)
       .normalize();
-
-    // const pmremGenerator = new THREE.PMREMGenerator(this.renderer);
-
+    // const pmremGenerator = new THREE.PMREMGenerator(this.renderer); // This causes memory leaks for some reason
     // this.scene.environment = pmremGenerator.fromScene(this.scene).texture;
   }
   render(state = true) {

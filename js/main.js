@@ -25,7 +25,7 @@ fetch(`https://harshinijk.github.io/showtimes.json`)
         warning.innerHTML =
           "The performance is currently closed. <br> Check back again later.";
         throw new Error("Show's closed bruh.");
-        break;
+        return;
       case "scheduled":
         const timeNowUTC = Math.floor(new Date().getTime() / 1000);
         // Is daily time okay?
@@ -40,7 +40,7 @@ fetch(`https://harshinijk.github.io/showtimes.json`)
         if (dailyStartUTC <= minsUTC && minsUTC <= dailyEndUTC) {
           showtimeOverlay.style.visibility = "hidden";
           runShow();
-          break;
+          return;
         }
         // If not a daily time then check for dates
         let tmpNextTime = [];
@@ -50,7 +50,7 @@ fetch(`https://harshinijk.github.io/showtimes.json`)
           if (dateStartUTC <= timeNowUTC && timeNowUTC <= dateEndUTC) {
             showtimeOverlay.style.visibility = "hidden";
             runShow();
-            break;
+            return;
           }
           tmpNextTime.push(dateStartUTC);
         }
@@ -62,6 +62,7 @@ fetch(`https://harshinijk.github.io/showtimes.json`)
           showtimeOverlay.style.visibility = "visible";
           warning.innerHTML = `The performance is currently closed. <br> Check back again later.`;
           throw new Error("Show's closed bruh.");
+          return;
         }
         let tmpNextDay = new Date(tmpNextTime[0] * 1000);
         tmpNextTime = tmpNextTime[0] - timeNowUTC;
@@ -91,7 +92,7 @@ fetch(`https://harshinijk.github.io/showtimes.json`)
         showtimeOverlay.style.visibility = "visible";
         warning.innerHTML = `Next showtime is on ${tmpNextDay}`;
         throw new Error("Wait till the show opens bruh.");
-        break;
+        return;
       case "open":
         showtimeOverlay.style.visibility = "hidden";
         runShow();
@@ -122,7 +123,6 @@ function runShow() {
     progress.style.display = "none";
     startButton.style.visibility = "visible";
     startButton.style.animation = "fadein 5s";
-    // fullscrButton.style.animation = "fadein 5s";
 
     // Skip play for now
     // currentScene = "perf3";

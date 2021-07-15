@@ -1,7 +1,7 @@
 {
     "showState": "open",
     "dailyTimeStart": "00:00",
-    "dailyTimeStop": "07:15",
+    "dailyTimeStop": "00:00",
     "specificDays": [
         ["04 Jan 2021 00:00:00 GMT", "04 Jul 2021 07:14:00 GMT"],
         ["01 Jan 2021 00:00:00 GMT+0530", "04 Jul 2021 01:29:00 GMT+0530"]
