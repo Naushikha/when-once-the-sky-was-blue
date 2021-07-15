@@ -795,10 +795,18 @@ class SceneLobby {
     setTimeout(() => {
       fIO.playEffect();
     }, 43000); // Everything ends @ 45000
+    // Credits ending fadeout animation
+    const creditsEndFunc = () => {
+      const fIO = new FadeInOutEffect("transition-overlay", "white", 4000, () => {
+        location.reload();
+      });
+      fIO.playEffect();
+    };
     const credHandler = new CreditsHandler(
       "credits-overlay",
       "credits-title",
-      "credits-name"
+      "credits-name",
+      creditsEndFunc
     );
     credHandler.load(`${this.dataPath}credits.csv`);
 

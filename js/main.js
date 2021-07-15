@@ -11,7 +11,8 @@ import { FadeOutEffect } from "./fadeOutEffect.js";
 const dataPath = "./data/";
 
 // First check if the show is open
-fetch(`https://harshinijk.github.io/showtimes.json`)
+// fetch(`./data/showtimes.json`, { cache: "no-store" })
+fetch(`https://harshinijk.github.io/showtimes.json`, { cache: "no-store" })
   .then((response) => response.json())
   .then((data) => {
     const showState = data.showState;
@@ -122,8 +123,8 @@ function runShow() {
     loadingState = false;
     progress.style.display = "none";
     setTimeout(() => {
-    startButton.style.visibility = "visible";
-    startButton.style.animation = "fadein 5s";
+      startButton.style.visibility = "visible";
+      startButton.style.animation = "fadein 5s";
     }, 5000); // This delay is to wait for phrases to disappear
 
     // Skip play for now
@@ -429,12 +430,12 @@ function runShow() {
         // Play end scene if all perfs are done
         if (perf1Done && perf2Done && perf3Done) {
           setTimeout(() => {
-              sfxEndingBase.play();
-              sfxEndingVO.play();
-              lobby.endingSubHandler.playSubtitles();
+            sfxEndingBase.play();
+            sfxEndingVO.play();
+            lobby.endingSubHandler.playSubtitles();
             setTimeout(() => {
               lobby.playEnding();
-            }, 1000);
+            }, 2000);
           }, 32000);
         }
         break;
