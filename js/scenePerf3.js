@@ -324,7 +324,7 @@ class ScenePerf3 {
   }
   renderLoop() {
     this.renderID = requestAnimationFrame(this.renderLoop.bind(this));
-    this.stats.update();
+    // this.stats.update();
     const delta = this.clock.getDelta();
     this.animation.update();
     if (this.controls.enabled) {

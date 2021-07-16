@@ -137,13 +137,11 @@ body {
 
 #loading-overlay #fullscr-button {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 5vh;
+  right: 3vw;
   float: right;
   height: 2em;
   width: 2em;
-  padding-top: 1.5em;
-  padding-right: 1em;
   transition: all 0.1s;
   opacity: 0.6;
   animation: fullscr-blink 1s 10;

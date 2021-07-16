@@ -521,7 +521,7 @@ class ScenePerf2 {
     if (this.controls.enabled) {
       this.controls.update(delta);
     }
-    this.stats.update();
+    // this.stats.update();
 
     // Lightning stuff
     this.renderBloom();

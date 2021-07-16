@@ -925,7 +925,7 @@ class SceneLobby {
     }
     this.renderBloom();
     this.finalComposer.render();
-    this.stats.update();
+    // this.stats.update();
 
     const franciControls = () => {
       this.raycaster.setFromCamera(this.mouse, this.camera);

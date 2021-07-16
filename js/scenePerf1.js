@@ -401,7 +401,7 @@ class ScenePerf1 {
     }
     this.renderBloom();
     this.finalComposer.render();
-    this.stats.update();
+    // this.stats.update();
   }
   onWindowResize = () => {
     this.camera.aspect = window.innerWidth / window.innerHeight;
