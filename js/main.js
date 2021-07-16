@@ -8,6 +8,9 @@ import { ScenePerf3 } from "./scenePerf3.js";
 import { FadeInOutEffect } from "./fadeInOutEffect.js";
 import { FadeOutEffect } from "./fadeOutEffect.js";
 
+import { FadeInAudioEffect } from "./fadeInAudioEffect.js";
+import { FadeOutAudioEffect } from "./fadeOutAudioEffect.js";
+
 const dataPath = "./data/";
 
 // First check if the show is open
@@ -138,8 +141,19 @@ function runShow() {
     // lobby.interactive = true;
     // sfxLobbyBase.play();
     // sfxLobbyVO.play(8);
+    // sfxLobbyBase.play();
+    // sfxPerf1Add.play();
+    // sfxPerf2Add.play();
+    // sfxPerf3Add.play();
+    // sfxPerf3AddB.play();
     // setTimeout(() => {
-    //   lobby.playEnding();
+    //   lobby.playEnding([
+    //     sfxLobbyBase,
+    //     sfxPerf1Add,
+    //     sfxPerf2Add,
+    //     sfxPerf3Add,
+    //     sfxPerf3AddB,
+    //   ]);
     // }, 8000);
 
     // lobby.setFranciTexture(lobby.francis1);
@@ -162,15 +176,13 @@ function runShow() {
         }, sfxLobbyVO.userData.duration + 8000);
         loadingOverlay.style.visibility = "hidden";
       }, 6000);
-      // lobby.interactive = true;
-
-      // currentScene = "perf2";
-      // perf2.render();
-      // perf2.play();
-      // sfxPerf2.play();
 
       loadingOverlay.style.animation = "fadeout 4s forwards";
       startButton.style.visibility = "hidden";
+      sfxAmbience.setVolume(0);
+      sfxAmbience.play();
+      const fI = new FadeInAudioEffect(4000, null, [sfxAmbience]);
+      fI.playEffect();
     });
   };
 
@@ -240,6 +252,7 @@ function runShow() {
   // Setup the audio
   const audioLoader = new THREE.AudioLoader(manager);
   const audioListener = new THREE.AudioListener();
+  const sfxAmbience = new THREE.Audio(audioListener);
   const sfxLobbyBase = new THREE.Audio(audioListener);
   const sfxLobbyVO = new THREE.Audio(audioListener);
   const sfxPerf1 = new THREE.Audio(audioListener);
@@ -252,6 +265,10 @@ function runShow() {
   const sfxEndingBase = new THREE.Audio(audioListener);
   const sfxEndingVO = new THREE.Audio(audioListener);
   const loadAllAudio = () => {
+    audioLoader.load(`${dataPath}sfx/ambience.ogg`, (audioBuffer) => {
+      sfxAmbience.setBuffer(audioBuffer);
+      sfxAmbience.setLoop(true);
+    });
     audioLoader.load(`${dataPath}sfx/lobby_base.ogg`, (audioBuffer) => {
       sfxLobbyBase.setBuffer(audioBuffer);
       sfxLobbyBase.setLoop(true);
@@ -429,12 +446,15 @@ function runShow() {
         }
         // Play end scene if all perfs are done
         if (perf1Done && perf2Done && perf3Done) {
+          // Fade out ambience first
+          const fO = new FadeOutAudioEffect(8000, null, [sfxAmbience]);
+          fO.playEffect();
           setTimeout(() => {
             sfxEndingBase.play();
             sfxEndingVO.play();
             lobby.endingSubHandler.playSubtitles();
             setTimeout(() => {
-              lobby.playEnding();
+              lobby.playEnding(sfxList); // Pass in the sfx to fade them out after credits
             }, 2000);
           }, 32000);
         }

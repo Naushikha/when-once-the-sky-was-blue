@@ -16,6 +16,8 @@ import { SubtitleHandler } from "./subtitleHandler.js";
 import { CreditsHandler } from "./creditsHandler.js";
 import { FadeInOutEffect } from "./fadeInOutEffect.js";
 
+import { FadeOutAudioEffect } from "./fadeOutAudioEffect.js";
+
 class SceneLobby {
   dataPath = "./data/";
   clock = new THREE.Clock();
@@ -689,7 +691,7 @@ class SceneLobby {
     lookAtBloom.start();
     growBloom.start();
   }
-  playEnding() {
+  playEnding(sfxList) {
     // Move all the franci to 0,0,0
     var posVec1 = {
       x1: this.francis1.position.x,
@@ -797,9 +799,16 @@ class SceneLobby {
     }, 43000); // Everything ends @ 45000
     // Credits ending fadeout animation
     const creditsEndFunc = () => {
-      const fIO = new FadeInOutEffect("transition-overlay", "white", 4000, () => {
-        location.reload();
-      });
+      const fIO = new FadeInOutEffect(
+        "transition-overlay",
+        "white",
+        8000,
+        () => {
+          location.reload();
+        }
+      );
+      const fO = new FadeOutAudioEffect(4000, null, sfxList);
+      fO.playEffect();
       fIO.playEffect();
     };
     const credHandler = new CreditsHandler(
