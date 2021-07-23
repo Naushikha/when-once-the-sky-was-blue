@@ -1,10 +1,11 @@
 // Simple credits loader
 class CreditsHandler {
-  constructor(overlayElemID, titleElemID, nameElemID) {
+  constructor(overlayElemID, titleElemID, nameElemID, onComplete) {
     this.overlay = document.getElementById(overlayElemID);
     this.title = document.getElementById(titleElemID);
     this.name = document.getElementById(nameElemID);
     this.animation = new TWEEN.Group(); // Animation
+    this.onComplete = onComplete;
   }
   async load(url) {
     function parseCredits(csv) {
@@ -68,8 +69,8 @@ class CreditsHandler {
           this.currentCredit = 0;
           this.overlay.style.visibility = "hidden";
           setTimeout(() => {
-            location.reload();
-          }, 10000); // Refresh the page in 10 secs after credits
+            this.onComplete();
+          }, 15000); // Run this function in 15 secs after credits
         }
       }.bind(this)
     );

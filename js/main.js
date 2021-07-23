@@ -8,10 +8,14 @@ import { ScenePerf3 } from "./scenePerf3.js";
 import { FadeInOutEffect } from "./fadeInOutEffect.js";
 import { FadeOutEffect } from "./fadeOutEffect.js";
 
+import { FadeInAudioEffect } from "./fadeInAudioEffect.js";
+import { FadeOutAudioEffect } from "./fadeOutAudioEffect.js";
+
 const dataPath = "./data/";
 
 // First check if the show is open
-fetch(`${dataPath}showtimes.json`)
+// fetch(`./data/showtimes.json`, { cache: "no-store" })
+fetch(`https://harshinijk.github.io/showtimes.json`, { cache: "no-store" })
   .then((response) => response.json())
   .then((data) => {
     const showState = data.showState;
@@ -23,9 +27,9 @@ fetch(`${dataPath}showtimes.json`)
       case "closed":
         showtimeOverlay.style.visibility = "visible";
         warning.innerHTML =
-          "Looks like you missed the showtime. <br> Check back again later.";
+          "The performance is currently closed. <br> Check back again later.";
         throw new Error("Show's closed bruh.");
-        break;
+        return;
       case "scheduled":
         const timeNowUTC = Math.floor(new Date().getTime() / 1000);
         // Is daily time okay?
@@ -40,7 +44,7 @@ fetch(`${dataPath}showtimes.json`)
         if (dailyStartUTC <= minsUTC && minsUTC <= dailyEndUTC) {
           showtimeOverlay.style.visibility = "hidden";
           runShow();
-          break;
+          return;
         }
         // If not a daily time then check for dates
         let tmpNextTime = [];
@@ -50,7 +54,7 @@ fetch(`${dataPath}showtimes.json`)
           if (dateStartUTC <= timeNowUTC && timeNowUTC <= dateEndUTC) {
             showtimeOverlay.style.visibility = "hidden";
             runShow();
-            break;
+            return;
           }
           tmpNextTime.push(dateStartUTC);
         }
@@ -60,8 +64,9 @@ fetch(`${dataPath}showtimes.json`)
         tmpNextTime.sort();
         if (tmpNextTime.length === 0) {
           showtimeOverlay.style.visibility = "visible";
-          warning.innerHTML = `Looks like you missed the showtime. <br> Check back again later.`;
+          warning.innerHTML = `The performance is currently closed. <br> Check back again later.`;
           throw new Error("Show's closed bruh.");
+          return;
         }
         let tmpNextDay = new Date(tmpNextTime[0] * 1000);
         tmpNextTime = tmpNextTime[0] - timeNowUTC;
@@ -89,9 +94,9 @@ fetch(`${dataPath}showtimes.json`)
           }
         }, 1000);
         showtimeOverlay.style.visibility = "visible";
-        warning.innerHTML = `Looks like you missed the showtime. <br> Next showtime is on ${tmpNextDay}`;
+        warning.innerHTML = `Next showtime is on ${tmpNextDay}`;
         throw new Error("Wait till the show opens bruh.");
-        break;
+        return;
       case "open":
         showtimeOverlay.style.visibility = "hidden";
         runShow();
@@ -120,9 +125,10 @@ function runShow() {
   manager.onLoad = function () {
     loadingState = false;
     progress.style.display = "none";
-    startButton.style.visibility = "visible";
-    startButton.style.animation = "fadein 5s";
-    // fullscrButton.style.animation = "fadein 5s";
+    setTimeout(() => {
+      startButton.style.visibility = "visible";
+      startButton.style.animation = "fadein 5s";
+    }, 5000); // This delay is to wait for phrases to disappear
 
     // Skip play for now
     // currentScene = "perf3";
@@ -132,10 +138,22 @@ function runShow() {
 
     // lobby.render();
     // lobby.play();
+    // lobby.interactive = true;
     // sfxLobbyBase.play();
     // sfxLobbyVO.play(8);
+    // sfxLobbyBase.play();
+    // sfxPerf1Add.play();
+    // sfxPerf2Add.play();
+    // sfxPerf3Add.play();
+    // sfxPerf3AddB.play();
     // setTimeout(() => {
-    //   lobby.playEnding();
+    //   lobby.playEnding([
+    //     sfxLobbyBase,
+    //     sfxPerf1Add,
+    //     sfxPerf2Add,
+    //     sfxPerf3Add,
+    //     sfxPerf3AddB,
+    //   ]);
     // }, 8000);
 
     // lobby.setFranciTexture(lobby.francis1);
@@ -158,15 +176,13 @@ function runShow() {
         }, sfxLobbyVO.userData.duration + 8000);
         loadingOverlay.style.visibility = "hidden";
       }, 6000);
-      // lobby.interactive = true;
-
-      // currentScene = "perf2";
-      // perf2.render();
-      // perf2.play();
-      // sfxPerf2.play();
 
       loadingOverlay.style.animation = "fadeout 4s forwards";
       startButton.style.visibility = "hidden";
+      sfxAmbience.setVolume(0);
+      sfxAmbience.play();
+      const fI = new FadeInAudioEffect(4000, null, [sfxAmbience]);
+      fI.playEffect();
     });
   };
 
@@ -236,6 +252,7 @@ function runShow() {
   // Setup the audio
   const audioLoader = new THREE.AudioLoader(manager);
   const audioListener = new THREE.AudioListener();
+  const sfxAmbience = new THREE.Audio(audioListener);
   const sfxLobbyBase = new THREE.Audio(audioListener);
   const sfxLobbyVO = new THREE.Audio(audioListener);
   const sfxPerf1 = new THREE.Audio(audioListener);
@@ -245,43 +262,53 @@ function runShow() {
   const sfxPerf2Add = new THREE.Audio(audioListener);
   const sfxPerf3Add = new THREE.Audio(audioListener);
   const sfxPerf3AddB = new THREE.Audio(audioListener);
+  const sfxEndingBase = new THREE.Audio(audioListener);
+  const sfxEndingVO = new THREE.Audio(audioListener);
   const loadAllAudio = () => {
-    audioLoader.load(`${dataPath}sfx/lobby_base.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/ambience.ogg`, (audioBuffer) => {
+      sfxAmbience.setBuffer(audioBuffer);
+      sfxAmbience.setLoop(true);
+    });
+    audioLoader.load(`${dataPath}sfx/lobby_base.ogg`, (audioBuffer) => {
       sfxLobbyBase.setBuffer(audioBuffer);
       sfxLobbyBase.setLoop(true);
     });
-    audioLoader.load(`${dataPath}sfx/lobby_vo.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/lobby_vo.ogg`, (audioBuffer) => {
       sfxLobbyVO.setBuffer(audioBuffer);
       sfxLobbyVO.userData.duration = 80000; // 1:20
     });
-    audioLoader.load(`${dataPath}sfx/perf1.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/perf1.ogg`, (audioBuffer) => {
       sfxPerf1.setBuffer(audioBuffer);
     });
-    audioLoader.load(`${dataPath}sfx/perf2.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/perf2.ogg`, (audioBuffer) => {
       sfxPerf2.setBuffer(audioBuffer);
     });
-    audioLoader.load(`${dataPath}sfx/perf3.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/perf3.ogg`, (audioBuffer) => {
       sfxPerf3.setBuffer(audioBuffer);
     });
-    audioLoader.load(`${dataPath}sfx/perf1_add.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/perf1_add.ogg`, (audioBuffer) => {
       sfxPerf1Add.setBuffer(audioBuffer);
       sfxPerf1Add.setLoop(true);
     });
-    audioLoader.load(`${dataPath}sfx/perf2_add.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/perf2_add.ogg`, (audioBuffer) => {
       sfxPerf2Add.setBuffer(audioBuffer);
       sfxPerf2Add.setLoop(true);
     });
-    audioLoader.load(`${dataPath}sfx/perf3_add.ogg`, function (audioBuffer) {
+    audioLoader.load(`${dataPath}sfx/perf3_add.ogg`, (audioBuffer) => {
       sfxPerf3Add.setBuffer(audioBuffer);
       sfxPerf3Add.setLoop(true);
     });
-    audioLoader.load(
-      `${dataPath}sfx/perf3_add_birds.ogg`,
-      function (audioBuffer) {
-        sfxPerf3AddB.setBuffer(audioBuffer);
-        sfxPerf3AddB.setLoop(true);
-      }
-    );
+    audioLoader.load(`${dataPath}sfx/perf3_add_birds.ogg`, (audioBuffer) => {
+      sfxPerf3AddB.setBuffer(audioBuffer);
+      sfxPerf3AddB.setLoop(true);
+    });
+    audioLoader.load(`${dataPath}sfx/ending_base.ogg`, (audioBuffer) => {
+      sfxEndingBase.setBuffer(audioBuffer);
+      sfxEndingBase.setLoop(true);
+    });
+    audioLoader.load(`${dataPath}sfx/ending_vo.ogg`, (audioBuffer) => {
+      sfxEndingVO.setBuffer(audioBuffer);
+    });
   };
   loadAllAudio();
 
@@ -318,7 +345,7 @@ function runShow() {
   const stats = new Stats();
   stats.domElement.style.position = "absolute";
   stats.domElement.style.top = "0px";
-  document.body.appendChild(stats.domElement);
+  // document.body.appendChild(stats.domElement);
 
   // Setup scenes
   const lobby = new SceneLobby(renderer, manager, stats);
@@ -419,10 +446,17 @@ function runShow() {
         }
         // Play end scene if all perfs are done
         if (perf1Done && perf2Done && perf3Done) {
-          // Set a timeout here and play lobby ending
+          // Fade out ambience first
+          const fO = new FadeOutAudioEffect(8000, null, [sfxAmbience]);
+          fO.playEffect();
           setTimeout(() => {
-            lobby.playEnding();
-          }, 25000);
+            sfxEndingBase.play();
+            sfxEndingVO.play();
+            lobby.endingSubHandler.playSubtitles();
+            setTimeout(() => {
+              lobby.playEnding(sfxList); // Pass in the sfx to fade them out after credits
+            }, 2000);
+          }, 32000);
         }
         break;
       case "perf1":
@@ -485,17 +519,23 @@ function runShow() {
   function sceneSwitchMouse() {
     switch (currentScene) {
       case "lobby":
-        if (lobby.francis1Hover) {
+        if (lobby.francis1Hover && lobby.francis1.userData.perfPending) {
+          lobby.francis1Hover = false; // Quick fix for multiple clicks bug
           lobby.enterPerformance(switchCallback, "perf1");
-        } else if (lobby.francis2Hover) {
+        } else if (lobby.francis2Hover && lobby.francis2.userData.perfPending) {
+          lobby.francis2Hover = false; // Quick fix for multiple clicks bug
           lobby.enterPerformance(switchCallback, "perf2");
-        } else if (lobby.francis3Hover) {
+        } else if (lobby.francis3Hover && lobby.francis3.userData.perfPending) {
+          lobby.francis3Hover = false; // Quick fix for multiple clicks bug
           lobby.enterPerformance(switchCallback, "perf3");
         }
         break;
       default:
         break;
     }
+    // Quick fix for multiple clicks bug
+    document.body.style.cursor =
+      "url('./data/txt/cursor_grey.png') 16 16, auto";
   }
   document.addEventListener("click", sceneSwitchMouse);
 

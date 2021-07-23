@@ -137,13 +137,11 @@ body {
 
 #loading-overlay #fullscr-button {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 5vh;
+  right: 3vw;
   float: right;
   height: 2em;
   width: 2em;
-  padding-top: 1.5em;
-  padding-right: 1em;
   transition: all 0.1s;
   opacity: 0.6;
   animation: fullscr-blink 1s 10;
@@ -164,14 +162,14 @@ body {
 }
 
 #loading-overlay #intro {
-  margin: 1em 10em;
+  margin: 1em 10em 0em 10em;
   animation: fadein 5s forwards;
-  animation-delay: 9.5s;
+  animation-delay: 11.5s;
   opacity: 0;
 }
 
 #loading-overlay #best {
-  margin: 1em 0em 1em 0em;
+  margin: 0.5em 0em 1em 0em;
   animation: fadein 5s forwards;
   animation-delay: 17s;
   opacity: 0;
@@ -192,9 +190,14 @@ body {
   animation-delay: 7.5s;
   opacity: 0;
 }
+#loading-overlay #rec4 {
+  animation: fadein 5s forwards;
+  animation-delay: 9.5s;
+  opacity: 0;
+}
 
 #loading-overlay #phrase {
-  margin: 2em 10em 1em 10em;
+  margin: 1em 10em 1em 10em;
   opacity: 0;
 }
 
@@ -238,7 +241,7 @@ body {
   letter-spacing: 2px;
 
   position: absolute;
-  bottom: 10vh;
+  bottom: 5vh;
   vertical-align: middle;
 }
 
