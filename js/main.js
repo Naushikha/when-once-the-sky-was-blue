@@ -14,8 +14,8 @@ import { FadeOutAudioEffect } from "./fadeOutAudioEffect.js";
 const dataPath = "./data/";
 
 // First check if the show is open
-// fetch(`./data/showtimes.json`, { cache: "no-store" })
-fetch(`https://harshinijk.github.io/showtimes.json`, { cache: "no-store" })
+fetch(`./data/showtimes.json`, { cache: "no-store" })
+  // fetch(`https://harshinijk.github.io/showtimes.json`, { cache: "no-store" })
   .then((response) => response.json())
   .then((data) => {
     const showState = data.showState;
