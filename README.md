@@ -10,11 +10,8 @@ In the not-so-distant future, the world has been consumed by darkness. In this e
 
 This immersive web experience aims to deal with eco-grief and collective trauma during the Anthropocene. Through poetry, visuals and immersive sound, be guided through a journey exploring three ecosystems from the comfort of your home. You choose where to begin in this performance encouraging mindfulness practices.
 
-<center>
-    <b>
-        <a href="mailto:hello@naushikha.com?subject=Request%20for%20WOTSWB%20Demo&body=Hi%20there%2C%0AI%20would%20like%20to%20get%20a%20demo%20of%20When%20once%20the%20sky%20was%20blue.">Request for a Demo</a>
-    </b>
-</center>
+<center><b><a href="mailto:hello@naushikha.com?subject=Request%20for%20WOTSWB%20Demo&body=Hi%20there%2C%0AI%20would%20like%20to%20get%20a%20demo%20of%20When%20once%20the%20sky%20was%20blue.">Request for a Demo</a></center></b>
+
 
 - Designed using Three.js, HTML, CSS and JS.
 - Completed in a short span of 2 weeks.
