@@ -13,3 +13,34 @@ This immersive web experience aims to deal with eco-grief and collective trauma 
 - Designed using Three.js, HTML, CSS and JS.
 - Completed in a short span of 2 weeks.
 - Makes use of the modular Three.js template @ https://github.com/Naushikha/Three.JS-Template
+- IMPORTANT: THIS CODE IS DISTRIBUTED UNDER GNU GPLv3. 
+
+## Related Links
+
+- Award for 'Outstanding Visual Design' at WTFringe21
+    - https://youtu.be/Sm_wx-iqUyg?t=14194 
+- Review on IndyWeek
+    - https://indyweek.com/culture/stage/wtfringe-21-festival/
+- Teaser Trailer
+    - https://twitter.com/HarshiniJK/status/1413993392724398080
+- Instagram Goodies
+    - https://www.instagram.com/p/CR9upw_Bice/
+    - https://www.instagram.com/p/CSZyTWNByDM/
+    - https://www.instagram.com/p/CRt7L5rHAf1/
+    - https://www.instagram.com/p/CRrOWiEjhGz/
+    - https://www.instagram.com/p/CRpJXbOLF5w/
+    - https://www.instagram.com/p/CRgIEkrLZwA/
+    - https://www.instagram.com/p/CRcOkIYH3Rj/
+    - https://www.instagram.com/p/CRWZcGDH7jp/
+    - https://www.instagram.com/p/CROt20xrjw3/
+    - https://www.instagram.com/p/CRKbQ_nrNCC/ 
+
+
+## Credits
+- Written and directed by Harshini J. Karunaratne
+- Sound design and narration by Keira Simmons
+- Programmer Naushikha Jayawickrama
+- Dramaturg Carlos Paez
+- 3D Artist Leo El-azhab
+- Special thanks to Judi Olson, Arthur de Oliveira, Gabriel Jimenez, and Tommy Wong
+- With support from Theater Mitu and The National Women's Theatre Festival
