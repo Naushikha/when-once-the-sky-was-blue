@@ -12,7 +12,7 @@ This immersive web experience aims to deal with eco-grief and collective trauma 
 
 <p align="center">
 <b><a href="mailto:hello@naushikha.com?subject=Request%20for%20WOTSWB%20Demo&body=Hi%20there%2C%0AI%20would%20like%20to%20get%20a%20demo%20of%20When%20once%20the%20sky%20was%20blue.">Request for a Demo</a></b>
-</p><br>
+</p>
 
 - Designed using Three.js, HTML, CSS and JS.
 - Completed in a short span of 2 weeks.
