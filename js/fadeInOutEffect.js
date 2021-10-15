@@ -29,7 +29,7 @@ class FadeInOutEffect {
         this.overlay.style.opacity = posVec1.o;
         if (this.sfxList !== null) {
           for (let sfx of this.sfxList) {
-            sfx.setVolume(posVec1.o / 2);
+            sfx.volume(posVec1.o / 2);
           }
         }
       }.bind(this)
@@ -54,7 +54,7 @@ class FadeInOutEffect {
         this.overlay.style.opacity = posVec1.o;
         if (this.sfxList !== null) {
           for (let sfx of this.sfxList) {
-            sfx.setVolume(1 - posVec1.o / 2);
+            sfx.volume(1 - posVec1.o / 2);
           }
         }
       }.bind(this)

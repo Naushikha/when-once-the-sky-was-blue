@@ -20,7 +20,7 @@ class FadeOutAudioEffect {
       function () {
         if (this.sfxList !== null) {
           for (let sfx of this.sfxList) {
-            sfx.setVolume(posVec1.o);
+            sfx.volume(posVec1.o);
           }
         }
       }.bind(this)
