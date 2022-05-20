@@ -1,3 +1,6 @@
+import "./lib/tween.umd.js";
+import "./lib/localforage.min.js";
+import "./lib/howler.core.min.js";
 import * as THREE from "./lib/three.module.js";
 import Stats from "./lib/stats.module.js";
 import { SceneLobby } from "./sceneLobby.js";
@@ -134,25 +137,25 @@ function runShow() {
     // currentScene = "perf3";
     // perf3.render();
     // perf3.play();
-    // sfxPerf3.play();
+    // SFX["perf3"].play();
 
     // lobby.render();
     // lobby.play();
     // lobby.interactive = true;
-    // sfxLobbyBase.play();
-    // sfxLobbyVO.play(8);
-    // sfxLobbyBase.play();
-    // sfxPerf1Add.play();
-    // sfxPerf2Add.play();
-    // sfxPerf3Add.play();
-    // sfxPerf3AddB.play();
+    // SFX["lobby_base"].play();
+    // SFX["lobby_vo"].play(8);
+    // SFX["lobby_base"].play();
+    // SFX["perf1_add"].play();
+    // SFX["perf2_add"].play();
+    // SFX["perf3_add"].play();
+    // SFX["perf3_add_birds"].play();
     // setTimeout(() => {
     //   lobby.playEnding([
-    //     sfxLobbyBase,
-    //     sfxPerf1Add,
-    //     sfxPerf2Add,
-    //     sfxPerf3Add,
-    //     sfxPerf3AddB,
+    //     SFX["lobby_base"],
+    //     SFX["perf1_add"],
+    //     SFX["perf2_add"],
+    //     SFX["perf3_add"],
+    //     SFX["perf3_add_birds"],
     //   ]);
     // }, 8000);
 
@@ -168,20 +171,22 @@ function runShow() {
       lobby.render();
       setTimeout(() => {
         lobby.play();
-        sfxLobbyBase.play();
-        sfxLobbyVO.play(8);
+        SFX["lobby_base"].play();
+        setTimeout(() => {
+          SFX["lobby_vo"].play();
+        }, 8000);
         setTimeout(() => {
           // Enable interaction in lobby after narration
           lobby.interactive = true;
-        }, sfxLobbyVO.userData.duration + 8000);
+        }, SFX["lobby_vo"].duration() * 1000 + 8000);
         loadingOverlay.style.visibility = "hidden";
       }, 6000);
 
       loadingOverlay.style.animation = "fadeout 4s forwards";
       startButton.style.visibility = "hidden";
-      sfxAmbience.setVolume(0);
-      sfxAmbience.play();
-      const fI = new FadeInAudioEffect(4000, null, [sfxAmbience]);
+      SFX["ambience"].volume(0);
+      SFX["ambience"].play();
+      const fI = new FadeInAudioEffect(4000, null, [SFX["ambience"]]);
       fI.playEffect();
     });
   };
@@ -250,64 +255,65 @@ function runShow() {
   document.body.appendChild(renderer.domElement);
 
   // Setup the audio
-  const audioLoader = new THREE.AudioLoader(manager);
-  const audioListener = new THREE.AudioListener();
-  const sfxAmbience = new THREE.Audio(audioListener);
-  const sfxLobbyBase = new THREE.Audio(audioListener);
-  const sfxLobbyVO = new THREE.Audio(audioListener);
-  const sfxPerf1 = new THREE.Audio(audioListener);
-  const sfxPerf2 = new THREE.Audio(audioListener);
-  const sfxPerf3 = new THREE.Audio(audioListener);
-  const sfxPerf1Add = new THREE.Audio(audioListener);
-  const sfxPerf2Add = new THREE.Audio(audioListener);
-  const sfxPerf3Add = new THREE.Audio(audioListener);
-  const sfxPerf3AddB = new THREE.Audio(audioListener);
-  const sfxEndingBase = new THREE.Audio(audioListener);
-  const sfxEndingVO = new THREE.Audio(audioListener);
-  const loadAllAudio = () => {
-    audioLoader.load(`${dataPath}sfx/ambience.ogg`, (audioBuffer) => {
-      sfxAmbience.setBuffer(audioBuffer);
-      sfxAmbience.setLoop(true);
-    });
-    audioLoader.load(`${dataPath}sfx/lobby_base.ogg`, (audioBuffer) => {
-      sfxLobbyBase.setBuffer(audioBuffer);
-      sfxLobbyBase.setLoop(true);
-    });
-    audioLoader.load(`${dataPath}sfx/lobby_vo.ogg`, (audioBuffer) => {
-      sfxLobbyVO.setBuffer(audioBuffer);
-      sfxLobbyVO.userData.duration = 80000; // 1:20
-    });
-    audioLoader.load(`${dataPath}sfx/perf1.ogg`, (audioBuffer) => {
-      sfxPerf1.setBuffer(audioBuffer);
-    });
-    audioLoader.load(`${dataPath}sfx/perf2.ogg`, (audioBuffer) => {
-      sfxPerf2.setBuffer(audioBuffer);
-    });
-    audioLoader.load(`${dataPath}sfx/perf3.ogg`, (audioBuffer) => {
-      sfxPerf3.setBuffer(audioBuffer);
-    });
-    audioLoader.load(`${dataPath}sfx/perf1_add.ogg`, (audioBuffer) => {
-      sfxPerf1Add.setBuffer(audioBuffer);
-      sfxPerf1Add.setLoop(true);
-    });
-    audioLoader.load(`${dataPath}sfx/perf2_add.ogg`, (audioBuffer) => {
-      sfxPerf2Add.setBuffer(audioBuffer);
-      sfxPerf2Add.setLoop(true);
-    });
-    audioLoader.load(`${dataPath}sfx/perf3_add.ogg`, (audioBuffer) => {
-      sfxPerf3Add.setBuffer(audioBuffer);
-      sfxPerf3Add.setLoop(true);
-    });
-    audioLoader.load(`${dataPath}sfx/perf3_add_birds.ogg`, (audioBuffer) => {
-      sfxPerf3AddB.setBuffer(audioBuffer);
-      sfxPerf3AddB.setLoop(true);
-    });
-    audioLoader.load(`${dataPath}sfx/ending_base.ogg`, (audioBuffer) => {
-      sfxEndingBase.setBuffer(audioBuffer);
-      sfxEndingBase.setLoop(true);
-    });
-    audioLoader.load(`${dataPath}sfx/ending_vo.ogg`, (audioBuffer) => {
-      sfxEndingVO.setBuffer(audioBuffer);
+  const FileLoader = new THREE.FileLoader(manager);
+
+  const SFX = {};
+  const SFXList = [
+    "ambience",
+    "lobby_base",
+    "lobby_vo",
+    "perf1",
+    "perf2",
+    "perf3",
+    "perf1_add",
+    "perf2_add",
+    "perf3_add",
+    "perf3_add_birds",
+    "ending_base",
+    "ending_vo",
+  ];
+
+  const loadAllAudio = async () => {
+    // Save audio to device
+    // https://stackoverflow.com/a/63016996
+    const promises = [];
+    for (let SFXItem of SFXList) {
+      promises.push(
+        new Promise((resolve) => {
+          FileLoader.setResponseType("blob").load(
+            `${dataPath}sfx/${SFXItem}.ogg`,
+            (data) => {
+              localforage
+                .setItem(`sfx_${SFXItem}`, data)
+                .then((data) => {
+                  SFX[SFXItem] = new Howl({
+                    src: [URL.createObjectURL(data)],
+                    format: ["ogg"],
+                    html5: true, // Most important bit: Saves memory!
+                  });
+                  resolve(1); // We have initialized the audio
+                })
+                .catch((err) => console.log(err));
+            }
+          );
+        })
+      );
+    }
+
+    Promise.all(promises).then(() => {
+      // Set looping
+      const toLoopList = [
+        "ambience",
+        "lobby_base",
+        "perf1_add",
+        "perf2_add",
+        "perf3_add",
+        "perf3_add_birds",
+        "ending_base",
+      ];
+      for (let loopItem of toLoopList) {
+        SFX[loopItem].loop(true);
+      }
     });
   };
   loadAllAudio();
@@ -318,26 +324,26 @@ function runShow() {
     perf3Done = false;
   function pauseAllLobbySFX() {
     // Just pause everything
-    sfxLobbyBase.pause();
-    sfxPerf1Add.pause();
-    sfxPerf2Add.pause();
-    sfxPerf3Add.pause();
-    sfxPerf3AddB.pause();
+    SFX["lobby_base"].pause();
+    SFX["perf1_add"].pause();
+    SFX["perf2_add"].pause();
+    SFX["perf3_add"].pause();
+    SFX["perf3_add_birds"].pause();
   }
   function playAllLobbySFX() {
-    sfxLobbyBase.play();
+    SFX["lobby_base"].play();
     if (perf1Done) {
-      sfxPerf1.stop();
-      sfxPerf1Add.play();
+      SFX["perf1"].stop();
+      SFX["perf1_add"].play();
     }
     if (perf2Done) {
-      sfxPerf2.stop();
-      sfxPerf2Add.play();
+      SFX["perf2"].stop();
+      SFX["perf2_add"].play();
     }
     if (perf3Done) {
-      sfxPerf3.stop();
-      sfxPerf3Add.play();
-      sfxPerf3AddB.play();
+      SFX["perf3"].stop();
+      SFX["perf3_add"].play();
+      SFX["perf3_add_birds"].play();
     }
   }
 
@@ -353,12 +359,6 @@ function runShow() {
   var perf2 = new ScenePerf2(renderer, manager, stats);
   var perf3 = new ScenePerf3(renderer, manager, stats);
 
-  // Set cameras to listen to audio
-  lobby.camera.add(audioListener);
-  perf1.camera.add(audioListener);
-  perf2.camera.add(audioListener);
-  perf3.camera.add(audioListener);
-
   // Set scene callbacks to return to lobby
   perf1.lobbyCallback = switchCallback;
   perf2.lobbyCallback = switchCallback;
@@ -366,11 +366,11 @@ function runShow() {
 
   function switchCallback(perf) {
     const sfxList = [
-      sfxLobbyBase,
-      sfxPerf1Add,
-      sfxPerf2Add,
-      sfxPerf3Add,
-      sfxPerf3AddB,
+      SFX["lobby_base"],
+      SFX["perf1_add"],
+      SFX["perf2_add"],
+      SFX["perf3_add"],
+      SFX["perf3_add_birds"],
     ];
     const onFadeOut = () => {
       currentScene = "lobby";
@@ -447,11 +447,11 @@ function runShow() {
         // Play end scene if all perfs are done
         if (perf1Done && perf2Done && perf3Done) {
           // Fade out ambience first
-          const fO = new FadeOutAudioEffect(8000, null, [sfxAmbience]);
+          const fO = new FadeOutAudioEffect(8000, null, [SFX["ambience"]]);
           fO.playEffect();
           setTimeout(() => {
-            sfxEndingBase.play();
-            sfxEndingVO.play();
+            SFX["ending_base"].play();
+            SFX["ending_vo"].play();
             lobby.endingSubHandler.playSubtitles();
             setTimeout(() => {
               lobby.playEnding(sfxList); // Pass in the sfx to fade them out after credits
@@ -468,7 +468,7 @@ function runShow() {
           5000,
           () => {
             pauseAllLobbySFX();
-            sfxPerf1.play();
+            SFX["perf1"].play();
             perf1.play(); // Play the effects
             currentScene = "perf1";
           },
@@ -485,7 +485,7 @@ function runShow() {
           5000,
           () => {
             pauseAllLobbySFX();
-            sfxPerf2.play();
+            SFX["perf2"].play();
             perf2.play(); // Play the effects
             currentScene = "perf2";
           },
@@ -502,7 +502,7 @@ function runShow() {
           5000,
           () => {
             pauseAllLobbySFX();
-            sfxPerf3.play();
+            SFX["perf3"].play();
             perf3.play(); // Play the effects
             currentScene = "perf3";
           },
